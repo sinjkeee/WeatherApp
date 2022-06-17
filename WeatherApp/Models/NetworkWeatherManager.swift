@@ -1,7 +1,12 @@
 import Foundation
 
 struct NetworkWeatherManager {
-
+    // вычисляемое свойство, которое достает ключ из info.plist
+    var apiKey: String {
+        guard let key = Bundle.main.object(forInfoDictionaryKey: "apiKey") as? String else { return "" }
+        return key
+    }
+    
     func fetchCurrentWeather(forCity city: String) {
         // url откуда к нам приходит json
         let urlString = "https://api.openweathermap.org/data/2.5/weather?q=\(city)&appid=\(apiKey)"
@@ -32,7 +37,7 @@ struct NetworkWeatherManager {
         let decoder = JSONDecoder() // создаем декодер
         do { // наш декодер возвращает объект currentWeatherData
             let currentWeatherData = try decoder.decode(CurrentWeatherData.self, from: data)
-            print(currentWeatherData.main?.feelsLike ?? "") // пока просто печатаем в консоль
+            print(currentWeatherData.name ?? "") // пока просто печатаем в консоль
         } catch let error {
             print(error)
         }

@@ -1,13 +1,13 @@
 import UIKit
 
-class ViewController: UIViewController {
+class MainViewController: UIViewController {
 
     let networkWeatherManager = NetworkWeatherManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
        
-        networkWeatherManager.fetchCurrentWeather(forCity: "Minsk")
+        networkWeatherManager.fetchCurrentWeather(forCity: "Moscow")
     }
 }
 
