@@ -27,22 +27,26 @@ class MainViewController: UIViewController {
         presentSearchAlertController(withTitle: "Enter city name", message: nil, style: .alert)
     }
     
-    func updateInterface(weather: CurrentAndForecastWeatherData) {
+    func updateInterface(weather: CurrentWeatherData) {
         guard let icon = weather.current?.weather?.first?.icon else { return }
         let iconURL = URL(string: "https://openweathermap.org/img/wn/\(icon)@2x.png")
-        DispatchQueue.global(qos: .utility).async {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
             guard let url = iconURL,
-                  let iconData = try? Data(contentsOf: url) else { return }
-            DispatchQueue.main.async {
+                  let iconData = try? Data(contentsOf: url),
+                  let self = self
+            else { return }
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
                 self.imageView.image = UIImage(data: iconData)
             }
         }
         
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
             guard let temp = weather.current?.temp,
                   let feelsLikeTemp = weather.current?.feelsLike,
                   let cityName = weather.timeZone,
-                  let description = weather.current?.weather?.first?.description
+                  let description = weather.current?.weather?.first?.description,
+                  let self = self
             else { return }
             
             self.tempLabel.text = "температура: \(Int(temp))"

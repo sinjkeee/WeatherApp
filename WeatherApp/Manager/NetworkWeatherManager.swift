@@ -47,7 +47,7 @@ class NetworkWeatherManager {
         }
     }
     
-    var completion: ((CurrentAndForecastWeatherData) -> Void)?
+    var completion: ((CurrentWeatherData) -> Void)?
     
     func geocoding(forCity city: String) {
         let urlStrig = "https://api.openweathermap.org/geo/1.0/direct?q=\(city)&appid=\(apiKey)"
@@ -78,7 +78,7 @@ class NetworkWeatherManager {
     }
     
     func currentWeather(long: Double, lat: Double, withLang lang: Languages, withUnitsOfmeasurement units: Units) {
-        let urlStrig = "https://api.openweathermap.org/data/2.5/onecall?lat=\(lat)&lon=\(long)&exclude=daily&appid=\(apiKey)&lang=\(lang.shortName)&units=\(units.code)"
+        let urlStrig = "https://api.openweathermap.org/data/2.5/onecall?lat=\(lat)&lon=\(long)&appid=\(apiKey)&lang=\(lang.shortName)&units=\(units.code)"
         guard let url = URL(string: urlStrig) else { return }
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "GET"
@@ -91,7 +91,7 @@ class NetworkWeatherManager {
             if let data = data {
                 let decoder = JSONDecoder()
                 do {
-                    let currentWeather = try decoder.decode(CurrentAndForecastWeatherData.self, from: data)
+                    let currentWeather = try decoder.decode(CurrentWeatherData.self, from: data)
                     print(currentWeather.current?.feelsLike ?? "some error")
                     self?.completion?(currentWeather)
                 } catch let error {
