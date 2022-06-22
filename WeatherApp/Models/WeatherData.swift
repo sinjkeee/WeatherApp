@@ -1,11 +1,13 @@
 import Foundation
 
-struct CurrentWeatherData: Codable {
+struct WeatherData: Codable {
     var lat: Double?
     var lon: Double?
     var timeZone: String?
     var timeZoneOffset: Int?
-    var current: Current?
+    var current: CurrentWeatherData?
+    var hourly: [HourlyWeatherData]?
+    var daily: [DailyWeatherData]?
     
     enum CodingKeys: String, CodingKey {
         case lat, lon, current
@@ -14,7 +16,7 @@ struct CurrentWeatherData: Codable {
     }
 }
 
-struct Current: Codable {
+struct CurrentWeatherData: Codable {
     var dt: Int?
     var sunrise: Int?
     var sunset: Int?

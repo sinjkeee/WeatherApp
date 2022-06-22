@@ -9,6 +9,10 @@ class MainViewController: UIViewController {
     @IBOutlet weak var cityName: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
     
+    private var currentWeather: WeatherData?
+    private var hourlyWeather: [HourlyWeatherData]?
+    private var dailyWeather: [DailyWeatherData]?
+    
     var networkWeatherManager = NetworkWeatherManager()
     
     override func viewDidLoad() {
@@ -18,7 +22,10 @@ class MainViewController: UIViewController {
         
         networkWeatherManager.completion = { [weak  self] currentWeather in
             guard let self = self else { return }
-            self.updateInterface(weather: currentWeather)
+            self.currentWeather = currentWeather
+            self.hourlyWeather = currentWeather.hourly
+            self.dailyWeather = currentWeather.daily
+            self.updateInterface()
         }
     }
     
@@ -27,8 +34,9 @@ class MainViewController: UIViewController {
         presentSearchAlertController(withTitle: "Enter city name", message: nil, style: .alert)
     }
     
-    func updateInterface(weather: CurrentWeatherData) {
-        guard let icon = weather.current?.weather?.first?.icon else { return }
+    func updateInterface() {
+        guard let weather = currentWeather,
+            let icon = weather.current?.weather?.first?.icon else { return }
         let iconURL = URL(string: "https://openweathermap.org/img/wn/\(icon)@2x.png")
         DispatchQueue.global(qos: .utility).async { [weak self] in
             guard let url = iconURL,

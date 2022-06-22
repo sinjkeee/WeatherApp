@@ -1,26 +1,13 @@
 import Foundation
 
-struct DailyWeatherData: Codable {
-    var lat: Double?
-    var lon: Double?
-    var timeZone: String?
-    var timeZoneOffset: Int?
-    var daily: [Daily]?
-    
-    enum CodingKeys: String, CodingKey {
-        case lat, lon, daily
-        case timeZone = "timezone"
-        case timeZoneOffset = "timezone_offset"
-    }
-}
 
-struct Daily: Codable {
+struct DailyWeatherData: Codable {
     var dt: Int?
     var sunrise: Int?
     var sunset: Int?
     var moonrise: Int?
     var moonset: Int?
-    var moon_phase: Double?
+    var moonPhase: Double?
     var temp: Temp?
     var feelsLike: FeelsLike?
     var pressure: Int?
@@ -42,6 +29,7 @@ struct Daily: Codable {
         case windSpeed = "wind_speed"
         case windDeg = "wind_deg"
         case windGust = "wind_gust"
+        case moonPhase = "moon_phase"
     }
 }
 

@@ -1,21 +1,6 @@
 import Foundation
 
 struct HourlyWeatherData: Codable {
-    var lat: Double?
-    var lon: Double?
-    var timeZone: String?
-    var timeZoneOffset: Int?
-    var hourly: [Hourly]?
-    
-    enum CodingKeys: String, CodingKey {
-        case lat, lon, hourly
-        case timeZone = "timezone"
-        case timeZoneOffset = "timezone_offset"
-    }
-}
-
-
-struct Hourly: Codable {
     var dt: Int?
     var temp: Double?
     var feelsLike: Double?

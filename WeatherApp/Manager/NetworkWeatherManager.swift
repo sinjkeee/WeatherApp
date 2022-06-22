@@ -47,7 +47,7 @@ class NetworkWeatherManager {
         }
     }
     
-    var completion: ((CurrentWeatherData) -> Void)?
+    var completion: ((WeatherData) -> Void)?
     
     func geocoding(forCity city: String) {
         let urlStrig = "https://api.openweathermap.org/geo/1.0/direct?q=\(city)&appid=\(apiKey)"
@@ -91,7 +91,7 @@ class NetworkWeatherManager {
             if let data = data {
                 let decoder = JSONDecoder()
                 do {
-                    let currentWeather = try decoder.decode(CurrentWeatherData.self, from: data)
+                    let currentWeather = try decoder.decode(WeatherData.self, from: data)
                     print(currentWeather.current?.feelsLike ?? "some error")
                     self?.completion?(currentWeather)
                 } catch let error {
