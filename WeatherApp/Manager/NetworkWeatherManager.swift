@@ -7,57 +7,98 @@ class NetworkWeatherManager {
         return key
     }
     
-    enum Languages: String {
-        case russian = "ru"
-        case english = "en"
-        case arabic = "ar"
-        case german = "de"
-        case french = "fr"
-        case japanese = "ja"
-        case chinese = "zh_tw"
-        case italian = "it"
-        case ukrainian = "ua"
+    enum Languages {
+        case russian
+        case english
+        case arabic
+        case german
+        case french
+        case japanese
+        case chinese
+        case italian
+        case ukrainian
+        
+        var shortName: String {
+            switch self {
+            case .russian: return "ru"
+            case .english: return "en"
+            case .arabic: return "ar"
+            case .german: return "de"
+            case .french: return "fr"
+            case .japanese: return "ja"
+            case .chinese: return "zh_tw"
+            case .italian: return "it"
+            case .ukrainian: return "ua"
+            }
+        }
     }
     
-    var completion: ((CurrentWeatherData) -> Void)?
+    enum Units {
+        case celsius
+        case fahrenheit
+        case kelvin
+        
+        var code: String {
+            switch self {
+            case .celsius: return "metric"
+            case .fahrenheit: return "imperial"
+            case .kelvin: return "standard"
+            }
+        }
+    }
     
-    func fetchCurrentWeather(forCity city: String, withLang lang: Languages) {
-        // url откуда к нам приходит json
-        let urlString = "https://api.openweathermap.org/data/2.5/weather?q=\(city)&appid=\(apiKey)&units=metric&lang=\(lang.rawValue)"
-        // получаем URL со строки urlString
-        guard let url = URL(string: urlString) else { return }
-        // создаем запрос по нашему url
+    var completion: ((CurrentAndForecastWeatherData) -> Void)?
+    
+    func geocoding(forCity city: String) {
+        let urlStrig = "https://api.openweathermap.org/geo/1.0/direct?q=\(city)&appid=\(apiKey)"
+        guard let url = URL(string: urlStrig) else { return }
         var urlRequest = URLRequest(url: url)
-        // тип запроса
         urlRequest.httpMethod = "GET"
-        // создаем сессию
         let session = URLSession(configuration: .default)
-        // создаем таск непосредственно для запроса на сервер
-        let dataTask = session.dataTask(with: urlRequest) { data, response, error in
-            if let error = error { // если будет ошибка, мы ее печатаем и дальше не идем
-                print("ERROR!!! – \(error)")
-                return
+        let dataTask = session.dataTask(with: urlRequest) { [weak self] data, response, error in
+            guard let self = self else { return }
+            if let error = error {
+                print(error)
             }
             
-            if let data = data { // проверяем данные, что они не nil
-                if let currentWeather = self.parseJSON(withData: data) {
-                    self.completion?(currentWeather)
+            if let data = data {
+                let decoder = JSONDecoder()
+                do {
+                    let geocoding = try decoder.decode([Geocoding].self, from: data)
+                    print(geocoding.first?.cityName ?? "nil")
+                    guard let long = geocoding.first?.lon,
+                          let lat = geocoding.first?.lat else { return }
+                    self.currentWeather(long: long, lat: lat, withLang: .russian, withUnitsOfmeasurement: .celsius)
+                } catch let error {
+                    print(error)
                 }
             }
         }
         dataTask.resume()
     }
     
-    // метод parseJSON декодирует json в структуры, которые мы определили для этого
-    func parseJSON(withData data: Data) -> CurrentWeatherData? {
-        let decoder = JSONDecoder() // создаем декодер
-        do { // наш декодер возвращает объект currentWeatherData
-            let currentWeatherData = try decoder.decode(CurrentWeatherData.self, from: data)
-            return currentWeatherData
-        } catch let error {
-            print(error)
+    func currentWeather(long: Double, lat: Double, withLang lang: Languages, withUnitsOfmeasurement units: Units) {
+        let urlStrig = "https://api.openweathermap.org/data/2.5/onecall?lat=\(lat)&lon=\(long)&exclude=daily&appid=\(apiKey)&lang=\(lang.shortName)&units=\(units.code)"
+        guard let url = URL(string: urlStrig) else { return }
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "GET"
+        let session = URLSession(configuration: .default)
+        let dataTask = session.dataTask(with: urlRequest) { [weak self] data, response, error in
+            if let error = error {
+                print(error)
+            }
+            
+            if let data = data {
+                let decoder = JSONDecoder()
+                do {
+                    let currentWeather = try decoder.decode(CurrentAndForecastWeatherData.self, from: data)
+                    print(currentWeather.current?.feelsLike ?? "some error")
+                    self?.completion?(currentWeather)
+                } catch let error {
+                    print(error)
+                }
+            }
         }
-        return nil
+        dataTask.resume()
     }
-    
 }

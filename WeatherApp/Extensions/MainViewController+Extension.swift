@@ -8,7 +8,7 @@ extension MainViewController {
             let textField = alert.textFields?.first
             guard let cityName = textField?.text else { return }
             if cityName != "" {
-                self.networkWeatherManager.fetchCurrentWeather(forCity: cityName, withLang: .russian)
+                self.networkWeatherManager.geocoding(forCity: cityName)
             }
         }
         let cancelButton = UIAlertAction(title: "Cancel", style: .default, handler: nil)

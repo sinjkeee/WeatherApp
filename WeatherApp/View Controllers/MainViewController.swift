@@ -1,7 +1,7 @@
 import UIKit
 
 class MainViewController: UIViewController {
-
+    
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var tempLabel: UILabel!
@@ -13,13 +13,13 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       
-        networkWeatherManager.completion = { [weak self] currentWeather in
+        
+        networkWeatherManager.geocoding(forCity: "Pinsk")
+        
+        networkWeatherManager.completion = { [weak  self] currentWeather in
             guard let self = self else { return }
             self.updateInterface(weather: currentWeather)
         }
-        
-        networkWeatherManager.fetchCurrentWeather(forCity: "Istambul", withLang: .russian)
     }
     
     
@@ -27,16 +27,24 @@ class MainViewController: UIViewController {
         presentSearchAlertController(withTitle: "Enter city name", message: nil, style: .alert)
     }
     
-    func updateInterface(weather: CurrentWeatherData) {
+    func updateInterface(weather: CurrentAndForecastWeatherData) {
+        guard let icon = weather.current?.weather?.first?.icon else { return }
+        let iconURL = URL(string: "https://openweathermap.org/img/wn/\(icon)@2x.png")
+        DispatchQueue.global(qos: .utility).async {
+            guard let url = iconURL,
+                  let iconData = try? Data(contentsOf: url) else { return }
+            DispatchQueue.main.async {
+                self.imageView.image = UIImage(data: iconData)
+            }
+        }
+        
         DispatchQueue.main.async {
-            guard let systemIcon = weather.weather?.first?.systemIconName,
-                  let temp = weather.main?.temp,
-                  let feelsLikeTemp = weather.main?.feelsLike,
-                  let cityName = weather.name,
-                  let description = weather.weather?.first?.description
+            guard let temp = weather.current?.temp,
+                  let feelsLikeTemp = weather.current?.feelsLike,
+                  let cityName = weather.timeZone,
+                  let description = weather.current?.weather?.first?.description
             else { return }
             
-            self.imageView.image = UIImage(systemName: systemIcon)
             self.tempLabel.text = "температура: \(Int(temp))"
             self.feelsLikeTemp.text = "ощущается как: \(Int(feelsLikeTemp))"
             self.cityName.text = cityName
