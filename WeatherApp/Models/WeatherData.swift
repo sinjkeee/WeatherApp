@@ -8,9 +8,9 @@ struct WeatherData: Codable {
     var current: CurrentWeatherData?
     var hourly: [HourlyWeatherData]?
     var daily: [DailyWeatherData]?
-    
+
     enum CodingKeys: String, CodingKey {
-        case lat, lon, current
+        case lat, lon, current, hourly, daily
         case timeZone = "timezone"
         case timeZoneOffset = "timezone_offset"
     }
@@ -32,7 +32,8 @@ struct CurrentWeatherData: Codable {
     var windDeg: Int?
     var windGust: Double?
     var weather: [Weather]?
-    
+    var pop: Double?
+
     enum CodingKeys: String, CodingKey {
         case dt, sunrise, sunset, temp, pressure, humidity, uvi, clouds, visibility, weather
         case feelsLike = "feels_like"

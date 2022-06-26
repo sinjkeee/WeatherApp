@@ -13,7 +13,7 @@ struct HourlyWeatherData: Codable {
     var windSpeed: Double?
     var windDeg: Int?
     var windGust: Double?
-    var weather: [WeatherHourly]?
+    var weather: [Weather]?
     var pop: Double?
     
     enum CodingKeys: String, CodingKey {

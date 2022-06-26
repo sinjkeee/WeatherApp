@@ -8,7 +8,13 @@ extension MainViewController {
             let textField = alert.textFields?.first
             guard let cityName = textField?.text else { return }
             if cityName != "" {
-                self.networkWeatherManager.geocoding(forCity: cityName)
+                self.networkWeatherManager.getCoordinatesByName(forCity: cityName) { [weak self] weatherData in
+                    guard let self = self else { return }
+                    self.currentWeather = weatherData
+                    self.hourlyWeather = weatherData.hourly
+                    self.dailyWeather = weatherData.daily
+                    self.updateInterface()
+                }
             }
         }
         let cancelButton = UIAlertAction(title: "Cancel", style: .default, handler: nil)
