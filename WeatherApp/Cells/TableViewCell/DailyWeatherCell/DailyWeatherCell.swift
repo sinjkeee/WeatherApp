@@ -69,20 +69,10 @@ class DailyWeatherCell: UITableViewCell {
                 self.imageWeather.image = UIImage(data: iconData)
             }
         }
-        let date = daysFormatter(dt: dt)
+        let formatter = DateFormatter()
+        let date = formatter.daysFormatt(dt: dt, isTime: false)
         firstLabel.text = date
         secondLabel.text = "температура днем: \(Int(temp)) °C"
         thirdLabel.text = data.weather?.first?.description
     }
-    
-    func daysFormatter(dt: Int) -> String {
-        let date = Date(timeIntervalSince1970: TimeInterval(dt))
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = DateFormatter.Style.medium
-        dateFormatter.timeZone = .current
-        let localDate = dateFormatter.string(from: date)
-        return localDate
-    }
-    
-    
 }

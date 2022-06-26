@@ -5,7 +5,7 @@ import GoogleMaps
 class MapViewController: UIViewController {
     
     var mapView = UIView()
-    var networkWeatherManager: RestAPIProviderProtocol = NetworkWeatherManager()
+    private var networkWeatherManager: RestAPIProviderProtocol = NetworkWeatherManager()
     var currentWeather: WeatherData?
     
     override func viewDidLoad() {

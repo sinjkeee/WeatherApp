@@ -35,20 +35,10 @@ class HourlyCell: UICollectionViewCell {
     
     func configure(data: HourlyWeatherData) {
         if let dt = data.dt, let temp = data.temp {
-            let date = daysFormatter(dt: dt)
+            let formatter = DateFormatter()
+            let date = formatter.daysFormatt(dt: dt, isTime: true)
             firstLabel.text = date
             secondLabel.text = "\(Int(temp)) °C"
         }
     }
-    
-    func daysFormatter(dt: Int) -> String {
-        let date = Date(timeIntervalSince1970: TimeInterval(dt))
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeStyle = DateFormatter.Style.short
-        dateFormatter.timeZone = .current
-        let localDate = dateFormatter.string(from: date)
-        return localDate
-    }
-    
-    
 }
