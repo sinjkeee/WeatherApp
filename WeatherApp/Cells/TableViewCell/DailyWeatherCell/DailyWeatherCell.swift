@@ -59,20 +59,12 @@ class DailyWeatherCell: UITableViewCell {
     
     func configure(data: DailyWeatherData) {
         guard let dt = data.dt, let temp = data.temp?.day, let icon = data.weather?.first?.icon else { return }
-        let endpoint = Endpoint.getIcon(icon: icon)
-        DispatchQueue.global(qos: .utility).async { [weak self] in
-            guard let iconData = try? Data(contentsOf: endpoint.url),
-                  let self = self
-            else { return }
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                self.imageWeather.image = UIImage(data: iconData)
-            }
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.imageWeather.getImageFromTheInternet(icon)
+            self.firstLabel.text = dt.dateFormatter(isTime: false)
+            self.secondLabel.text = "температура днем: \(Int(temp)) °C"
+            self.thirdLabel.text = data.weather?.first?.description
         }
-        let formatter = DateFormatter()
-        let date = formatter.daysFormatt(dt: dt, isTime: false)
-        firstLabel.text = date
-        secondLabel.text = "температура днем: \(Int(temp)) °C"
-        thirdLabel.text = data.weather?.first?.description
     }
 }

@@ -1,8 +1,9 @@
 import Foundation
+import UIKit
 
-extension DateFormatter {
-    func daysFormatt(dt: Int, isTime: Bool) -> String {
-        let date = Date(timeIntervalSince1970: TimeInterval(dt))
+extension Int {
+    func dateFormatter(isTime: Bool) -> String {
+        let date = Date(timeIntervalSince1970: TimeInterval(self))
         let dateFormatter = DateFormatter()
         if isTime {
             dateFormatter.timeStyle = DateFormatter.Style.short

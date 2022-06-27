@@ -83,22 +83,26 @@
                                 </prototypes>
                             </tableView>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="N00-Ni-JoD">
-                                <rect key="frame" x="0.0" y="372" width="375" height="137.5"/>
+                                <rect key="frame" x="0.0" y="372" width="375" height="150"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="150" id="TPk-qG-sos"/>
+                                </constraints>
                                 <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="ZHm-r7-WMG">
-                                    <size key="itemSize" width="128" height="128"/>
+                                    <size key="itemSize" width="150" height="150"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" restorationIdentifier="HourlyCell" reuseIdentifier="HourlyCell" id="Upa-yn-VcM" customClass="HourlyCell" customModule="WeatherApp" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="5" width="128" height="128"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="ysy-BV-vvL">
-                                            <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </collectionViewCellContentView>
+                                        <size key="customSize" width="150" height="150"/>
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
@@ -109,7 +113,6 @@
                             <constraint firstItem="N00-Ni-JoD" firstAttribute="top" secondItem="XnL-3g-sV5" secondAttribute="bottom" constant="32" id="1Yc-Ov-tmQ"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="POi-0Y-VfC" secondAttribute="trailing" constant="16" id="2CD-ag-feD"/>
                             <constraint firstItem="XnL-3g-sV5" firstAttribute="top" secondItem="eaM-kP-8Oo" secondAttribute="bottom" constant="20" id="3cd-rO-1sD"/>
-                            <constraint firstItem="20V-kN-HGr" firstAttribute="top" secondItem="N00-Ni-JoD" secondAttribute="bottom" constant="100" id="59x-eP-crO"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="N00-Ni-JoD" secondAttribute="trailing" id="BRc-Pn-7Ec"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="XnL-3g-sV5" secondAttribute="trailing" id="CMw-Im-zKM"/>
                             <constraint firstItem="N00-Ni-JoD" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="EMl-Ww-MAQ"/>
