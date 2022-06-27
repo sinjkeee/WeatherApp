@@ -43,16 +43,6 @@ class MainViewController: UIViewController {
     func updateInterface() {
         guard let weather = currentWeather,
               let icon = weather.current?.weather?.first?.icon else { return }
-        let endpoint = Endpoint.getIcon(icon: icon)
-        DispatchQueue.global(qos: .utility).async { [weak self] in
-            guard let iconData = try? Data(contentsOf: endpoint.url),
-                  let self = self
-            else { return }
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                self.imageView.image = UIImage(data: iconData)
-            }
-        }
         
         DispatchQueue.main.async { [weak self] in
             guard let temp = weather.current?.temp,
@@ -62,6 +52,7 @@ class MainViewController: UIViewController {
                   let self = self
             else { return }
             
+            self.imageView.getImageFromTheInternet(icon)
             self.tempLabel.text = "температура: \(Int(temp)) °C"
             self.feelsLikeTemp.text = "ощущается как: \(Int(feelsLikeTemp)) °C"
             self.cityName.text = cityName
