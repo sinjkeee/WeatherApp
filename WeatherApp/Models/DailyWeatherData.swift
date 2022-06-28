@@ -16,14 +16,12 @@ struct DailyWeatherData: Codable {
     var windSpeed: Double?
     var windDeg: Int?
     var windGust: Double?
-    var weather: [WeatherDaily]?
+    var weather: [Weather]?
     var clouds: Int?
-    var pop: Int?
-    var rain: Double?
     var uvi: Double?
     
     enum CodingKeys: String, CodingKey {
-        case dt, sunrise, sunset, moonrise, moonset, temp, pressure, humidity, weather, clouds, pop, rain, uvi
+        case dt, sunrise, sunset, moonrise, moonset, temp, pressure, humidity, weather, clouds, uvi
         case feelsLike = "feels_like"
         case dewPoint = "dew_point"
         case windSpeed = "wind_speed"
