@@ -46,7 +46,7 @@ class MapViewController: UIViewController {
     }
 }
 
-//MARK: - GMSMapViewDelegate
+//MARK: - extension GMSMapViewDelegate
 extension MapViewController:GMSMapViewDelegate {
     func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
         

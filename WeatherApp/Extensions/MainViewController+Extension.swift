@@ -14,6 +14,7 @@ extension MainViewController {
                     self.hourlyWeather = weatherData.hourly
                     self.dailyWeather = weatherData.daily
                     self.updateInterface()
+                    self.saveDataInRealm(data: weatherData)
                 }
             }
         }

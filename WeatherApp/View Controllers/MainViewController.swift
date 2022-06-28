@@ -1,7 +1,8 @@
 import UIKit
+import RealmSwift
 
 class MainViewController: UIViewController {
-    
+    //MARK: - @IBOutlets
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var tempLabel: UILabel!
     @IBOutlet weak var feelsLikeTemp: UILabel!
@@ -9,14 +10,26 @@ class MainViewController: UIViewController {
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var dailytableView: UITableView!
     @IBOutlet weak var hourlyCollectionView: UICollectionView!
-    
+    //MARK: - let/var
+    var realm = try! Realm()
     var currentWeather: WeatherData?
     var hourlyWeather: [HourlyWeatherData]?
     var dailyWeather: [DailyWeatherData]?
     var networkWeatherManager: RestAPIProviderProtocol = NetworkWeatherManager()
     
+    //MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        print(Realm.Configuration.defaultConfiguration.fileURL!)
+        var configuration = Realm.Configuration()
+        configuration.deleteRealmIfMigrationNeeded = true
+        do {
+            realm = try Realm(configuration: configuration)
+        } catch let error {
+            print(error)
+        }
+        
         
         dailytableView.register(UINib(nibName: "DailyWeatherCell", bundle: nil), forCellReuseIdentifier: "DailyWeatherCell")
         hourlyCollectionView.register(UINib(nibName: "HourlyCell", bundle: nil), forCellWithReuseIdentifier: "HourlyCell")
@@ -27,6 +40,7 @@ class MainViewController: UIViewController {
             self.hourlyWeather = weatherData.hourly
             self.dailyWeather = weatherData.daily
             self.updateInterface()
+            self.saveDataInRealm(data: weatherData)
         }
         
         dailytableView.delegate = self
@@ -35,11 +49,11 @@ class MainViewController: UIViewController {
         hourlyCollectionView.dataSource = self
     }
     
-    
+    //MARK: - @IBAction
     @IBAction func findCityPressed(_ sender: UIButton) {
         presentSearchAlertController(withTitle: "Enter city name", message: nil, style: .alert)
     }
-    
+    //MARK: - Update interface
     func updateInterface() {
         guard let weather = currentWeather,
               let icon = weather.current?.weather?.first?.icon else { return }
@@ -59,6 +73,59 @@ class MainViewController: UIViewController {
             self.descriptionLabel.text = description
             self.dailytableView.reloadData()
             self.hourlyCollectionView.reloadData()
+        }
+    }
+    //MARK: - Save the weather to the realm
+    func saveDataInRealm(data: WeatherData) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self,
+                  let temp = data.current?.temp,
+                  let time = data.current?.dt,
+                  let long = data.lon,
+                  let lat = data.lat,
+                  let sunrise = data.current?.sunrise,
+                  let sunset = data.current?.sunset,
+                  let feelsLike = data.current?.feelsLike,
+                  let pressure = data.current?.pressure,
+                  let humidity = data.current?.humidity,
+                  let dewPoint = data.current?.dewPoint,
+                  let uvi = data.current?.uvi,
+                  let clouds = data.current?.clouds,
+                  let visibility = data.current?.visibility,
+                  let windSpeed = data.current?.windSpeed,
+                  let windDeg = data.current?.windDeg,
+                  let windGust = data.current?.windGust,
+                  let timeZone = data.timeZone
+            else { return }
+            
+            let coordinateForRealm = Coordinate()
+            let currentWeatherForRealm = CurrentWeatherForRealm()
+            coordinateForRealm.lat = lat
+            coordinateForRealm.lot = long
+            currentWeatherForRealm.coordinate = coordinateForRealm
+            currentWeatherForRealm.temp = temp
+            currentWeatherForRealm.time = time
+            currentWeatherForRealm.sunrise = sunrise
+            currentWeatherForRealm.sunset = sunset
+            currentWeatherForRealm.feelsLike = feelsLike
+            currentWeatherForRealm.pressure = pressure
+            currentWeatherForRealm.humidity = humidity
+            currentWeatherForRealm.dewPoint = dewPoint
+            currentWeatherForRealm.uvi = uvi
+            currentWeatherForRealm.clouds = clouds
+            currentWeatherForRealm.visibility = visibility
+            currentWeatherForRealm.windSpeed = windSpeed
+            currentWeatherForRealm.windDeg = windDeg
+            currentWeatherForRealm.windGust = windGust
+            currentWeatherForRealm.timeZone = timeZone
+            
+            do {
+                try self.realm.write({
+                    self.realm.add(currentWeatherForRealm)
+                })
+            } catch let error {
+                print(error)
+            }
         }
     }
 }
