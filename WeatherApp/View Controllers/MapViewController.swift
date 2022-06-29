@@ -1,10 +1,12 @@
 import UIKit
 import SnapKit
 import GoogleMaps
+import RealmSwift
 
 class MapViewController: UIViewController {
     
     var mapView = UIView()
+    private var realmManager = RealmManager()
     private var networkWeatherManager: RestAPIProviderProtocol = NetworkWeatherManager()
     var currentWeather: WeatherData?
     
@@ -54,6 +56,7 @@ extension MapViewController:GMSMapViewDelegate {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
                 guard let temp = weatherData.current?.temp else { return }
+                self.realmManager.savaData(data: weatherData)
                 self.showAlertWith(temperature: temp)
             }
         }

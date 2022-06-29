@@ -11,7 +11,7 @@ class MainViewController: UIViewController {
     @IBOutlet weak var dailytableView: UITableView!
     @IBOutlet weak var hourlyCollectionView: UICollectionView!
     //MARK: - let/var
-    var realm = try! Realm()
+    var realm = RealmManager()
     var currentWeather: WeatherData?
     var hourlyWeather: [HourlyWeatherData]?
     var dailyWeather: [DailyWeatherData]?
@@ -20,16 +20,6 @@ class MainViewController: UIViewController {
     //MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        print(Realm.Configuration.defaultConfiguration.fileURL!)
-        var configuration = Realm.Configuration()
-        configuration.deleteRealmIfMigrationNeeded = true
-        do {
-            realm = try Realm(configuration: configuration)
-        } catch let error {
-            print(error)
-        }
-        
         
         dailytableView.register(UINib(nibName: "DailyWeatherCell", bundle: nil), forCellReuseIdentifier: "DailyWeatherCell")
         hourlyCollectionView.register(UINib(nibName: "HourlyCell", bundle: nil), forCellWithReuseIdentifier: "HourlyCell")
@@ -40,7 +30,7 @@ class MainViewController: UIViewController {
             self.hourlyWeather = weatherData.hourly
             self.dailyWeather = weatherData.daily
             self.updateInterface()
-            self.saveDataInRealm(data: weatherData)
+            self.realm.savaData(data: weatherData)
         }
         
         dailytableView.delegate = self
@@ -73,59 +63,6 @@ class MainViewController: UIViewController {
             self.descriptionLabel.text = description
             self.dailytableView.reloadData()
             self.hourlyCollectionView.reloadData()
-        }
-    }
-    //MARK: - Save the weather to the realm
-    func saveDataInRealm(data: WeatherData) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self,
-                  let temp = data.current?.temp,
-                  let time = data.current?.dt,
-                  let long = data.lon,
-                  let lat = data.lat,
-                  let sunrise = data.current?.sunrise,
-                  let sunset = data.current?.sunset,
-                  let feelsLike = data.current?.feelsLike,
-                  let pressure = data.current?.pressure,
-                  let humidity = data.current?.humidity,
-                  let dewPoint = data.current?.dewPoint,
-                  let uvi = data.current?.uvi,
-                  let clouds = data.current?.clouds,
-                  let visibility = data.current?.visibility,
-                  let windSpeed = data.current?.windSpeed,
-                  let windDeg = data.current?.windDeg,
-                  let windGust = data.current?.windGust,
-                  let timeZone = data.timeZone
-            else { return }
-            
-            let coordinateForRealm = Coordinate()
-            let currentWeatherForRealm = CurrentWeatherForRealm()
-            coordinateForRealm.lat = lat
-            coordinateForRealm.lot = long
-            currentWeatherForRealm.coordinate = coordinateForRealm
-            currentWeatherForRealm.temp = temp
-            currentWeatherForRealm.time = time
-            currentWeatherForRealm.sunrise = sunrise
-            currentWeatherForRealm.sunset = sunset
-            currentWeatherForRealm.feelsLike = feelsLike
-            currentWeatherForRealm.pressure = pressure
-            currentWeatherForRealm.humidity = humidity
-            currentWeatherForRealm.dewPoint = dewPoint
-            currentWeatherForRealm.uvi = uvi
-            currentWeatherForRealm.clouds = clouds
-            currentWeatherForRealm.visibility = visibility
-            currentWeatherForRealm.windSpeed = windSpeed
-            currentWeatherForRealm.windDeg = windDeg
-            currentWeatherForRealm.windGust = windGust
-            currentWeatherForRealm.timeZone = timeZone
-            
-            do {
-                try self.realm.write({
-                    self.realm.add(currentWeatherForRealm)
-                })
-            } catch let error {
-                print(error)
-            }
         }
     }
 }

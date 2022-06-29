@@ -5,12 +5,10 @@ extension Int {
     func changeDate(dateFormat: DateFormat) -> String {
         let date = Date(timeIntervalSince1970: TimeInterval(self))
         let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .full
         dateFormatter.locale = Locale(identifier: "ru_RU")
         dateFormatter.dateFormat = dateFormat.getString
         dateFormatter.timeZone = .current
-        let localDate = dateFormatter.string(from: date)
-        return localDate
+        return dateFormatter.string(from: date)
     }
 }
 

@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 
 class HistoryCell: UITableViewCell {
-
+    
     var dateLabel = UILabel()
     var coordinateLabel = UILabel()
     var temperatureLabel = UILabel()

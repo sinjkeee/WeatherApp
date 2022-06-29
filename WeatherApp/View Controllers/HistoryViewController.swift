@@ -3,15 +3,15 @@ import RealmSwift
 import SnapKit
 
 class HistoryViewController: UIViewController {
-
-    var realm = try! Realm()
+    
+    var realm = RealmManager()
     var arrayData: [CurrentWeatherForRealm] = []
     var button = UIButton()
     var historyTableView = UITableView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         button = UIButton(type: .roundedRect)
         button.backgroundColor = .systemYellow
         button.layer.cornerRadius = 10
@@ -40,24 +40,18 @@ class HistoryViewController: UIViewController {
             make.left.right.equalToSuperview().inset(0)
             make.top.equalTo(button.snp.bottom).offset(8)
         }
-        
-        print(Realm.Configuration.defaultConfiguration.fileURL!)
-        var configuration = Realm.Configuration()
-        configuration.deleteRealmIfMigrationNeeded = true
-        do {
-            realm = try Realm(configuration: configuration)
-        } catch let error {
-            print(error)
-        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
         refreshData()
     }
     
     @IBAction func pressedButton(sender: UIButton) {
         refreshData()
     }
-
+    
     func refreshData() {
-        arrayData = realm.objects(CurrentWeatherForRealm.self).map{$0}.reversed()
+        arrayData = self.realm.loadData()
         historyTableView.reloadData()
     }
 }

@@ -16,7 +16,7 @@ class NetworkWeatherManager: RestAPIProviderProtocol {
         let endpoint = Endpoint.geocodingURL(key: apiKey, city: city)
         var urlRequest = URLRequest(url: endpoint.url)
         urlRequest.httpMethod = "GET"
-        parseJSON(type: [Geocoding].self, urlRequest: urlRequest) { [weak self] weatherData in
+        apiRequestAndParseJSON(urlRequest: urlRequest) { [weak self] (weatherData: [Geocoding]) in
             guard let lon = weatherData.first?.lon,
                   let lat = weatherData.first?.lat,
                   let self = self
@@ -31,12 +31,12 @@ class NetworkWeatherManager: RestAPIProviderProtocol {
         let endpoint = Endpoint.currentWeather(lat: lat, lon: long, key: apiKey, lang: lang.shortName, units: units.code)
         var urlRequest = URLRequest(url: endpoint.url)
         urlRequest.httpMethod = "GET"
-        parseJSON(type: WeatherData.self, urlRequest: urlRequest) { weatherData in
+        apiRequestAndParseJSON(urlRequest: urlRequest) { (weatherData: WeatherData) in
             completionHandler(weatherData)
         }
     }
     
-    func parseJSON<T: Codable>(type: T.Type, urlRequest: URLRequest, closure: @escaping (T) -> Void) {
+    func apiRequestAndParseJSON<T: Codable>(urlRequest: URLRequest, completionHandler: @escaping (T) -> Void) {
         let session = URLSession(configuration: .default)
         let dataTask = session.dataTask(with: urlRequest) { data, response, error in
             if let error = error {
@@ -45,8 +45,8 @@ class NetworkWeatherManager: RestAPIProviderProtocol {
             if let data = data {
                 let decoder = JSONDecoder()
                 do {
-                    let currentWeather = try decoder.decode(type, from: data)
-                    closure(currentWeather)
+                    let currentWeather = try decoder.decode(T.self, from: data)
+                    completionHandler(currentWeather)
                 } catch {
                     print(error)
                 }
