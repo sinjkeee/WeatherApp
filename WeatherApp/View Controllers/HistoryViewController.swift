@@ -4,20 +4,14 @@ import SnapKit
 
 class HistoryViewController: UIViewController {
     
-    var realm = RealmManager()
+    //MARK: - let/var
+    private var realmManager: RealmManagerProtocol = RealmManager()
     var arrayData: [CurrentWeatherForRealm] = []
-    var button = UIButton()
     var historyTableView = UITableView()
     
+    //MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        button = UIButton(type: .roundedRect)
-        button.backgroundColor = .systemYellow
-        button.layer.cornerRadius = 10
-        button.setTitle("Refresh TableView", for: .normal)
-        button.addTarget(self, action: #selector(pressedButton), for: .touchUpInside)
-        view.addSubview(button)
         
         historyTableView = UITableView(frame: view.bounds, style: .plain)
         historyTableView.delegate = self
@@ -27,36 +21,27 @@ class HistoryViewController: UIViewController {
         
         guard let frame = tabBarController?.tabBar.frame.height else { return }
         
-        button.snp.makeConstraints { make in
-            make.height.equalTo(32)
-            make.width.equalTo(150)
-            make.top.equalToSuperview().inset(32)
-            make.right.equalToSuperview().inset(16)
-        }
-        
         historyTableView.snp.makeConstraints { make in
             make.width.equalTo(view.frame.width)
-            make.height.equalTo(view.frame.height - frame - button.frame.maxY)
+            make.height.equalTo(view.frame.height - frame)
             make.left.right.equalToSuperview().inset(0)
-            make.top.equalTo(button.snp.bottom).offset(8)
+            make.top.equalToSuperview().inset(16)
         }
     }
     
+    //MARK: - viewWillAppear
     override func viewWillAppear(_ animated: Bool) {
         refreshData()
     }
     
-    @IBAction func pressedButton(sender: UIButton) {
-        refreshData()
-    }
-    
+    //MARK: - @IBAction / Methods
     func refreshData() {
-        arrayData = self.realm.loadData()
+        arrayData = self.realmManager.loadData()
         historyTableView.reloadData()
     }
 }
 
-
+//MARK: - extension TableView
 extension HistoryViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return arrayData.count

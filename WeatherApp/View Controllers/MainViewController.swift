@@ -2,6 +2,7 @@ import UIKit
 import RealmSwift
 
 class MainViewController: UIViewController {
+    
     //MARK: - @IBOutlets
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var tempLabel: UILabel!
@@ -10,8 +11,9 @@ class MainViewController: UIViewController {
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var dailytableView: UITableView!
     @IBOutlet weak var hourlyCollectionView: UICollectionView!
+    
     //MARK: - let/var
-    var realm = RealmManager()
+    var realmManager: RealmManagerProtocol = RealmManager()
     var currentWeather: WeatherData?
     var hourlyWeather: [HourlyWeatherData]?
     var dailyWeather: [DailyWeatherData]?
@@ -30,7 +32,9 @@ class MainViewController: UIViewController {
             self.hourlyWeather = weatherData.hourly
             self.dailyWeather = weatherData.daily
             self.updateInterface()
-            self.realm.savaData(data: weatherData)
+            DispatchQueue.main.async {
+                self.realmManager.savaData(data: weatherData)
+            }
         }
         
         dailytableView.delegate = self
@@ -43,7 +47,8 @@ class MainViewController: UIViewController {
     @IBAction func findCityPressed(_ sender: UIButton) {
         presentSearchAlertController(withTitle: "Enter city name", message: nil, style: .alert)
     }
-    //MARK: - Update interface
+    
+    //MARK: - Methods
     func updateInterface() {
         guard let weather = currentWeather,
               let icon = weather.current?.weather?.first?.icon else { return }
@@ -67,7 +72,6 @@ class MainViewController: UIViewController {
     }
 }
 
-
 //MARK: - extension TableView
 extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     
@@ -88,9 +92,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
-    
 }
-
 
 //MARK: - extension CollectionView
 extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {

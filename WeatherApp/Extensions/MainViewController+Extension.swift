@@ -14,10 +14,13 @@ extension MainViewController {
                     self.hourlyWeather = weatherData.hourly
                     self.dailyWeather = weatherData.daily
                     self.updateInterface()
-                    self.realm.savaData(data: weatherData)
+                    DispatchQueue.main.async {
+                        self.realmManager.savaData(data: weatherData)
+                    }
                 }
             }
         }
+        
         let cancelButton = UIAlertAction(title: "Cancel", style: .default, handler: nil)
         alert.addTextField { textField in
             let cities = ["Moscow", "Minsk", "Istambul", "Viena", "Brest"]
