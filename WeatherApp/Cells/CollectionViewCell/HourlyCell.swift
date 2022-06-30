@@ -51,7 +51,7 @@ class HourlyCell: UICollectionViewCell {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.iconImage.getImageFromTheInternet(icon)
-            self.firstLabel.text = dt.dateFormatter(isTime: true)
+            self.firstLabel.text = dt.changeDate(dateFormat: .hours)
             self.secondLabel.text = "\(Int(temp)) °C"
         }
     }
