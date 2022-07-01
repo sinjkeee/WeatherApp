@@ -34,6 +34,9 @@ class MainViewController: UIViewController {
             self.updateInterface()
             DispatchQueue.main.async {
                 self.realmManager.savaData(data: weatherData)
+                guard let weather = self.hourlyWeather else { return }
+                self.removeAllNotification()
+                self.weatherCheck(weather: weather)
             }
         }
         
@@ -49,6 +52,62 @@ class MainViewController: UIViewController {
     }
     
     //MARK: - Methods
+    func weatherCheck(weather: [HourlyWeatherData]) {
+        for hour in weather {
+            guard let id = hour.weather?.first?.id,
+                  let time = hour.dt else { return }
+//            let currentDate = Date()
+//            let newDate = Date(timeIntervalSince1970: TimeInterval(time))
+//            let timeEnterval = newDate.timeIntervalSince(currentDate) / 60 - 30
+//            print(timeEnterval)
+            let calendar = Calendar.current
+            let newDate = Date(timeIntervalSince1970: TimeInterval(time))
+            var newDateComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: newDate)
+            guard let minutes = newDateComponents.minute else { return }
+            newDateComponents.minute = minutes - 30
+//            let newCalendar = calendar.date(from: newDateComponents)
+            
+            
+            switch id {
+            case 200...232:
+                setLocalNotification(body: "soon thunderstorm", title: "Hey!", dateComponents: newDateComponents)
+            case 500...531:
+                setLocalNotification(body: "soon rain", title: "Hey!", dateComponents: newDateComponents)
+            case 600...622:
+                setLocalNotification(body: "soon snow", title: "Hey!", dateComponents: newDateComponents)
+            default: break
+            }
+        }
+    }
+    
+    func setLocalNotification(body: String, title: String, dateComponents: DateComponents) {
+        let notificationCenter = UNUserNotificationCenter.current()
+        notificationCenter.requestAuthorization(options: [.alert, .badge, .sound]) { isAutorized, error in
+            if isAutorized {
+                let content = UNMutableNotificationContent()
+                content.body = body
+                content.title = title
+                
+                let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
+                let identifier = "identifier"
+                let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+                
+                notificationCenter.add(request) { error in
+                    if let error = error {
+                        print(error)
+                    }
+                }
+            } else if let error = error {
+                print(error)
+            }
+        }
+    }
+    
+    func removeAllNotification() {
+        let notificationCenter = UNUserNotificationCenter.current()
+        notificationCenter.removeAllPendingNotificationRequests()
+    }
+    
     func updateInterface() {
         guard let weather = currentWeather,
               let icon = weather.current?.weather?.first?.icon else { return }
