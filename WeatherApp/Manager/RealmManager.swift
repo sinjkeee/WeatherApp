@@ -71,7 +71,7 @@ class RealmManager: RealmManagerProtocol {
         } catch let error {
             print(error)
         }
-        
+        NotificationCenter.default.post(name: .databaseUpdated, object: nil, userInfo: nil)
     }
     
     func loadData() -> [CurrentWeatherForRealm] {
@@ -79,5 +79,4 @@ class RealmManager: RealmManagerProtocol {
         array = realm.objects(CurrentWeatherForRealm.self).map{$0}.reversed()
         return array
     }
-    
 }

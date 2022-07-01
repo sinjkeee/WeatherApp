@@ -9,7 +9,7 @@ class MainViewController: UIViewController {
     @IBOutlet weak var feelsLikeTemp: UILabel!
     @IBOutlet weak var cityName: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
-    @IBOutlet weak var dailytableView: UITableView!
+    @IBOutlet weak var dailyTableView: UITableView!
     @IBOutlet weak var hourlyCollectionView: UICollectionView!
     
     //MARK: - let/var
@@ -23,7 +23,7 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        dailytableView.register(UINib(nibName: "DailyWeatherCell", bundle: nil), forCellReuseIdentifier: "DailyWeatherCell")
+        dailyTableView.register(UINib(nibName: "DailyWeatherCell", bundle: nil), forCellReuseIdentifier: "DailyWeatherCell")
         hourlyCollectionView.register(UINib(nibName: "HourlyCell", bundle: nil), forCellWithReuseIdentifier: "HourlyCell")
         
         networkWeatherManager.getCoordinatesByName(forCity: "Kiev") { [weak self] weatherData in
@@ -37,8 +37,8 @@ class MainViewController: UIViewController {
             }
         }
         
-        dailytableView.delegate = self
-        dailytableView.dataSource = self
+        dailyTableView.delegate = self
+        dailyTableView.dataSource = self
         hourlyCollectionView.delegate = self
         hourlyCollectionView.dataSource = self
     }
@@ -66,7 +66,7 @@ class MainViewController: UIViewController {
             self.feelsLikeTemp.text = "ощущается как: \(Int(feelsLikeTemp)) °C"
             self.cityName.text = cityName
             self.descriptionLabel.text = description
-            self.dailytableView.reloadData()
+            self.dailyTableView.reloadData()
             self.hourlyCollectionView.reloadData()
         }
     }

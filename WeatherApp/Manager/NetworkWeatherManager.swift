@@ -42,6 +42,7 @@ class NetworkWeatherManager: RestAPIProviderProtocol {
             if let error = error {
                 print(error)
             }
+            
             if let data = data {
                 let decoder = JSONDecoder()
                 do {
