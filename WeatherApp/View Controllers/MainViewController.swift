@@ -14,6 +14,7 @@ class MainViewController: UIViewController {
     
     //MARK: - let/var
     var realmManager: RealmManagerProtocol = RealmManager()
+    let notificationCenter = UNUserNotificationCenter.current()
     var currentWeather: WeatherData?
     var hourlyWeather: [HourlyWeatherData]?
     var dailyWeather: [DailyWeatherData]?
@@ -36,7 +37,7 @@ class MainViewController: UIViewController {
                 self.realmManager.savaData(data: weatherData)
                 guard let weather = self.hourlyWeather else { return }
                 self.removeAllNotification()
-                self.weatherCheck(weather: weather)
+                self.weatherCheck(hourlyWeather: weather)
             }
         }
         
@@ -52,37 +53,34 @@ class MainViewController: UIViewController {
     }
     
     //MARK: - Methods
-    func weatherCheck(weather: [HourlyWeatherData]) {
-        for hour in weather {
-            guard let id = hour.weather?.first?.id,
-                  let time = hour.dt else { return }
-//            let currentDate = Date()
-//            let newDate = Date(timeIntervalSince1970: TimeInterval(time))
-//            let timeEnterval = newDate.timeIntervalSince(currentDate) / 60 - 30
-//            print(timeEnterval)
-            let calendar = Calendar.current
-            let newDate = Date(timeIntervalSince1970: TimeInterval(time))
-            var newDateComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: newDate)
-            guard let minutes = newDateComponents.minute else { return }
-            newDateComponents.minute = minutes - 30
-//            let newCalendar = calendar.date(from: newDateComponents)
-            
+    func weatherCheck(hourlyWeather: [HourlyWeatherData]) {
+        for hour in hourlyWeather {
+            guard let id = hour.weather?.first?.id, let time = hour.dt else { return }
             
             switch id {
             case 200...232:
-                setLocalNotification(body: "soon thunderstorm", title: "Hey!", dateComponents: newDateComponents)
+                setLocalNotification(body: "soon thunderstorm", title: "Hey!", dateComponents: getDateComponentsFrom(date: time))
             case 500...531:
-                setLocalNotification(body: "soon rain", title: "Hey!", dateComponents: newDateComponents)
+                setLocalNotification(body: "soon rain", title: "Hey!", dateComponents: getDateComponentsFrom(date: time))
             case 600...622:
-                setLocalNotification(body: "soon snow", title: "Hey!", dateComponents: newDateComponents)
+                setLocalNotification(body: "soon snow", title: "Hey!", dateComponents: getDateComponentsFrom(date: time))
             default: break
             }
         }
     }
     
+    func getDateComponentsFrom(date: Int) -> DateComponents {
+        let calendar = Calendar.current
+        let newDate = Date(timeIntervalSince1970: TimeInterval(date))
+        var newDateComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: newDate)
+        guard let minutes = newDateComponents.minute else { fatalError() }
+        newDateComponents.minute = minutes - 30
+        return newDateComponents
+    }
+    
     func setLocalNotification(body: String, title: String, dateComponents: DateComponents) {
-        let notificationCenter = UNUserNotificationCenter.current()
-        notificationCenter.requestAuthorization(options: [.alert, .badge, .sound]) { isAutorized, error in
+        notificationCenter.requestAuthorization(options: [.alert, .badge, .sound]) { [weak self] isAutorized, error in
+            guard let self = self else { return }
             if isAutorized {
                 let content = UNMutableNotificationContent()
                 content.body = body
@@ -92,7 +90,7 @@ class MainViewController: UIViewController {
                 let identifier = "identifier"
                 let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
                 
-                notificationCenter.add(request) { error in
+                self.notificationCenter.add(request) { error in
                     if let error = error {
                         print(error)
                     }
@@ -104,7 +102,6 @@ class MainViewController: UIViewController {
     }
     
     func removeAllNotification() {
-        let notificationCenter = UNUserNotificationCenter.current()
         notificationCenter.removeAllPendingNotificationRequests()
     }
     
