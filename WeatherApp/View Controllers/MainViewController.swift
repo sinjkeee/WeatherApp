@@ -64,22 +64,19 @@ class MainViewController: UIViewController {
                     setLocalNotification(body: "soon thunderstorm", title: "Hey!", dateComponents: getDateComponentsFrom(date: time))
                     index = 1
                 }
-                index += 1
             case 500...531:
                 if index == 0 || index > 3 {
                     setLocalNotification(body: "soon rain", title: "Hey!", dateComponents: getDateComponentsFrom(date: time))
                     index = 1
                 }
-                index += 1
             case 600...622:
                 if index == 0 || index > 3 {
                     setLocalNotification(body: "soon snow", title: "Hey!", dateComponents: getDateComponentsFrom(date: time))
                     index = 1
                 }
-                index += 1
-            default:
-                index += 1
+            default: break
             }
+            index += 1
         }
     }
     
