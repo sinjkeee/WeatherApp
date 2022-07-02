@@ -58,23 +58,19 @@ class MainViewController: UIViewController {
         for hour in hourlyWeather {
             guard let id = hour.weather?.first?.id, let time = hour.dt else { return }
             //Если плохая погода впервые или перерыв между уведомлениями больше 3х часов, отправляем новое уведомление
-            switch id {
-            case 200...232:
-                if index == 0 || index > 3 {
+            if index == 0 || index > 3 {
+                switch id {
+                case 200...232:
                     setLocalNotification(body: "soon thunderstorm", title: "Hey!", dateComponents: getDateComponentsFrom(date: time))
                     index = 1
-                }
-            case 500...531:
-                if index == 0 || index > 3 {
+                case 500...531:
                     setLocalNotification(body: "soon rain", title: "Hey!", dateComponents: getDateComponentsFrom(date: time))
                     index = 1
-                }
-            case 600...622:
-                if index == 0 || index > 3 {
+                case 600...622:
                     setLocalNotification(body: "soon snow", title: "Hey!", dateComponents: getDateComponentsFrom(date: time))
                     index = 1
+                default: break
                 }
-            default: break
             }
             index += 1
         }
