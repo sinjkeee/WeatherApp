@@ -4,7 +4,14 @@ import UIKit
 extension UIImageView {
     func getImageFromTheInternet(_ icon: String) {
         let endpoint = Endpoint.getIcon(icon: icon)
-        guard let iconData = try? Data(contentsOf: endpoint.url) else { fatalError() }
-        self.image = UIImage(data: iconData)
+        var icon: Data?
+        DispatchQueue.global(qos: .utility).async {
+            guard let iconData = try? Data(contentsOf: endpoint.url) else { fatalError() }
+            icon = iconData
+            DispatchQueue.main.async {
+                guard let icon = icon else { return }
+                self.image = UIImage(data: icon)
+            }
+        }
     }
 }

@@ -33,7 +33,7 @@ struct CurrentWeatherData: Codable {
     var windGust: Double?
     var weather: [Weather]?
     var pop: Double?
-
+    
     enum CodingKeys: String, CodingKey {
         case dt, sunrise, sunset, temp, pressure, humidity, uvi, clouds, visibility, weather
         case feelsLike = "feels_like"
