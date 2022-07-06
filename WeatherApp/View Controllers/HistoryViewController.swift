@@ -27,15 +27,18 @@ class HistoryViewController: UIViewController {
             make.left.right.equalToSuperview().inset(0)
             make.top.equalToSuperview().inset(16)
         }
+        
+        reloadData()
+        NotificationCenter.default.addObserver(self, selector: #selector(reloadData), name: .databaseUpdated, object: nil)
     }
     
-    //MARK: - viewWillAppear
-    override func viewWillAppear(_ animated: Bool) {
-        refreshData()
+    //MARK: - deinit
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     //MARK: - @IBAction / Methods
-    func refreshData() {
+    @IBAction func reloadData() {
         arrayData = self.realmManager.loadData()
         historyTableView.reloadData()
     }

@@ -9,11 +9,12 @@ class MainViewController: UIViewController {
     @IBOutlet weak var feelsLikeTemp: UILabel!
     @IBOutlet weak var cityName: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
-    @IBOutlet weak var dailytableView: UITableView!
+    @IBOutlet weak var dailyTableView: UITableView!
     @IBOutlet weak var hourlyCollectionView: UICollectionView!
     
     //MARK: - let/var
     var realmManager: RealmManagerProtocol = RealmManager()
+    let notificationCenter = UNUserNotificationCenter.current()
     var currentWeather: WeatherData?
     var hourlyWeather: [HourlyWeatherData]?
     var dailyWeather: [DailyWeatherData]?
@@ -23,7 +24,7 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        dailytableView.register(UINib(nibName: "DailyWeatherCell", bundle: nil), forCellReuseIdentifier: "DailyWeatherCell")
+        dailyTableView.register(UINib(nibName: "DailyWeatherCell", bundle: nil), forCellReuseIdentifier: "DailyWeatherCell")
         hourlyCollectionView.register(UINib(nibName: "HourlyCell", bundle: nil), forCellWithReuseIdentifier: "HourlyCell")
         
         networkWeatherManager.getCoordinatesByName(forCity: "Kiev") { [weak self] weatherData in
@@ -34,11 +35,14 @@ class MainViewController: UIViewController {
             self.updateInterface()
             DispatchQueue.main.async {
                 self.realmManager.savaData(data: weatherData)
+                guard let weather = self.hourlyWeather else { return }
+                self.removeAllNotification()
+                self.weatherCheck(hourlyWeather: weather)
             }
         }
         
-        dailytableView.delegate = self
-        dailytableView.dataSource = self
+        dailyTableView.delegate = self
+        dailyTableView.dataSource = self
         hourlyCollectionView.delegate = self
         hourlyCollectionView.dataSource = self
     }
@@ -49,6 +53,65 @@ class MainViewController: UIViewController {
     }
     
     //MARK: - Methods
+    func weatherCheck(hourlyWeather: [HourlyWeatherData]) {
+        var index = 0
+        for hour in hourlyWeather {
+            guard let id = hour.weather?.first?.id, let time = hour.dt else { return }
+            //Если плохая погода впервые или перерыв между уведомлениями больше 3х часов, отправляем новое уведомление
+            if index == 0 || index > 3 {
+                switch id {
+                case 200...232:
+                    setLocalNotification(body: "soon thunderstorm", title: "Hey!", dateComponents: getDateComponentsFrom(date: time))
+                    index = 1
+                case 500...531:
+                    setLocalNotification(body: "soon rain", title: "Hey!", dateComponents: getDateComponentsFrom(date: time))
+                    index = 1
+                case 600...622:
+                    setLocalNotification(body: "soon snow", title: "Hey!", dateComponents: getDateComponentsFrom(date: time))
+                    index = 1
+                default: break
+                }
+            }
+            index += 1
+        }
+    }
+    
+    func getDateComponentsFrom(date: Int) -> DateComponents {
+        let calendar = Calendar.current
+        let newDate = Date(timeIntervalSince1970: TimeInterval(date))
+        var newDateComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: newDate)
+        guard let minutes = newDateComponents.minute else { fatalError() }
+        newDateComponents.minute = minutes - 30
+        return newDateComponents
+    }
+    
+    func setLocalNotification(body: String, title: String, dateComponents: DateComponents) {
+        notificationCenter.requestAuthorization(options: [.alert, .badge, .sound]) { [weak self] isAutorized, error in
+            guard let self = self else { return }
+            if isAutorized {
+                let content = UNMutableNotificationContent()
+                content.body = body
+                content.title = title
+                
+                let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
+                let identifier = "identifier"
+                let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+                
+                self.notificationCenter.add(request) { error in
+                    if let error = error {
+                        print(error)
+                    }
+                }
+            } else if let error = error {
+                print(error)
+            }
+        }
+    }
+    
+    func removeAllNotification() {
+        notificationCenter.removeAllPendingNotificationRequests()
+    }
+    
     func updateInterface() {
         guard let weather = currentWeather,
               let icon = weather.current?.weather?.first?.icon else { return }
@@ -66,7 +129,7 @@ class MainViewController: UIViewController {
             self.feelsLikeTemp.text = "ощущается как: \(Int(feelsLikeTemp)) °C"
             self.cityName.text = cityName
             self.descriptionLabel.text = description
-            self.dailytableView.reloadData()
+            self.dailyTableView.reloadData()
             self.hourlyCollectionView.reloadData()
         }
     }
