@@ -13,6 +13,7 @@ class MainViewController: UIViewController {
     var realmManager: RealmManagerProtocol = RealmManager()
     let notificationCenter = UNUserNotificationCenter.current()
     var geoData: [Geocoding]?
+    var coordinate: CLLocationCoordinate2D?
     var currentWeather: WeatherData?
     var hourlyWeather: [HourlyWeatherData]?
     var dailyWeather: [DailyWeatherData]?
@@ -50,16 +51,10 @@ class MainViewController: UIViewController {
         if locationManager.authorizationStatus != .authorizedWhenInUse && locationManager.authorizationStatus != .authorizedAlways {
             networkWeatherManager.getCoordinatesByName(forCity: "Kiev") { [weak self] geoData, weatherData in
                 guard let self = self else { return }
-                self.currentWeather = weatherData
-                self.hourlyWeather = weatherData.hourly
-                self.dailyWeather = weatherData.daily
-                self.geoData = geoData
+                self.saveCurrentData(weatherData: weatherData, geoData: geoData)
                 DispatchQueue.main.async {
                     self.realmManager.savaData(data: weatherData)
-                    guard let weather = self.hourlyWeather else { return }
-                    self.updateInterface()
-                    self.removeAllNotification()
-                    self.weatherCheck(hourlyWeather: weather)
+                    self.updateInterface(hourlyWeather: self.hourlyWeather)
                 }
             }
         }
@@ -69,17 +64,45 @@ class MainViewController: UIViewController {
     @IBAction func findCityPressed(_ sender: UIButton) {
         presentSearchAlertController(withTitle: "Enter city name", message: nil, style: .alert)
     }
-    // тут будет обновление погоды, когда придумаю как :D
+    
     @IBAction func refreshTableView() {
-        
-        // updating data...
-        
-        tableView.reloadData()
+        if geoData != nil {
+            self.createAndShowBlurEffectWithActivityIndicator()
+            guard let cityName = geoData?.first?.cityName else { return }
+            self.networkWeatherManager.getCoordinatesByName(forCity: cityName) { [weak self] geoData, weatherData in
+                guard let self = self else { return }
+                self.saveCurrentData(weatherData: weatherData, geoData: geoData)
+                DispatchQueue.main.async {
+                    self.realmManager.savaData(data: weatherData)
+                    self.updateInterface(hourlyWeather: self.hourlyWeather)
+                }
+            }
+        } else {
+            self.createAndShowBlurEffectWithActivityIndicator()
+            locationManager.requestLocation()
+            guard let coordinate = coordinate else { return }
+            self.networkWeatherManager.getWeatherForCityCoordinates(long: coordinate.longitude, lat: coordinate.latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { [weak self] weatherData in
+                guard let self = self else { return }
+                self.saveCurrentData(weatherData: weatherData, geoData: nil)
+                DispatchQueue.main.async {
+                    self.realmManager.savaData(data: weatherData)
+                    self.updateInterface(hourlyWeather: self.hourlyWeather)
+                }
+            }
+        }
         refresh.endRefreshing()
     }
     
     //MARK: - Methods
-    func weatherCheck(hourlyWeather: [HourlyWeatherData]) {
+    func saveCurrentData(weatherData: WeatherData, geoData: [Geocoding]?) {
+        self.currentWeather = weatherData
+        self.hourlyWeather = weatherData.hourly
+        self.dailyWeather = weatherData.daily
+        self.geoData = geoData
+    }
+    
+    func weatherCheck(hourlyWeather: [HourlyWeatherData]?) {
+        guard let hourlyWeather = hourlyWeather else { return }
         var index = 0
         for hour in hourlyWeather {
             guard let id = hour.weather?.first?.id, let time = hour.dt else { return }
@@ -138,21 +161,20 @@ class MainViewController: UIViewController {
         notificationCenter.removeAllPendingNotificationRequests()
     }
     
-    func updateInterface() {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            if self.geoData == nil {
-                self.tableView.reloadData()
-                self.title = self.currentWeather?.timeZone
-                self.hideBlurView()
-            } else {
-                guard let name = self.geoData?.first?.cityName,
-                      let country = self.geoData?.first?.country else  { return }
-                self.tableView.reloadData()
-                self.title = "\(name), \(country)"
-                self.hideBlurView()
-            }
+    func updateInterface(hourlyWeather: [HourlyWeatherData]?) {
+        if self.geoData == nil {
+            self.tableView.reloadData()
+            self.title = self.currentWeather?.timeZone
+            self.hideBlurView()
+        } else {
+            guard let name = self.geoData?.first?.cityName,
+                  let country = self.geoData?.first?.country else  { return }
+            self.tableView.reloadData()
+            self.title = "\(name), \(country)"
+            self.hideBlurView()
         }
+        self.removeAllNotification()
+        self.weatherCheck(hourlyWeather: hourlyWeather)
     }
 }
 
@@ -235,20 +257,15 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 extension MainViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = manager.location?.coordinate else { return }
-        print("location = \(location.latitude) \(location.longitude)")
+        self.coordinate = location
         
         if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
             self.networkWeatherManager.getWeatherForCityCoordinates(long: location.longitude, lat: location.latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { [weak self] weatherData in
                 guard let self = self else { return }
-                self.currentWeather = weatherData
-                self.hourlyWeather = weatherData.hourly
-                self.dailyWeather = weatherData.daily
+                self.saveCurrentData(weatherData: weatherData, geoData: nil)
                 DispatchQueue.main.async {
                     self.realmManager.savaData(data: weatherData)
-                    guard let weather = self.hourlyWeather else { return }
-                    self.updateInterface()
-                    self.removeAllNotification()
-                    self.weatherCheck(hourlyWeather: weather)
+                    self.updateInterface(hourlyWeather: self.hourlyWeather)
                 }
             }
         }

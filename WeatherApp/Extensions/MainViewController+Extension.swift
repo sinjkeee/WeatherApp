@@ -12,16 +12,10 @@ extension MainViewController {
                 self.createAndShowBlurEffectWithActivityIndicator()
                 self.networkWeatherManager.getCoordinatesByName(forCity: cityName) { [weak self] geoData, weatherData in
                     guard let self = self else { return }
-                    self.currentWeather = weatherData
-                    self.hourlyWeather = weatherData.hourly
-                    self.dailyWeather = weatherData.daily
-                    self.geoData = geoData
+                    self.saveCurrentData(weatherData: weatherData, geoData: geoData)
                     DispatchQueue.main.async {
                         self.realmManager.savaData(data: weatherData)
-                        guard let weather = self.hourlyWeather else { return }
-                        self.updateInterface()
-                        self.removeAllNotification()
-                        self.weatherCheck(hourlyWeather: weather)
+                        self.updateInterface(hourlyWeather: self.hourlyWeather)
                     }
                 }
             }
