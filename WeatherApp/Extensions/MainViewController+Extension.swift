@@ -6,9 +6,10 @@ extension MainViewController {
     func presentSearchAlertController(withTitle title: String?, message: String?, style: UIAlertController.Style) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: style)
         let searchButton = UIAlertAction(title: "Search", style: .cancel) { _ in
-            let textField = alert.textFields?.first
-            guard let cityName = textField?.text else { return }
-            if cityName != "" {
+            guard let textField = alert.textFields?.first else { return }
+            guard let cityName = textField.text else { return }
+            if textField.hasText {
+                self.createAndShowBlurEffectWithActivityIndicator()
                 self.networkWeatherManager.getCoordinatesByName(forCity: cityName) { [weak self] geoData, weatherData in
                     guard let self = self else { return }
                     self.currentWeather = weatherData
@@ -43,7 +44,7 @@ extension MainViewController {
         tabBarController?.view.addSubview(blurView)
         blurView.alpha = 1
         blurView.snp.makeConstraints { make in
-            make.top.bottom.right.left.equalToSuperview().inset(0)
+            make.top.bottom.right.left.equalToSuperview()
         }
         
         let activityIndicator = UIActivityIndicatorView()
@@ -58,7 +59,7 @@ extension MainViewController {
     }
     
     func hideBlurView() {
-        var _ = Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: { [weak self] _ in
+        var _ = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false, block: { [weak self] _ in
             guard let self = self,
                   let views = self.tabBarController?.view.subviews else { return }
             for view in views where view is UIVisualEffectView {

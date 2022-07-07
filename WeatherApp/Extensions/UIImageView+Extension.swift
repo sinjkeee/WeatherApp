@@ -6,7 +6,7 @@ extension UIImageView {
         let endpoint = Endpoint.getIcon(icon: icon)
         var icon: Data?
         DispatchQueue.global(qos: .utility).async {
-            guard let iconData = try? Data(contentsOf: endpoint.url) else { fatalError() }
+            guard let iconData = try? Data(contentsOf: endpoint.url) else { return }
             icon = iconData
             DispatchQueue.main.async {
                 guard let icon = icon else { return }

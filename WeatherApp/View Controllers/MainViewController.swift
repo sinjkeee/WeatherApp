@@ -131,14 +131,12 @@ class MainViewController: UIViewController {
             guard let self = self else { return }
             if self.geoData == nil {
                 self.tableView.reloadData()
-                NotificationCenter.default.post(name: .collectionViewUpdated, object: nil)
                 self.title = self.currentWeather?.timeZone
                 self.hideBlurView()
             } else {
                 guard let name = self.geoData?.first?.cityName,
                       let country = self.geoData?.first?.country else  { return }
                 self.tableView.reloadData()
-                NotificationCenter.default.post(name: .collectionViewUpdated, object: nil)
                 self.title = "\(name), \(country)"
                 self.hideBlurView()
             }

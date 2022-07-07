@@ -11,18 +11,12 @@ class CellWithCollectionView: UITableViewCell {
         collectionView.register(UINib(nibName: "MyHourlyCell", bundle: nil), forCellWithReuseIdentifier: "MyHourlyCell")
         collectionView.delegate = self
         collectionView.dataSource = self
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(updatedCollectionView), name: .collectionViewUpdated, object: nil)
     }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-    
-    @IBAction func updatedCollectionView() {
+
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
         collectionView.reloadData()
     }
-    
 }
 
 
@@ -40,7 +34,5 @@ extension CellWithCollectionView: UICollectionViewDelegate, UICollectionViewData
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0
-    }
-    
-    
+    } 
 }
