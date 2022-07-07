@@ -8,6 +8,7 @@ class MainViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     //MARK: - let/var
+    let refresh = UIRefreshControl()
     let locationManager = CLLocationManager()
     var realmManager: RealmManagerProtocol = RealmManager()
     let notificationCenter = UNUserNotificationCenter.current()
@@ -26,8 +27,11 @@ class MainViewController: UIViewController {
         tableView.register(UINib(nibName: "CurrentWeatherCell", bundle: nil), forCellReuseIdentifier: "CurrentWeatherCell")
         
         createAndShowBlurEffectWithActivityIndicator()
+        
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.refreshControl = refresh
+        refresh.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
         
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
@@ -64,6 +68,14 @@ class MainViewController: UIViewController {
     //MARK: - @IBAction
     @IBAction func findCityPressed(_ sender: UIButton) {
         presentSearchAlertController(withTitle: "Enter city name", message: nil, style: .alert)
+    }
+    // тут будет обновление погоды, когда придумаю как :D
+    @IBAction func refreshTableView() {
+        
+        // updating data...
+        
+        tableView.reloadData()
+        refresh.endRefreshing()
     }
     
     //MARK: - Methods
