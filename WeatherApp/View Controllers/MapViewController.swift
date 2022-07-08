@@ -19,7 +19,6 @@ class MapViewController: UIViewController {
         
         view.layoutIfNeeded()
         view.addSubview(mapView)
-        mapView.backgroundColor = .cyan
         
         mapView.snp.makeConstraints { make in
             make.top.trailing.leading.equalToSuperview()

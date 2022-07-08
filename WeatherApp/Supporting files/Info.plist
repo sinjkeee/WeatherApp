@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>We need your lication data to provide weather information.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>We need your lication data to provide weather information.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need your lication data to provide weather information.</string>
 	<key>apiKey</key>
 	<string>f5b1b015006e1802f35638d295100520</string>
 	<key>googleMapsKey</key>

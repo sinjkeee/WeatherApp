@@ -6,22 +6,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        guard let windowScene = (scene as? UIWindowScene) else { return }
-        window?.windowScene = windowScene
-        guard let first = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MainViewController") as? MainViewController else { return }
-        guard let second = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MapViewController") as? MapViewController else { return }
-        guard let third = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "HistoryViewController") as? HistoryViewController else { return }
-        let tabBarViewController = UITabBarController()
-        tabBarViewController.setViewControllers([first, second, third], animated: true)
-        first.tabBarItem.title = "MAIN"
-        first.tabBarItem.image = UIImage(systemName: "sun.min.fill")
-        second.tabBarItem.title = "MAP"
-        second.tabBarItem.image = UIImage(systemName: "map")
-        third.tabBarItem.title = "HISTORY"
-        third.tabBarItem.image = UIImage(systemName: "viewfinder")
-        tabBarViewController.tabBar.backgroundColor = UIColor.white
-        window?.rootViewController = tabBarViewController
-        window?.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

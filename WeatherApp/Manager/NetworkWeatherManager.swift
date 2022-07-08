@@ -1,7 +1,7 @@
 import Foundation
 
 protocol RestAPIProviderProtocol {
-    func getCoordinatesByName(forCity city: String, completionHandler: @escaping (WeatherData) -> Void)
+    func getCoordinatesByName(forCity city: String, completionHandler: @escaping ([Geocoding], WeatherData) -> Void)
     func getWeatherForCityCoordinates(long: Double, lat: Double, withLang lang: Languages, withUnitsOfmeasurement units: Units, completionHandler: @escaping (WeatherData) -> Void)
 }
 
@@ -12,8 +12,9 @@ class NetworkWeatherManager: RestAPIProviderProtocol {
         return key
     }
     
-    func getCoordinatesByName(forCity city: String, completionHandler: @escaping (WeatherData) -> Void) {
-        let endpoint = Endpoint.geocodingURL(key: apiKey, city: city)
+    func getCoordinatesByName(forCity city: String, completionHandler: @escaping ([Geocoding], WeatherData) -> Void) {
+        let newCity = city.trimmingCharacters(in: .whitespaces).split(separator: " ").joined(separator: "%20")
+        let endpoint = Endpoint.geocodingURL(key: apiKey, city: newCity)
         var urlRequest = URLRequest(url: endpoint.url)
         urlRequest.httpMethod = "GET"
         apiRequestAndParseJSON(urlRequest: urlRequest) { [weak self] (weatherData: [Geocoding]) in
@@ -21,8 +22,9 @@ class NetworkWeatherManager: RestAPIProviderProtocol {
                   let lat = weatherData.first?.lat,
                   let self = self
             else { return }
-            self.getWeatherForCityCoordinates(long: lon, lat: lat, withLang: .russian, withUnitsOfmeasurement: .celsius) { weatherData in
-                completionHandler(weatherData)
+            let geoData = weatherData
+            self.getWeatherForCityCoordinates(long: lon, lat: lat, withLang: .english, withUnitsOfmeasurement: .celsius) { weatherData in
+                completionHandler(geoData, weatherData)
             }
         }
     }
