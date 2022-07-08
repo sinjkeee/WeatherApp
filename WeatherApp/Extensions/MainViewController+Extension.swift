@@ -12,11 +12,10 @@ extension MainViewController {
                 self.createAndShowBlurEffectWithActivityIndicator()
                 self.networkWeatherManager.getCoordinatesByName(forCity: cityName) { [weak self] geoData, weatherData in
                     guard let self = self else { return }
-                    self.saveCurrentData(weatherData: weatherData, geoData: geoData)
+                    self.combiningMethods(weatherData: weatherData, geoData: geoData)
                     DispatchQueue.main.async {
-                        self.realmManager.savaData(data: weatherData)
-                        self.updateInterface(hourlyWeather: self.hourlyWeather)
                         self.getLocationButton.tintColor = .systemCyan
+                        UserDefaults.standard.removeObject(forKey: "location")
                         UserDefaults.standard.set("\(cityName)", forKey: "city")
                     }
                 }

@@ -5,6 +5,7 @@ import CoreLocation
 enum IsLocationAllowed {
     case yes
     case no
+    case notDetermined
 }
 
 class MainViewController: UIViewController {
@@ -14,7 +15,7 @@ class MainViewController: UIViewController {
     @IBOutlet weak var getLocationButton: UIButton!
     
     //MARK: - let/var
-    var isLocationAllowed: IsLocationAllowed = .no
+    var isLocationAllowed: IsLocationAllowed = .notDetermined
     let refresh = UIRefreshControl()
     lazy var locationManager: CLLocationManager = {
         let lm = CLLocationManager()
@@ -35,10 +36,13 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if locationManager.authorizationStatus != .authorizedWhenInUse && locationManager.authorizationStatus != .authorizedAlways {
-            isLocationAllowed = .no
-        } else {
+        if locationManager.authorizationStatus == .notDetermined {
+            isLocationAllowed = .notDetermined
+        } else if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
             isLocationAllowed = .yes
+        } else {
+            isLocationAllowed = .no
+            getLocationButton.isEnabled = false
         }
         
         tableView.register(UINib(nibName: "CellWithCollectionView", bundle: nil), forCellReuseIdentifier: "CellWithCollectionView")
@@ -61,28 +65,22 @@ class MainViewController: UIViewController {
         tabBarController?.tabBar.backgroundColor = .clear
         tabBarController?.tabBar.scrollEdgeAppearance = appearance
         
-        if isLocationAllowed == .no {
+        if isLocationAllowed == .no || isLocationAllowed == .notDetermined {
             let lastCity = UserDefaults.standard.value(forKey: "city") != nil ? UserDefaults.standard.value(forKey: "city") as! String : "Kaliningrad"
             networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] geoData, weatherData in
                 guard let self = self else { return }
-                self.saveCurrentData(weatherData: weatherData, geoData: geoData)
-                DispatchQueue.main.async {
-                    self.realmManager.savaData(data: weatherData)
-                    self.updateInterface(hourlyWeather: self.hourlyWeather)
-                }
+                self.combiningMethods(weatherData: weatherData, geoData: geoData)
             }
-        } else if isLocationAllowed == .yes && UserDefaults.standard.value(forKey: "city") != nil {
-            let lastCity = UserDefaults.standard.value(forKey: "city") as! String
-            networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] geoData, weatherData in
-                guard let self = self else { return }
-                self.saveCurrentData(weatherData: weatherData, geoData: geoData)
-                DispatchQueue.main.async {
-                    self.realmManager.savaData(data: weatherData)
-                    self.updateInterface(hourlyWeather: self.hourlyWeather)
+        } else if isLocationAllowed == .yes {
+            if UserDefaults.standard.value(forKey: "city") != nil {
+                let lastCity = UserDefaults.standard.value(forKey: "city") as! String
+                networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] geoData, weatherData in
+                    guard let self = self else { return }
+                    self.combiningMethods(weatherData: weatherData, geoData: geoData)
                 }
+            } else if UserDefaults.standard.value(forKey: "location") != nil {
+                locationManager.requestLocation()
             }
-        } else {
-            locationManager.requestLocation()
         }
     }
     
@@ -92,12 +90,15 @@ class MainViewController: UIViewController {
     }
     
     @IBAction func getLocationPressed(_ sender: UIButton) {
-        locationManager.requestWhenInUseAuthorization()
-        if locationManager.authorizationStatus != .authorizedWhenInUse && locationManager.authorizationStatus != .authorizedAlways {
-            isLocationAllowed = .no
-        } else {
+        if locationManager.authorizationStatus == .notDetermined {
+            isLocationAllowed = .notDetermined
+            locationManager.requestWhenInUseAuthorization()
+        } else if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
             isLocationAllowed = .yes
             locationManager.requestLocation()
+        } else {
+            isLocationAllowed = .no
+            getLocationButton.isEnabled = false
         }
     }
     
@@ -107,11 +108,7 @@ class MainViewController: UIViewController {
             guard let cityName = geoData?.first?.cityName else { return }
             self.networkWeatherManager.getCoordinatesByName(forCity: cityName) { [weak self] geoData, weatherData in
                 guard let self = self else { return }
-                self.saveCurrentData(weatherData: weatherData, geoData: geoData)
-                DispatchQueue.main.async {
-                    self.realmManager.savaData(data: weatherData)
-                    self.updateInterface(hourlyWeather: self.hourlyWeather)
-                }
+                self.combiningMethods(weatherData: weatherData, geoData: geoData)
             }
         } else {
             self.createAndShowBlurEffectWithActivityIndicator()
@@ -119,17 +116,21 @@ class MainViewController: UIViewController {
             guard let coordinate = coordinate else { return }
             self.networkWeatherManager.getWeatherForCityCoordinates(long: coordinate.longitude, lat: coordinate.latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { [weak self] weatherData in
                 guard let self = self else { return }
-                self.saveCurrentData(weatherData: weatherData, geoData: nil)
-                DispatchQueue.main.async {
-                    self.realmManager.savaData(data: weatherData)
-                    self.updateInterface(hourlyWeather: self.hourlyWeather)
-                }
+                self.combiningMethods(weatherData: weatherData, geoData: nil)
             }
         }
         refresh.endRefreshing()
     }
     
     //MARK: - Methods
+    func combiningMethods(weatherData: WeatherData, geoData: [Geocoding]?) {
+        self.saveCurrentData(weatherData: weatherData, geoData: geoData)
+        DispatchQueue.main.async {
+            self.realmManager.savaData(data: weatherData)
+            self.updateInterface(hourlyWeather: self.hourlyWeather)
+        }
+    }
+    
     func saveCurrentData(weatherData: WeatherData, geoData: [Geocoding]?) {
         self.currentWeather = weatherData
         self.hourlyWeather = weatherData.hourly
@@ -296,11 +297,10 @@ extension MainViewController: CLLocationManagerDelegate {
         if isLocationAllowed == .yes {
             self.networkWeatherManager.getWeatherForCityCoordinates(long: location.longitude, lat: location.latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { [weak self] weatherData in
                 guard let self = self else { return }
-                self.saveCurrentData(weatherData: weatherData, geoData: nil)
+                self.combiningMethods(weatherData: weatherData, geoData: nil)
                 DispatchQueue.main.async {
-                    self.realmManager.savaData(data: weatherData)
-                    self.updateInterface(hourlyWeather: self.hourlyWeather)
                     UserDefaults.standard.removeObject(forKey: "city")
+                    UserDefaults.standard.set(true, forKey: "location")
                 }
             }
             self.getLocationButton.tintColor = .systemPink
