@@ -16,6 +16,7 @@ extension MainViewController {
                     DispatchQueue.main.async {
                         self.realmManager.savaData(data: weatherData)
                         self.updateInterface(hourlyWeather: self.hourlyWeather)
+                        self.getLocationButton.tintColor = .systemCyan
                     }
                 }
             }

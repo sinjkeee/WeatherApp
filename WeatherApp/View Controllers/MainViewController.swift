@@ -2,14 +2,26 @@ import UIKit
 import RealmSwift
 import CoreLocation
 
+enum IsLocationAllowed {
+    case yes
+    case no
+}
+
 class MainViewController: UIViewController {
     
     //MARK: - @IBOutlets
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var getLocationButton: UIButton!
     
     //MARK: - let/var
+    var isLocationAllowed: IsLocationAllowed = .no
     let refresh = UIRefreshControl()
-    let locationManager = CLLocationManager()
+    lazy var locationManager: CLLocationManager = {
+        let lm = CLLocationManager()
+        lm.delegate = self
+        lm.desiredAccuracy = kCLLocationAccuracyKilometer
+        return lm
+    }()
     var realmManager: RealmManagerProtocol = RealmManager()
     let notificationCenter = UNUserNotificationCenter.current()
     var geoData: [Geocoding]?
@@ -23,6 +35,12 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        if locationManager.authorizationStatus != .authorizedWhenInUse && locationManager.authorizationStatus != .authorizedAlways {
+            isLocationAllowed = .no
+        } else {
+            isLocationAllowed = .yes
+        }
+        
         tableView.register(UINib(nibName: "CellWithCollectionView", bundle: nil), forCellReuseIdentifier: "CellWithCollectionView")
         tableView.register(UINib(nibName: "DailyWeatherCell", bundle: nil), forCellReuseIdentifier: "DailyWeatherCell")
         tableView.register(UINib(nibName: "CurrentWeatherCell", bundle: nil), forCellReuseIdentifier: "CurrentWeatherCell")
@@ -34,11 +52,6 @@ class MainViewController: UIViewController {
         tableView.refreshControl = refresh
         refresh.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
         
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.requestLocation()
-        
         self.addGradient()
         
         let appearance = UITabBarAppearance()
@@ -48,8 +61,8 @@ class MainViewController: UIViewController {
         tabBarController?.tabBar.backgroundColor = .clear
         tabBarController?.tabBar.scrollEdgeAppearance = appearance
         
-        if locationManager.authorizationStatus != .authorizedWhenInUse && locationManager.authorizationStatus != .authorizedAlways {
-            networkWeatherManager.getCoordinatesByName(forCity: "Kiev") { [weak self] geoData, weatherData in
+        if isLocationAllowed == .no {
+            networkWeatherManager.getCoordinatesByName(forCity: "Kaliningrad") { [weak self] geoData, weatherData in
                 guard let self = self else { return }
                 self.saveCurrentData(weatherData: weatherData, geoData: geoData)
                 DispatchQueue.main.async {
@@ -57,12 +70,24 @@ class MainViewController: UIViewController {
                     self.updateInterface(hourlyWeather: self.hourlyWeather)
                 }
             }
+        } else {
+            locationManager.requestLocation()
         }
     }
     
     //MARK: - @IBAction
     @IBAction func findCityPressed(_ sender: UIButton) {
         presentSearchAlertController(withTitle: "Enter city name", message: nil, style: .alert)
+    }
+    
+    @IBAction func getLocationPressed(_ sender: UIButton) {
+        locationManager.requestWhenInUseAuthorization()
+        if locationManager.authorizationStatus != .authorizedWhenInUse && locationManager.authorizationStatus != .authorizedAlways {
+            isLocationAllowed = .no
+        } else {
+            isLocationAllowed = .yes
+            locationManager.requestLocation()
+        }
     }
     
     @IBAction func refreshTableView() {
@@ -163,18 +188,16 @@ class MainViewController: UIViewController {
     
     func updateInterface(hourlyWeather: [HourlyWeatherData]?) {
         if self.geoData == nil {
-            self.tableView.reloadData()
             self.title = self.currentWeather?.timeZone
-            self.hideBlurView()
         } else {
             guard let name = self.geoData?.first?.cityName,
                   let country = self.geoData?.first?.country else  { return }
-            self.tableView.reloadData()
             self.title = "\(name), \(country)"
-            self.hideBlurView()
         }
+        self.tableView.reloadData()
         self.removeAllNotification()
         self.weatherCheck(hourlyWeather: hourlyWeather)
+        self.hideBlurView()
     }
 }
 
@@ -219,7 +242,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             return currentWeatherCell
         } else if indexPath.section == 1 {
             if let hourlyWeatherData = hourlyWeather {
-                hourlyCell.hourlyArray = hourlyWeatherData
+                hourlyCell.configure(hourlyWeatherData)
             }
             return hourlyCell
         } else {
@@ -259,7 +282,7 @@ extension MainViewController: CLLocationManagerDelegate {
         guard let location = manager.location?.coordinate else { return }
         self.coordinate = location
         
-        if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
+        if isLocationAllowed == .yes {
             self.networkWeatherManager.getWeatherForCityCoordinates(long: location.longitude, lat: location.latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { [weak self] weatherData in
                 guard let self = self else { return }
                 self.saveCurrentData(weatherData: weatherData, geoData: nil)
@@ -268,6 +291,7 @@ extension MainViewController: CLLocationManagerDelegate {
                     self.updateInterface(hourlyWeather: self.hourlyWeather)
                 }
             }
+            self.getLocationButton.tintColor = .systemPink
         }
     }
     
