@@ -62,7 +62,18 @@ class MainViewController: UIViewController {
         tabBarController?.tabBar.scrollEdgeAppearance = appearance
         
         if isLocationAllowed == .no {
-            networkWeatherManager.getCoordinatesByName(forCity: "Kaliningrad") { [weak self] geoData, weatherData in
+            let lastCity = UserDefaults.standard.value(forKey: "city") != nil ? UserDefaults.standard.value(forKey: "city") as! String : "Kaliningrad"
+            networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] geoData, weatherData in
+                guard let self = self else { return }
+                self.saveCurrentData(weatherData: weatherData, geoData: geoData)
+                DispatchQueue.main.async {
+                    self.realmManager.savaData(data: weatherData)
+                    self.updateInterface(hourlyWeather: self.hourlyWeather)
+                }
+            }
+        } else if isLocationAllowed == .yes && UserDefaults.standard.value(forKey: "city") != nil {
+            let lastCity = UserDefaults.standard.value(forKey: "city") as! String
+            networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] geoData, weatherData in
                 guard let self = self else { return }
                 self.saveCurrentData(weatherData: weatherData, geoData: geoData)
                 DispatchQueue.main.async {
@@ -289,6 +300,7 @@ extension MainViewController: CLLocationManagerDelegate {
                 DispatchQueue.main.async {
                     self.realmManager.savaData(data: weatherData)
                     self.updateInterface(hourlyWeather: self.hourlyWeather)
+                    UserDefaults.standard.removeObject(forKey: "city")
                 }
             }
             self.getLocationButton.tintColor = .systemPink
