@@ -259,7 +259,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             return hourlyCell
         } else {
             if let daily = dailyWeather {
-                cell.configureDailyCell(data: daily[indexPath.row])
+                cell.configureDailyCell(data: daily[indexPath.row], isFirst: indexPath.row == 0)
             }
             return cell
         }

@@ -14,7 +14,7 @@ class DailyWeatherCell: UITableViewCell {
         
     }
     
-    func configureDailyCell(data: DailyWeatherData) {
+    func configureDailyCell(data: DailyWeatherData, isFirst: Bool) {
         guard let icon = data.weather?.first?.icon,
               let windSpeed = data.windSpeed,
               let tempMax = data.temp?.max,
@@ -22,7 +22,7 @@ class DailyWeatherCell: UITableViewCell {
         else { return }
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            self.dayNameLabel.text = data.dt?.changeDate(dateFormat: .weekday)
+            self.dayNameLabel.text = isFirst ? "Today" : data.dt?.changeDate(dateFormat: .weekday)
             self.imageViewForThisCell.getImageFromTheInternet(icon)
             self.windSpeedLabel.text = "\(windSpeed)"
             self.tempMaxLabel.text = "\(Int(tempMax))˚"

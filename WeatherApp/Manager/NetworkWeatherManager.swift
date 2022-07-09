@@ -15,7 +15,11 @@ class NetworkWeatherManager: RestAPIProviderProtocol {
     func getCoordinatesByName(forCity city: String, completionHandler: @escaping ([Geocoding], WeatherData) -> Void) {
         let newCity = city.trimmingCharacters(in: .whitespaces).split(separator: " ").joined(separator: "%20")
         let endpoint = Endpoint.geocodingURL(key: apiKey, city: newCity)
-        var urlRequest = URLRequest(url: endpoint.url)
+        guard let url = endpoint.url else {
+            print("ERROOOOORR!!!!! URL!!!!!")
+            return
+        }
+        var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "GET"
         apiRequestAndParseJSON(urlRequest: urlRequest) { [weak self] (weatherData: [Geocoding]) in
             guard let lon = weatherData.first?.lon,
@@ -31,7 +35,8 @@ class NetworkWeatherManager: RestAPIProviderProtocol {
     
     func getWeatherForCityCoordinates(long: Double, lat: Double, withLang lang: Languages, withUnitsOfmeasurement units: Units, completionHandler: @escaping (WeatherData) -> Void) {
         let endpoint = Endpoint.currentWeather(lat: lat, lon: long, key: apiKey, lang: lang.shortName, units: units.code)
-        var urlRequest = URLRequest(url: endpoint.url)
+        guard let url = endpoint.url else { return }
+        var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "GET"
         apiRequestAndParseJSON(urlRequest: urlRequest) { (weatherData: WeatherData) in
             completionHandler(weatherData)
@@ -42,7 +47,7 @@ class NetworkWeatherManager: RestAPIProviderProtocol {
         let session = URLSession(configuration: .default)
         let dataTask = session.dataTask(with: urlRequest) { data, response, error in
             if let error = error {
-                print(error)
+                print("SOME ERRRRROOOOORR!!!!!!!!! \(error)")
             }
             
             if let data = data {
