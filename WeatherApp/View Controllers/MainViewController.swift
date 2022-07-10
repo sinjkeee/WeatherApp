@@ -67,16 +67,34 @@ class MainViewController: UIViewController {
         
         if isLocationAllowed == .no || isLocationAllowed == .notDetermined {
             let lastCity = UserDefaults.standard.value(forKey: "city") != nil ? UserDefaults.standard.value(forKey: "city") as! String : "Kaliningrad"
-            networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] geoData, weatherData in
+            networkWeatherManager.getCoordinatesByNameForGeoData(forCity: lastCity) { [weak self] geoData in
                 guard let self = self else { return }
-                self.combiningMethods(weatherData: weatherData, geoData: geoData)
+                self.geoData = geoData
+            }
+            networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] (result: Result<WeatherData, Error>) in
+                guard let self = self else { return }
+                switch result {
+                case .failure(let error):
+                    print(error.localizedDescription)
+                case .success(let weatherData):
+                    self.combiningMethods(weatherData: weatherData)
+                }
             }
         } else if isLocationAllowed == .yes {
             if UserDefaults.standard.value(forKey: "city") != nil {
                 let lastCity = UserDefaults.standard.value(forKey: "city") as! String
-                networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] geoData, weatherData in
+                networkWeatherManager.getCoordinatesByNameForGeoData(forCity: lastCity) { [weak self] geoData in
                     guard let self = self else { return }
-                    self.combiningMethods(weatherData: weatherData, geoData: geoData)
+                    self.geoData = geoData
+                }
+                networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] (result: Result<WeatherData, Error>) in
+                    guard let self = self else { return }
+                    switch result {
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                    case .success(let weatherData):
+                        self.combiningMethods(weatherData: weatherData)
+                    }
                 }
             } else if UserDefaults.standard.value(forKey: "location") != nil {
                 locationManager.requestLocation()
@@ -106,36 +124,51 @@ class MainViewController: UIViewController {
         if geoData != nil {
             self.createAndShowBlurEffectWithActivityIndicator()
             guard let cityName = geoData?.first?.cityName else { return }
-            self.networkWeatherManager.getCoordinatesByName(forCity: cityName) { [weak self] geoData, weatherData in
+            self.networkWeatherManager.getCoordinatesByNameForGeoData(forCity: cityName) { [weak self] geoData in
                 guard let self = self else { return }
-                self.combiningMethods(weatherData: weatherData, geoData: geoData)
+                self.geoData = geoData
+            }
+            self.networkWeatherManager.getCoordinatesByName(forCity: cityName) { [weak self] (result: Result<WeatherData, Error>) in
+                guard let self = self else { return }
+                switch result {
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    self.hideBlurView()
+                case .success(let weatherData):
+                    self.combiningMethods(weatherData: weatherData)
+                }
             }
         } else {
             self.createAndShowBlurEffectWithActivityIndicator()
             locationManager.requestLocation()
             guard let coordinate = coordinate else { return }
-            self.networkWeatherManager.getWeatherForCityCoordinates(long: coordinate.longitude, lat: coordinate.latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { [weak self] weatherData in
+            self.networkWeatherManager.getWeatherForCityCoordinates(long: coordinate.longitude, lat: coordinate.latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { [weak self] (result: Result<WeatherData, Error>) in
                 guard let self = self else { return }
-                self.combiningMethods(weatherData: weatherData, geoData: nil)
+                switch result {
+                case .success(let weatherData):
+                    self.combiningMethods(weatherData: weatherData)
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    self.hideBlurView()
+                }
             }
         }
         refresh.endRefreshing()
     }
     
     //MARK: - Methods
-    func combiningMethods(weatherData: WeatherData, geoData: [Geocoding]?) {
-        self.saveCurrentData(weatherData: weatherData, geoData: geoData)
+    func combiningMethods(weatherData: WeatherData) {
+        self.saveCurrentData(weatherData: weatherData)
         DispatchQueue.main.async {
             self.realmManager.savaData(data: weatherData)
             self.updateInterface(hourlyWeather: self.hourlyWeather)
         }
     }
     
-    func saveCurrentData(weatherData: WeatherData, geoData: [Geocoding]?) {
+    func saveCurrentData(weatherData: WeatherData) {
         self.currentWeather = weatherData
         self.hourlyWeather = weatherData.hourly
         self.dailyWeather = weatherData.daily
-        self.geoData = geoData
     }
     
     func weatherCheck(hourlyWeather: [HourlyWeatherData]?) {
@@ -295,12 +328,18 @@ extension MainViewController: CLLocationManagerDelegate {
         self.coordinate = location
         
         if isLocationAllowed == .yes {
-            self.networkWeatherManager.getWeatherForCityCoordinates(long: location.longitude, lat: location.latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { [weak self] weatherData in
+            self.networkWeatherManager.getWeatherForCityCoordinates(long: location.longitude, lat: location.latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { [weak self] (result: Result<WeatherData, Error>) in
                 guard let self = self else { return }
-                self.combiningMethods(weatherData: weatherData, geoData: nil)
-                DispatchQueue.main.async {
-                    UserDefaults.standard.removeObject(forKey: "city")
-                    UserDefaults.standard.set(true, forKey: "location")
+                switch result {
+                case .failure(let error):
+                    print(error.localizedDescription)
+                case .success(let weatherData):
+                    self.combiningMethods(weatherData: weatherData)
+                    self.geoData = nil
+                    DispatchQueue.main.async {
+                        UserDefaults.standard.removeObject(forKey: "city")
+                        UserDefaults.standard.set(true, forKey: "location")
+                    }
                 }
             }
             self.getLocationButton.tintColor = .systemPink

@@ -54,12 +54,17 @@ class MapViewController: UIViewController {
 extension MapViewController:GMSMapViewDelegate {
     func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
         
-        networkWeatherManager.getWeatherForCityCoordinates(long: coordinate.longitude, lat: coordinate.latitude, withLang: .russian, withUnitsOfmeasurement: .celsius) { weatherData in
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                guard let temp = weatherData.current?.temp else { return }
-                self.realmManager.savaData(data: weatherData)
-                self.showAlertWith(temperature: temp)
+        networkWeatherManager.getWeatherForCityCoordinates(long: coordinate.longitude, lat: coordinate.latitude, withLang: .russian, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
+            switch result {
+            case .success(let weatherData):
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    guard let temp = weatherData.current?.temp else { return }
+                    self.realmManager.savaData(data: weatherData)
+                    self.showAlertWith(temperature: temp)
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
             }
         }
     }

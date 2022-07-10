@@ -10,13 +10,23 @@ extension MainViewController {
             guard let cityName = textField.text else { return }
             if textField.hasText {
                 self.createAndShowBlurEffectWithActivityIndicator()
-                self.networkWeatherManager.getCoordinatesByName(forCity: cityName) { [weak self] geoData, weatherData in
+                self.networkWeatherManager.getCoordinatesByNameForGeoData(forCity: cityName) { [weak self] geoData in
                     guard let self = self else { return }
-                    self.combiningMethods(weatherData: weatherData, geoData: geoData)
-                    DispatchQueue.main.async {
-                        self.getLocationButton.tintColor = .systemCyan
-                        UserDefaults.standard.removeObject(forKey: "location")
-                        UserDefaults.standard.set("\(cityName)", forKey: "city")
+                    self.geoData = geoData
+                }
+                self.networkWeatherManager.getCoordinatesByName(forCity: cityName) { [weak self] (result: Result<WeatherData, Error>) in
+                    guard let self = self else { return }
+                    switch result {
+                    case .success(let weatherData):
+                        self.combiningMethods(weatherData: weatherData)
+                        DispatchQueue.main.async {
+                            self.getLocationButton.tintColor = .systemCyan
+                            UserDefaults.standard.removeObject(forKey: "location")
+                            UserDefaults.standard.set("\(cityName)", forKey: "city")
+                        }
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                        self.hideBlurView()
                     }
                 }
             }
