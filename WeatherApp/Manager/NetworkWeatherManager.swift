@@ -1,9 +1,8 @@
 import Foundation
 
 protocol RestAPIProviderProtocol {
-    func getCoordinatesByName(forCity city: String, completionHandler: @escaping (Result<WeatherData, Error>) -> Void)
+    func getCoordinatesByName(forCity city: String, completionHandler: @escaping (Result<[Geocoding], Error>) -> Void)
     func getWeatherForCityCoordinates(long: Double, lat: Double, withLang lang: Languages, withUnitsOfmeasurement units: Units, completionHandler: @escaping (Result<WeatherData, Error>) -> Void)
-    func getCoordinatesByNameForGeoData(forCity city: String, completionHandler: @escaping ([Geocoding]) -> Void)
 }
 
 class NetworkWeatherManager: RestAPIProviderProtocol {
@@ -13,38 +12,14 @@ class NetworkWeatherManager: RestAPIProviderProtocol {
         return key
     }
     
-    func getCoordinatesByNameForGeoData(forCity city: String, completionHandler: @escaping ([Geocoding]) -> Void) {
+    func getCoordinatesByName(forCity city: String, completionHandler: @escaping (Result<[Geocoding], Error>) -> Void) {
         let newCity = city.trimmingCharacters(in: .whitespaces).split(separator: " ").joined(separator: "%20")
         let endpoint = Endpoint.geocodingURL(key: apiKey, city: newCity)
         guard let url = endpoint.url else { return }
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "GET"
         apiRequestAndParseJSON(urlRequest: urlRequest) { (result: Result<[Geocoding], Error>) in
-            switch result {
-            case .success(let geoData):
-                completionHandler(geoData)
-            case .failure(let error):
-                print(error)
-            }
-        }
-    }
-    
-    func getCoordinatesByName(forCity city: String, completionHandler: @escaping (Result<WeatherData, Error>) -> Void) {
-        let newCity = city.trimmingCharacters(in: .whitespaces).split(separator: " ").joined(separator: "%20")
-        let endpoint = Endpoint.geocodingURL(key: apiKey, city: newCity)
-        guard let url = endpoint.url else { return }
-        var urlRequest = URLRequest(url: url)
-        urlRequest.httpMethod = "GET"
-        apiRequestAndParseJSON(urlRequest: urlRequest) { (result: Result<[Geocoding], Error>) in
-            switch result {
-            case .success(let geocoding):
-                guard let lon = geocoding.first?.lon, let lat = geocoding.first?.lat else { return }
-                self.getWeatherForCityCoordinates(long: lon, lat: lat, withLang: .english, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
-                    completionHandler(result)
-                }
-            case .failure(let error):
-                completionHandler(.failure(error))
-            }
+            completionHandler(result)
         }
     }
     

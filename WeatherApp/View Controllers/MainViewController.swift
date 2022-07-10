@@ -67,33 +67,59 @@ class MainViewController: UIViewController {
         
         if isLocationAllowed == .no || isLocationAllowed == .notDetermined {
             let lastCity = UserDefaults.standard.value(forKey: "city") != nil ? UserDefaults.standard.value(forKey: "city") as! String : "Kaliningrad"
-            networkWeatherManager.getCoordinatesByNameForGeoData(forCity: lastCity) { [weak self] geoData in
-                guard let self = self else { return }
-                self.geoData = geoData
-            }
-            networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] (result: Result<WeatherData, Error>) in
+            self.networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] (result: Result<[Geocoding], Error>) in
                 guard let self = self else { return }
                 switch result {
                 case .failure(let error):
                     print(error.localizedDescription)
-                case .success(let weatherData):
-                    self.combiningMethods(weatherData: weatherData)
+                    DispatchQueue.main.async {
+                        self.hideBlurView()
+                        self.showErrorAlert(title: "Oops", message: "Something went wrong. Check city name and try again")
+                    }
+                case .success(let geocoding):
+                    self.geoData = geocoding
+                    guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
+                    self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
+                        switch result {
+                        case .failure(let error):
+                            print(error.localizedDescription)
+                            DispatchQueue.main.async {
+                                self.hideBlurView()
+                                self.showErrorAlert(title: "Oops", message: "Something went wrong. Check city name and try again")
+                            }
+                        case .success(let weatherData):
+                            self.combiningMethods(weatherData: weatherData)
+                        }
+                    }
                 }
             }
         } else if isLocationAllowed == .yes {
             if UserDefaults.standard.value(forKey: "city") != nil {
                 let lastCity = UserDefaults.standard.value(forKey: "city") as! String
-                networkWeatherManager.getCoordinatesByNameForGeoData(forCity: lastCity) { [weak self] geoData in
-                    guard let self = self else { return }
-                    self.geoData = geoData
-                }
-                networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] (result: Result<WeatherData, Error>) in
+                self.networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] (result: Result<[Geocoding], Error>) in
                     guard let self = self else { return }
                     switch result {
                     case .failure(let error):
                         print(error.localizedDescription)
-                    case .success(let weatherData):
-                        self.combiningMethods(weatherData: weatherData)
+                        DispatchQueue.main.async {
+                            self.hideBlurView()
+                            self.showErrorAlert(title: "Oops", message: "Something went wrong. Check city name and try again")
+                        }
+                    case .success(let geocoding):
+                        self.geoData = geocoding
+                        guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
+                        self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
+                            switch result {
+                            case .failure(let error):
+                                print(error.localizedDescription)
+                                DispatchQueue.main.async {
+                                    self.hideBlurView()
+                                    self.showErrorAlert(title: "Oops", message: "Something went wrong. Check city name and try again")
+                                }
+                            case .success(let weatherData):
+                                self.combiningMethods(weatherData: weatherData)
+                            }
+                        }
                     }
                 }
             } else if UserDefaults.standard.value(forKey: "location") != nil {
@@ -124,18 +150,30 @@ class MainViewController: UIViewController {
         if geoData != nil {
             self.createAndShowBlurEffectWithActivityIndicator()
             guard let cityName = geoData?.first?.cityName else { return }
-            self.networkWeatherManager.getCoordinatesByNameForGeoData(forCity: cityName) { [weak self] geoData in
-                guard let self = self else { return }
-                self.geoData = geoData
-            }
-            self.networkWeatherManager.getCoordinatesByName(forCity: cityName) { [weak self] (result: Result<WeatherData, Error>) in
+            self.networkWeatherManager.getCoordinatesByName(forCity: cityName) { [weak self] (result: Result<[Geocoding], Error>) in
                 guard let self = self else { return }
                 switch result {
                 case .failure(let error):
                     print(error.localizedDescription)
-                    self.hideBlurView()
-                case .success(let weatherData):
-                    self.combiningMethods(weatherData: weatherData)
+                    DispatchQueue.main.async {
+                        self.hideBlurView()
+                        self.showErrorAlert(title: "Oops", message: "Something went wrong. Check city name and try again")
+                    }
+                case .success(let geocoding):
+                    self.geoData = geocoding
+                    guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
+                    self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
+                        switch result {
+                        case .failure(let error):
+                            print(error.localizedDescription)
+                            DispatchQueue.main.async {
+                                self.hideBlurView()
+                                self.showErrorAlert(title: "Oops", message: "Something went wrong. Check city name and try again")
+                            }
+                        case .success(let weatherData):
+                            self.combiningMethods(weatherData: weatherData)
+                        }
+                    }
                 }
             }
         } else {
@@ -149,7 +187,10 @@ class MainViewController: UIViewController {
                     self.combiningMethods(weatherData: weatherData)
                 case .failure(let error):
                     print(error.localizedDescription)
-                    self.hideBlurView()
+                    DispatchQueue.main.async {
+                        self.hideBlurView()
+                        self.showErrorAlert(title: "Oops", message: "Something went wrong. Check city name and try again")
+                    }
                 }
             }
         }
@@ -333,6 +374,9 @@ extension MainViewController: CLLocationManagerDelegate {
                 switch result {
                 case .failure(let error):
                     print(error.localizedDescription)
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "Oops", message: "Something went wrong. Check city name and try again")
+                    }
                 case .success(let weatherData):
                     self.combiningMethods(weatherData: weatherData)
                     self.geoData = nil

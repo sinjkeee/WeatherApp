@@ -21,19 +21,16 @@ extension Endpoint {
             if let url = URL(string: baseURLForWeather.appending("geo/1.0/direct?q=\(city)&appid=\(key)")) {
                 return url
             }
-//            fatalError()
             return nil
         case .getIcon(let icon):
             if let url = URL(string: baseURLForIcon.appending("img/wn/\(icon)@2x.png")) {
                 return url
             }
-//            fatalError()
             return nil
         case .currentWeather(let lat, let lon, let key, let lang, let units):
             if let url = URL(string: baseURLForWeather.appending("data/2.5/onecall?lat=\(lat)&lon=\(lon)&appid=\(key)&lang=\(lang)&units=\(units)")) {
                 return url
             }
-//            fatalError()
             return nil
         }
     }
