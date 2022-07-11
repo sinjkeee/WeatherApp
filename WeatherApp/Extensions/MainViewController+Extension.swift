@@ -17,26 +17,35 @@ extension MainViewController {
                         print(error.localizedDescription)
                         DispatchQueue.main.async {
                             self.hideBlurView()
-                            self.showErrorAlert(title: "Oops", message: "Something went wrong. Check city name and try again")
+                            self.showErrorAlert(title: "Oops", message: "Something went wrong")
                         }
                     case .success(let geocoding):
-                        self.geoData = geocoding
-                        guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
-                        self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
-                            switch result {
-                            case .failure(let error):
-                                print(error.localizedDescription)
-                                DispatchQueue.main.async {
-                                    self.hideBlurView()
-                                    self.showErrorAlert(title: "Oops", message: "Something went wrong. Check city name and try again")
+                        if !geocoding.isEmpty {
+                            self.geoData = geocoding
+                            guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
+                            self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
+                                switch result {
+                                case .failure(let error):
+                                    print(error.localizedDescription)
+                                    DispatchQueue.main.async {
+                                        self.hideBlurView()
+                                        self.showErrorAlert(title: "Oops", message: "Something went wrong")
+                                    }
+                                case .success(let weatherData):
+                                    self.combiningMethods(weatherData: weatherData)
+                                    DispatchQueue.main.async {
+                                        UserDefaults.standard.removeObject(forKey: "location")
+                                        UserDefaults.standard.removeObject(forKey: "city")
+                                        UserDefaults.standard.set("\(cityName)", forKey: "city")
+                                        self.getLocationButton.tintColor = .systemCyan
+                                        self.findCityButton.tintColor = .systemPink
+                                    }
                                 }
-                            case .success(let weatherData):
-                                self.combiningMethods(weatherData: weatherData)
-                                DispatchQueue.main.async {
-                                    self.getLocationButton.tintColor = .systemCyan
-                                    UserDefaults.standard.removeObject(forKey: "location")
-                                    UserDefaults.standard.set("\(cityName)", forKey: "city")
-                                }
+                            }
+                        } else {
+                            DispatchQueue.main.async {
+                                self.hideBlurView()
+                                self.showErrorAlert(title: "City not found!", message: "Check city name and try again")
                             }
                         }
                     }

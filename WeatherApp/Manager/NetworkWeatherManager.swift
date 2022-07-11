@@ -15,7 +15,10 @@ class NetworkWeatherManager: RestAPIProviderProtocol {
     func getCoordinatesByName(forCity city: String, completionHandler: @escaping (Result<[Geocoding], Error>) -> Void) {
         let newCity = city.trimmingCharacters(in: .whitespaces).split(separator: " ").joined(separator: "%20")
         let endpoint = Endpoint.geocodingURL(key: apiKey, city: newCity)
-        guard let url = endpoint.url else { return }
+        guard let url = endpoint.url else {
+            completionHandler(.failure(Error.self as! Error))
+            return
+        }
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "GET"
         apiRequestAndParseJSON(urlRequest: urlRequest) { (result: Result<[Geocoding], Error>) in
@@ -25,7 +28,10 @@ class NetworkWeatherManager: RestAPIProviderProtocol {
     
     func getWeatherForCityCoordinates(long: Double, lat: Double, withLang lang: Languages, withUnitsOfmeasurement units: Units, completionHandler: @escaping (Result<WeatherData, Error>) -> Void) {
         let endpoint = Endpoint.currentWeather(lat: lat, lon: long, key: apiKey, lang: lang.shortName, units: units.code)
-        guard let url = endpoint.url else { return }
+        guard let url = endpoint.url else {
+            completionHandler(.failure(Error.self as! Error))
+            return
+        }
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "GET"
         apiRequestAndParseJSON(urlRequest: urlRequest) { (result: Result<WeatherData, Error>) in

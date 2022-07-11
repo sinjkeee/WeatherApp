@@ -81,6 +81,7 @@
                         </rightBarButtonItems>
                     </navigationItem>
                     <connections>
+                        <outlet property="findCityButton" destination="vzr-ve-gRw" id="C0H-70-EmT"/>
                         <outlet property="getLocationButton" destination="RfR-X6-XS1" id="w4X-4e-oWf"/>
                         <outlet property="tableView" destination="0Kb-fK-oho" id="uZI-m9-qPU"/>
                     </connections>

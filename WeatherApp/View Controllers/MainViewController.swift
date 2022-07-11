@@ -2,20 +2,14 @@ import UIKit
 import RealmSwift
 import CoreLocation
 
-enum IsLocationAllowed {
-    case yes
-    case no
-    case notDetermined
-}
-
 class MainViewController: UIViewController {
     
     //MARK: - @IBOutlets
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var getLocationButton: UIButton!
+    @IBOutlet weak var findCityButton: UIButton!
     
     //MARK: - let/var
-    var isLocationAllowed: IsLocationAllowed = .notDetermined
     let refresh = UIRefreshControl()
     lazy var locationManager: CLLocationManager = {
         let lm = CLLocationManager()
@@ -36,14 +30,9 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if locationManager.authorizationStatus == .notDetermined {
-            isLocationAllowed = .notDetermined
-        } else if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
-            isLocationAllowed = .yes
-        } else {
-            isLocationAllowed = .no
-            getLocationButton.isEnabled = false
-        }
+        self.geoData = nil
+        self.findCityButton.tintColor = .systemCyan
+        self.getLocationButton.tintColor = .systemCyan
         
         tableView.register(UINib(nibName: "CellWithCollectionView", bundle: nil), forCellReuseIdentifier: "CellWithCollectionView")
         tableView.register(UINib(nibName: "DailyWeatherCell", bundle: nil), forCellReuseIdentifier: "DailyWeatherCell")
@@ -65,7 +54,7 @@ class MainViewController: UIViewController {
         tabBarController?.tabBar.backgroundColor = .clear
         tabBarController?.tabBar.scrollEdgeAppearance = appearance
         
-        if isLocationAllowed == .no || isLocationAllowed == .notDetermined {
+        if locationManager.authorizationStatus == .denied || locationManager.authorizationStatus == .notDetermined {
             let lastCity = UserDefaults.standard.value(forKey: "city") != nil ? UserDefaults.standard.value(forKey: "city") as! String : "Kaliningrad"
             self.networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] (result: Result<[Geocoding], Error>) in
                 guard let self = self else { return }
@@ -74,7 +63,7 @@ class MainViewController: UIViewController {
                     print(error.localizedDescription)
                     DispatchQueue.main.async {
                         self.hideBlurView()
-                        self.showErrorAlert(title: "Oops", message: "Something went wrong. Check city name and try again")
+                        self.showErrorAlert(title: "Oops", message: "Something went wrong")
                     }
                 case .success(let geocoding):
                     self.geoData = geocoding
@@ -85,15 +74,18 @@ class MainViewController: UIViewController {
                             print(error.localizedDescription)
                             DispatchQueue.main.async {
                                 self.hideBlurView()
-                                self.showErrorAlert(title: "Oops", message: "Something went wrong. Check city name and try again")
+                                self.showErrorAlert(title: "Oops", message: "Something went wrong")
                             }
                         case .success(let weatherData):
                             self.combiningMethods(weatherData: weatherData)
+                            DispatchQueue.main.async {
+                                self.findCityButton.tintColor = .systemPink
+                            }
                         }
                     }
                 }
             }
-        } else if isLocationAllowed == .yes {
+        } else if locationManager.authorizationStatus == .authorizedAlways || locationManager.authorizationStatus == .authorizedWhenInUse {
             if UserDefaults.standard.value(forKey: "city") != nil {
                 let lastCity = UserDefaults.standard.value(forKey: "city") as! String
                 self.networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] (result: Result<[Geocoding], Error>) in
@@ -103,7 +95,7 @@ class MainViewController: UIViewController {
                         print(error.localizedDescription)
                         DispatchQueue.main.async {
                             self.hideBlurView()
-                            self.showErrorAlert(title: "Oops", message: "Something went wrong. Check city name and try again")
+                            self.showErrorAlert(title: "Oops", message: "Something went wrong")
                         }
                     case .success(let geocoding):
                         self.geoData = geocoding
@@ -114,16 +106,20 @@ class MainViewController: UIViewController {
                                 print(error.localizedDescription)
                                 DispatchQueue.main.async {
                                     self.hideBlurView()
-                                    self.showErrorAlert(title: "Oops", message: "Something went wrong. Check city name and try again")
+                                    self.showErrorAlert(title: "Oops", message: "Something went wrong")
                                 }
                             case .success(let weatherData):
                                 self.combiningMethods(weatherData: weatherData)
+                                DispatchQueue.main.async {
+                                    self.findCityButton.tintColor = .systemPink
+                                }
                             }
                         }
                     }
                 }
             } else if UserDefaults.standard.value(forKey: "location") != nil {
                 locationManager.requestLocation()
+                self.geoData = nil
             }
         }
     }
@@ -135,14 +131,9 @@ class MainViewController: UIViewController {
     
     @IBAction func getLocationPressed(_ sender: UIButton) {
         if locationManager.authorizationStatus == .notDetermined {
-            isLocationAllowed = .notDetermined
             locationManager.requestWhenInUseAuthorization()
         } else if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
-            isLocationAllowed = .yes
             locationManager.requestLocation()
-        } else {
-            isLocationAllowed = .no
-            getLocationButton.isEnabled = false
         }
     }
     
@@ -157,7 +148,7 @@ class MainViewController: UIViewController {
                     print(error.localizedDescription)
                     DispatchQueue.main.async {
                         self.hideBlurView()
-                        self.showErrorAlert(title: "Oops", message: "Something went wrong. Check city name and try again")
+                        self.showErrorAlert(title: "Oops", message: "Something went wrong")
                     }
                 case .success(let geocoding):
                     self.geoData = geocoding
@@ -168,7 +159,7 @@ class MainViewController: UIViewController {
                             print(error.localizedDescription)
                             DispatchQueue.main.async {
                                 self.hideBlurView()
-                                self.showErrorAlert(title: "Oops", message: "Something went wrong. Check city name and try again")
+                                self.showErrorAlert(title: "Oops", message: "Something went wrong")
                             }
                         case .success(let weatherData):
                             self.combiningMethods(weatherData: weatherData)
@@ -189,7 +180,7 @@ class MainViewController: UIViewController {
                     print(error.localizedDescription)
                     DispatchQueue.main.async {
                         self.hideBlurView()
-                        self.showErrorAlert(title: "Oops", message: "Something went wrong. Check city name and try again")
+                        self.showErrorAlert(title: "Oops", message: "Something went wrong")
                     }
                 }
             }
@@ -367,30 +358,49 @@ extension MainViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = manager.location?.coordinate else { return }
         self.coordinate = location
-        
-        if isLocationAllowed == .yes {
-            self.networkWeatherManager.getWeatherForCityCoordinates(long: location.longitude, lat: location.latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { [weak self] (result: Result<WeatherData, Error>) in
-                guard let self = self else { return }
-                switch result {
-                case .failure(let error):
-                    print(error.localizedDescription)
-                    DispatchQueue.main.async {
-                        self.showErrorAlert(title: "Oops", message: "Something went wrong. Check city name and try again")
-                    }
-                case .success(let weatherData):
-                    self.combiningMethods(weatherData: weatherData)
-                    self.geoData = nil
-                    DispatchQueue.main.async {
-                        UserDefaults.standard.removeObject(forKey: "city")
-                        UserDefaults.standard.set(true, forKey: "location")
-                    }
+        self.networkWeatherManager.getWeatherForCityCoordinates(long: location.longitude, lat: location.latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { [weak self] (result: Result<WeatherData, Error>) in
+            guard let self = self else { return }
+            switch result {
+            case .failure(let error):
+                print(error.localizedDescription)
+                DispatchQueue.main.async {
+                    self.showErrorAlert(title: "Oops", message: "Something went wrong")
+                }
+            case .success(let weatherData):
+                self.combiningMethods(weatherData: weatherData)
+                self.geoData = nil
+                DispatchQueue.main.async {
+                    UserDefaults.standard.removeObject(forKey: "city")
+                    UserDefaults.standard.set(true, forKey: "location")
+                    self.findCityButton.tintColor = .systemCyan
+                    self.getLocationButton.tintColor = .systemPink
                 }
             }
-            self.getLocationButton.tintColor = .systemPink
         }
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(error.localizedDescription)
+    }
+    
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        if manager.authorizationStatus == .authorizedWhenInUse || manager.authorizationStatus == .authorizedAlways {
+            if UserDefaults.standard.value(forKey: "city") != nil {
+                self.findCityButton.tintColor = .systemPink
+                self.getLocationButton.tintColor = .systemCyan
+                self.getLocationButton.isEnabled = true
+            } else if UserDefaults.standard.value(forKey: "location") != nil {
+                locationManager.requestLocation()
+                self.getLocationButton.isEnabled = true
+            } else {
+                locationManager.requestLocation()
+                self.getLocationButton.isEnabled = true
+            }
+        } else if manager.authorizationStatus == .restricted || manager.authorizationStatus == .denied {
+            self.getLocationButton.isEnabled = false
+            UserDefaults.standard.removeObject(forKey: "location")
+        } else if manager.authorizationStatus == .notDetermined {
+            self.getLocationButton.isEnabled = true
+        }
     }
 }

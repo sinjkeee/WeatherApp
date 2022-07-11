@@ -70,7 +70,6 @@ extension MapViewController:GMSMapViewDelegate {
             guard let url = endpoint.url else { fatalError() }
             view.configure(weather: weather, url: url)
         }
-        
         return view
     }
 }
