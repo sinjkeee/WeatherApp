@@ -23,4 +23,5 @@ class CurrentWeatherForRealm: Object {
     @objc dynamic var windSpeed = 0.0
     @objc dynamic var windDeg = 0
     @objc dynamic var windGust = 0.0
+    @objc dynamic var isMap = false
 }

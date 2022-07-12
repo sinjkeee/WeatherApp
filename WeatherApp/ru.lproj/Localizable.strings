@@ -52,3 +52,12 @@
 
 //MARK: - MapViewController
 "Map" = "Карта";
+
+//MARK: - HistoryCell
+"Longitude:" = "Долгота:";
+"Latitude:" = "Широта:";
+"Temperature:" = "Температура воздуха:";
+"Wind speed:" = "Скорость ветра:";
+"km/h HistoryCell" = " км/ч";
+"Data from the request from the maps" = "Данные получены с карты";
+"Data from the request from the main screen" = "Данные получены из запроса на главном экране";

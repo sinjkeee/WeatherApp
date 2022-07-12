@@ -2,7 +2,7 @@ import Foundation
 import RealmSwift
 
 protocol RealmManagerProtocol {
-    func savaData(data: WeatherData)
+    func savaData(data: WeatherData, isMap: Bool)
     func loadData() -> [CurrentWeatherForRealm]
 }
 
@@ -20,7 +20,7 @@ class RealmManager: RealmManagerProtocol {
         }
     }
     
-    func savaData(data: WeatherData) {
+    func savaData(data: WeatherData, isMap: Bool) {
         
         let coordinateForRealm = Coordinate()
         let currentWeatherForRealm = CurrentWeatherForRealm()
@@ -63,6 +63,7 @@ class RealmManager: RealmManagerProtocol {
         currentWeatherForRealm.windDeg = windDeg
         currentWeatherForRealm.windGust = windGust
         currentWeatherForRealm.timeZone = timeZone
+        currentWeatherForRealm.isMap = isMap
         
         do {
             try realm.write({

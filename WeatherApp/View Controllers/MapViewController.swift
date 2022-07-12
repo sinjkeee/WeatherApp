@@ -55,7 +55,7 @@ extension MapViewController:GMSMapViewDelegate {
             case .success(let weatherData):
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
-                    self.realmManager.savaData(data: weatherData)
+                    self.realmManager.savaData(data: weatherData, isMap: true)
                     self.currentWeather = weatherData
                     self.createMarker(map: self.map, latitude: coordinate.latitude, longitude: coordinate.longitude)
                 }

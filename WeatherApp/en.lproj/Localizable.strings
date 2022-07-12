@@ -52,3 +52,12 @@
 
 //MARK: - MapViewController
 "Map" = "Map";
+
+//MARK: - HistoryCell
+"Longitude:" = "Longitude:";
+"Latitude:" = "Latitude:";
+"Temperature:" = "Temperature:";
+"Wind speed:" = "Wind speed:";
+"km/h HistoryCell" = " km/h";
+"Data from the request from the maps" = "Data from the request from the maps";
+"Data from the request from the main screen" = "Data from the request from the main screen";

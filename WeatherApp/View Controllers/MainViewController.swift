@@ -192,7 +192,7 @@ class MainViewController: UIViewController {
     func combiningMethods(weatherData: WeatherData) {
         self.saveCurrentData(weatherData: weatherData)
         DispatchQueue.main.async {
-            self.realmManager.savaData(data: weatherData)
+            self.realmManager.savaData(data: weatherData, isMap: false)
             self.updateInterface(hourlyWeather: self.hourlyWeather)
         }
     }
