@@ -41,6 +41,7 @@ class MapViewController: UIViewController {
         let marker = GMSMarker()
         marker.position = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         marker.map = map
+        map.selectedMarker = marker
     }
 }
 
@@ -54,12 +55,12 @@ extension MapViewController:GMSMapViewDelegate {
                     guard let self = self else { return }
                     self.realmManager.savaData(data: weatherData)
                     self.currentWeather = weatherData
+                    self.createMarker(map: self.map, latitude: coordinate.latitude, longitude: coordinate.longitude)
                 }
             case .failure(let error):
                 print(error.localizedDescription)
             }
         }
-        self.createMarker(map: map, latitude: coordinate.latitude, longitude: coordinate.longitude)
     }
     
     func mapView(_ mapView: GMSMapView, markerInfoWindow marker: GMSMarker) -> UIView? {

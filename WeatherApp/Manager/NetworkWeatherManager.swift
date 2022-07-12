@@ -14,7 +14,8 @@ class NetworkWeatherManager: RestAPIProviderProtocol {
     
     func getCoordinatesByName(forCity city: String, completionHandler: @escaping (Result<[Geocoding], Error>) -> Void) {
         let newCity = city.trimmingCharacters(in: .whitespaces).split(separator: " ").joined(separator: "%20")
-        let endpoint = Endpoint.geocodingURL(key: apiKey, city: newCity)
+        guard let name = newCity.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed) else { return }
+        let endpoint = Endpoint.geocodingURL(key: apiKey, city: name)
         guard let url = endpoint.url else {
             completionHandler(.failure(Error.self as! Error))
             return
