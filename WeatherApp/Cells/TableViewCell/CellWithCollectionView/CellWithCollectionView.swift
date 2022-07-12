@@ -12,10 +12,10 @@ class CellWithCollectionView: UITableViewCell {
         collectionView.delegate = self
         collectionView.dataSource = self
     }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-        collectionView.reloadData()
+    
+    func configure(_ hourlyWeather: [HourlyWeatherData]) {
+        self.hourlyArray = hourlyWeather
+        self.collectionView.reloadData()
     }
 }
 

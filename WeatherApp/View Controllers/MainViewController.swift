@@ -6,10 +6,17 @@ class MainViewController: UIViewController {
     
     //MARK: - @IBOutlets
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var getLocationButton: UIButton!
+    @IBOutlet weak var findCityButton: UIButton!
     
     //MARK: - let/var
     let refresh = UIRefreshControl()
-    let locationManager = CLLocationManager()
+    lazy var locationManager: CLLocationManager = {
+        let lm = CLLocationManager()
+        lm.delegate = self
+        lm.desiredAccuracy = kCLLocationAccuracyKilometer
+        return lm
+    }()
     var realmManager: RealmManagerProtocol = RealmManager()
     let notificationCenter = UNUserNotificationCenter.current()
     var geoData: [Geocoding]?
@@ -23,6 +30,10 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.geoData = nil
+        self.findCityButton.tintColor = .systemCyan
+        self.getLocationButton.tintColor = .systemCyan
+        
         tableView.register(UINib(nibName: "CellWithCollectionView", bundle: nil), forCellReuseIdentifier: "CellWithCollectionView")
         tableView.register(UINib(nibName: "DailyWeatherCell", bundle: nil), forCellReuseIdentifier: "DailyWeatherCell")
         tableView.register(UINib(nibName: "CurrentWeatherCell", bundle: nil), forCellReuseIdentifier: "CurrentWeatherCell")
@@ -34,11 +45,6 @@ class MainViewController: UIViewController {
         tableView.refreshControl = refresh
         refresh.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
         
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.requestLocation()
-        
         self.addGradient()
         
         let appearance = UITabBarAppearance()
@@ -48,14 +54,72 @@ class MainViewController: UIViewController {
         tabBarController?.tabBar.backgroundColor = .clear
         tabBarController?.tabBar.scrollEdgeAppearance = appearance
         
-        if locationManager.authorizationStatus != .authorizedWhenInUse && locationManager.authorizationStatus != .authorizedAlways {
-            networkWeatherManager.getCoordinatesByName(forCity: "Kiev") { [weak self] geoData, weatherData in
+        if locationManager.authorizationStatus == .denied || locationManager.authorizationStatus == .notDetermined {
+            let lastCity = UserDefaults.standard.value(forKey: "city") != nil ? UserDefaults.standard.value(forKey: "city") as! String : "Kaliningrad"
+            self.networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] (result: Result<[Geocoding], Error>) in
                 guard let self = self else { return }
-                self.saveCurrentData(weatherData: weatherData, geoData: geoData)
-                DispatchQueue.main.async {
-                    self.realmManager.savaData(data: weatherData)
-                    self.updateInterface(hourlyWeather: self.hourlyWeather)
+                switch result {
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    DispatchQueue.main.async {
+                        self.hideBlurView()
+                        self.showErrorAlert(title: "Oops", message: "Something went wrong")
+                    }
+                case .success(let geocoding):
+                    self.geoData = geocoding
+                    guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
+                    self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
+                        switch result {
+                        case .failure(let error):
+                            print(error.localizedDescription)
+                            DispatchQueue.main.async {
+                                self.hideBlurView()
+                                self.showErrorAlert(title: "Oops", message: "Something went wrong")
+                            }
+                        case .success(let weatherData):
+                            self.combiningMethods(weatherData: weatherData)
+                            DispatchQueue.main.async {
+                                self.findCityButton.tintColor = .systemPink
+                            }
+                        }
+                    }
                 }
+            }
+        } else if locationManager.authorizationStatus == .authorizedAlways || locationManager.authorizationStatus == .authorizedWhenInUse {
+            if UserDefaults.standard.value(forKey: "city") != nil {
+                let lastCity = UserDefaults.standard.value(forKey: "city") as! String
+                self.networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] (result: Result<[Geocoding], Error>) in
+                    guard let self = self else { return }
+                    switch result {
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                        DispatchQueue.main.async {
+                            self.hideBlurView()
+                            self.showErrorAlert(title: "Oops", message: "Something went wrong")
+                        }
+                    case .success(let geocoding):
+                        self.geoData = geocoding
+                        guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
+                        self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
+                            switch result {
+                            case .failure(let error):
+                                print(error.localizedDescription)
+                                DispatchQueue.main.async {
+                                    self.hideBlurView()
+                                    self.showErrorAlert(title: "Oops", message: "Something went wrong")
+                                }
+                            case .success(let weatherData):
+                                self.combiningMethods(weatherData: weatherData)
+                                DispatchQueue.main.async {
+                                    self.findCityButton.tintColor = .systemPink
+                                }
+                            }
+                        }
+                    }
+                }
+            } else if UserDefaults.standard.value(forKey: "location") != nil {
+                locationManager.requestLocation()
+                self.geoData = nil
             }
         }
     }
@@ -65,28 +129,59 @@ class MainViewController: UIViewController {
         presentSearchAlertController(withTitle: "Enter city name", message: nil, style: .alert)
     }
     
+    @IBAction func getLocationPressed(_ sender: UIButton) {
+        if locationManager.authorizationStatus == .notDetermined {
+            locationManager.requestWhenInUseAuthorization()
+        } else if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
+            locationManager.requestLocation()
+        }
+    }
+    
     @IBAction func refreshTableView() {
         if geoData != nil {
             self.createAndShowBlurEffectWithActivityIndicator()
             guard let cityName = geoData?.first?.cityName else { return }
-            self.networkWeatherManager.getCoordinatesByName(forCity: cityName) { [weak self] geoData, weatherData in
+            self.networkWeatherManager.getCoordinatesByName(forCity: cityName) { [weak self] (result: Result<[Geocoding], Error>) in
                 guard let self = self else { return }
-                self.saveCurrentData(weatherData: weatherData, geoData: geoData)
-                DispatchQueue.main.async {
-                    self.realmManager.savaData(data: weatherData)
-                    self.updateInterface(hourlyWeather: self.hourlyWeather)
+                switch result {
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    DispatchQueue.main.async {
+                        self.hideBlurView()
+                        self.showErrorAlert(title: "Oops", message: "Something went wrong")
+                    }
+                case .success(let geocoding):
+                    self.geoData = geocoding
+                    guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
+                    self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
+                        switch result {
+                        case .failure(let error):
+                            print(error.localizedDescription)
+                            DispatchQueue.main.async {
+                                self.hideBlurView()
+                                self.showErrorAlert(title: "Oops", message: "Something went wrong")
+                            }
+                        case .success(let weatherData):
+                            self.combiningMethods(weatherData: weatherData)
+                        }
+                    }
                 }
             }
         } else {
             self.createAndShowBlurEffectWithActivityIndicator()
             locationManager.requestLocation()
             guard let coordinate = coordinate else { return }
-            self.networkWeatherManager.getWeatherForCityCoordinates(long: coordinate.longitude, lat: coordinate.latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { [weak self] weatherData in
+            self.networkWeatherManager.getWeatherForCityCoordinates(long: coordinate.longitude, lat: coordinate.latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { [weak self] (result: Result<WeatherData, Error>) in
                 guard let self = self else { return }
-                self.saveCurrentData(weatherData: weatherData, geoData: nil)
-                DispatchQueue.main.async {
-                    self.realmManager.savaData(data: weatherData)
-                    self.updateInterface(hourlyWeather: self.hourlyWeather)
+                switch result {
+                case .success(let weatherData):
+                    self.combiningMethods(weatherData: weatherData)
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    DispatchQueue.main.async {
+                        self.hideBlurView()
+                        self.showErrorAlert(title: "Oops", message: "Something went wrong")
+                    }
                 }
             }
         }
@@ -94,11 +189,18 @@ class MainViewController: UIViewController {
     }
     
     //MARK: - Methods
-    func saveCurrentData(weatherData: WeatherData, geoData: [Geocoding]?) {
+    func combiningMethods(weatherData: WeatherData) {
+        self.saveCurrentData(weatherData: weatherData)
+        DispatchQueue.main.async {
+            self.realmManager.savaData(data: weatherData)
+            self.updateInterface(hourlyWeather: self.hourlyWeather)
+        }
+    }
+    
+    func saveCurrentData(weatherData: WeatherData) {
         self.currentWeather = weatherData
         self.hourlyWeather = weatherData.hourly
         self.dailyWeather = weatherData.daily
-        self.geoData = geoData
     }
     
     func weatherCheck(hourlyWeather: [HourlyWeatherData]?) {
@@ -163,18 +265,16 @@ class MainViewController: UIViewController {
     
     func updateInterface(hourlyWeather: [HourlyWeatherData]?) {
         if self.geoData == nil {
-            self.tableView.reloadData()
             self.title = self.currentWeather?.timeZone
-            self.hideBlurView()
         } else {
             guard let name = self.geoData?.first?.cityName,
                   let country = self.geoData?.first?.country else  { return }
-            self.tableView.reloadData()
             self.title = "\(name), \(country)"
-            self.hideBlurView()
         }
+        self.tableView.reloadData()
         self.removeAllNotification()
         self.weatherCheck(hourlyWeather: hourlyWeather)
+        self.hideBlurView()
     }
 }
 
@@ -219,12 +319,12 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             return currentWeatherCell
         } else if indexPath.section == 1 {
             if let hourlyWeatherData = hourlyWeather {
-                hourlyCell.hourlyArray = hourlyWeatherData
+                hourlyCell.configure(hourlyWeatherData)
             }
             return hourlyCell
         } else {
             if let daily = dailyWeather {
-                cell.configureDailyCell(data: daily[indexPath.row])
+                cell.configureDailyCell(data: daily[indexPath.row], isFirst: indexPath.row == 0)
             }
             return cell
         }
@@ -258,14 +358,22 @@ extension MainViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = manager.location?.coordinate else { return }
         self.coordinate = location
-        
-        if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
-            self.networkWeatherManager.getWeatherForCityCoordinates(long: location.longitude, lat: location.latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { [weak self] weatherData in
-                guard let self = self else { return }
-                self.saveCurrentData(weatherData: weatherData, geoData: nil)
+        self.networkWeatherManager.getWeatherForCityCoordinates(long: location.longitude, lat: location.latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { [weak self] (result: Result<WeatherData, Error>) in
+            guard let self = self else { return }
+            switch result {
+            case .failure(let error):
+                print(error.localizedDescription)
                 DispatchQueue.main.async {
-                    self.realmManager.savaData(data: weatherData)
-                    self.updateInterface(hourlyWeather: self.hourlyWeather)
+                    self.showErrorAlert(title: "Oops", message: "Something went wrong")
+                }
+            case .success(let weatherData):
+                self.combiningMethods(weatherData: weatherData)
+                self.geoData = nil
+                DispatchQueue.main.async {
+                    UserDefaults.standard.removeObject(forKey: "city")
+                    UserDefaults.standard.set(true, forKey: "location")
+                    self.findCityButton.tintColor = .systemCyan
+                    self.getLocationButton.tintColor = .systemPink
                 }
             }
         }
@@ -273,5 +381,26 @@ extension MainViewController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(error.localizedDescription)
+    }
+    
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        if manager.authorizationStatus == .authorizedWhenInUse || manager.authorizationStatus == .authorizedAlways {
+            if UserDefaults.standard.value(forKey: "city") != nil {
+                self.findCityButton.tintColor = .systemPink
+                self.getLocationButton.tintColor = .systemCyan
+                self.getLocationButton.isEnabled = true
+            } else if UserDefaults.standard.value(forKey: "location") != nil {
+                locationManager.requestLocation()
+                self.getLocationButton.isEnabled = true
+            } else {
+                locationManager.requestLocation()
+                self.getLocationButton.isEnabled = true
+            }
+        } else if manager.authorizationStatus == .restricted || manager.authorizationStatus == .denied {
+            self.getLocationButton.isEnabled = false
+            UserDefaults.standard.removeObject(forKey: "location")
+        } else if manager.authorizationStatus == .notDetermined {
+            self.getLocationButton.isEnabled = true
+        }
     }
 }

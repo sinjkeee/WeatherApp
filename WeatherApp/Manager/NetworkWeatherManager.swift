@@ -1,8 +1,8 @@
 import Foundation
 
 protocol RestAPIProviderProtocol {
-    func getCoordinatesByName(forCity city: String, completionHandler: @escaping ([Geocoding], WeatherData) -> Void)
-    func getWeatherForCityCoordinates(long: Double, lat: Double, withLang lang: Languages, withUnitsOfmeasurement units: Units, completionHandler: @escaping (WeatherData) -> Void)
+    func getCoordinatesByName(forCity city: String, completionHandler: @escaping (Result<[Geocoding], Error>) -> Void)
+    func getWeatherForCityCoordinates(long: Double, lat: Double, withLang lang: Languages, withUnitsOfmeasurement units: Units, completionHandler: @escaping (Result<WeatherData, Error>) -> Void)
 }
 
 class NetworkWeatherManager: RestAPIProviderProtocol {
@@ -12,46 +12,48 @@ class NetworkWeatherManager: RestAPIProviderProtocol {
         return key
     }
     
-    func getCoordinatesByName(forCity city: String, completionHandler: @escaping ([Geocoding], WeatherData) -> Void) {
+    func getCoordinatesByName(forCity city: String, completionHandler: @escaping (Result<[Geocoding], Error>) -> Void) {
         let newCity = city.trimmingCharacters(in: .whitespaces).split(separator: " ").joined(separator: "%20")
-        let endpoint = Endpoint.geocodingURL(key: apiKey, city: newCity)
-        var urlRequest = URLRequest(url: endpoint.url)
+        guard let name = newCity.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed) else { return }
+        let endpoint = Endpoint.geocodingURL(key: apiKey, city: name)
+        guard let url = endpoint.url else {
+            completionHandler(.failure(Error.self as! Error))
+            return
+        }
+        var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "GET"
-        apiRequestAndParseJSON(urlRequest: urlRequest) { [weak self] (weatherData: [Geocoding]) in
-            guard let lon = weatherData.first?.lon,
-                  let lat = weatherData.first?.lat,
-                  let self = self
-            else { return }
-            let geoData = weatherData
-            self.getWeatherForCityCoordinates(long: lon, lat: lat, withLang: .english, withUnitsOfmeasurement: .celsius) { weatherData in
-                completionHandler(geoData, weatherData)
-            }
+        apiRequestAndParseJSON(urlRequest: urlRequest) { (result: Result<[Geocoding], Error>) in
+            completionHandler(result)
         }
     }
     
-    func getWeatherForCityCoordinates(long: Double, lat: Double, withLang lang: Languages, withUnitsOfmeasurement units: Units, completionHandler: @escaping (WeatherData) -> Void) {
+    func getWeatherForCityCoordinates(long: Double, lat: Double, withLang lang: Languages, withUnitsOfmeasurement units: Units, completionHandler: @escaping (Result<WeatherData, Error>) -> Void) {
         let endpoint = Endpoint.currentWeather(lat: lat, lon: long, key: apiKey, lang: lang.shortName, units: units.code)
-        var urlRequest = URLRequest(url: endpoint.url)
+        guard let url = endpoint.url else {
+            completionHandler(.failure(Error.self as! Error))
+            return
+        }
+        var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "GET"
-        apiRequestAndParseJSON(urlRequest: urlRequest) { (weatherData: WeatherData) in
-            completionHandler(weatherData)
+        apiRequestAndParseJSON(urlRequest: urlRequest) { (result: Result<WeatherData, Error>) in
+            completionHandler(result)
         }
     }
     
-    func apiRequestAndParseJSON<T: Codable>(urlRequest: URLRequest, completionHandler: @escaping (T) -> Void) {
+    func apiRequestAndParseJSON<T: Codable>(urlRequest: URLRequest, completionHandler: @escaping (Result<T, Error>) -> Void) {
         let session = URLSession(configuration: .default)
         let dataTask = session.dataTask(with: urlRequest) { data, response, error in
             if let error = error {
-                print(error)
+                completionHandler(.failure(error))
             }
             
             if let data = data {
                 let decoder = JSONDecoder()
                 do {
                     let currentWeather = try decoder.decode(T.self, from: data)
-                    completionHandler(currentWeather)
+                    completionHandler(.success(currentWeather))
                 } catch {
-                    print(error)
+                    completionHandler(.failure(error))
                 }
             }
         }

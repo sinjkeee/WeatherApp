@@ -10,12 +10,44 @@ extension MainViewController {
             guard let cityName = textField.text else { return }
             if textField.hasText {
                 self.createAndShowBlurEffectWithActivityIndicator()
-                self.networkWeatherManager.getCoordinatesByName(forCity: cityName) { [weak self] geoData, weatherData in
+                self.networkWeatherManager.getCoordinatesByName(forCity: cityName) { [weak self] (result: Result<[Geocoding], Error>) in
                     guard let self = self else { return }
-                    self.saveCurrentData(weatherData: weatherData, geoData: geoData)
-                    DispatchQueue.main.async {
-                        self.realmManager.savaData(data: weatherData)
-                        self.updateInterface(hourlyWeather: self.hourlyWeather)
+                    switch result {
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                        DispatchQueue.main.async {
+                            self.hideBlurView()
+                            self.showErrorAlert(title: "Oops", message: "Something went wrong")
+                        }
+                    case .success(let geocoding):
+                        if !geocoding.isEmpty {
+                            self.geoData = geocoding
+                            guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
+                            self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
+                                switch result {
+                                case .failure(let error):
+                                    print(error.localizedDescription)
+                                    DispatchQueue.main.async {
+                                        self.hideBlurView()
+                                        self.showErrorAlert(title: "Oops", message: "Something went wrong")
+                                    }
+                                case .success(let weatherData):
+                                    self.combiningMethods(weatherData: weatherData)
+                                    DispatchQueue.main.async {
+                                        UserDefaults.standard.removeObject(forKey: "location")
+                                        UserDefaults.standard.removeObject(forKey: "city")
+                                        UserDefaults.standard.set("\(cityName)", forKey: "city")
+                                        self.getLocationButton.tintColor = .systemCyan
+                                        self.findCityButton.tintColor = .systemPink
+                                    }
+                                }
+                            }
+                        } else {
+                            DispatchQueue.main.async {
+                                self.hideBlurView()
+                                self.showErrorAlert(title: "City not found!", message: "Check city name and try again")
+                            }
+                        }
                     }
                 }
             }
@@ -70,5 +102,12 @@ extension MainViewController {
         gradient.endPoint = CGPoint(x: 1.0, y: 1.0)
         gradient.frame = view.bounds
         view.layer.insertSublayer(gradient, at: 0)
+    }
+    
+    func showErrorAlert(title: String, message: String) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let okeyButton = UIAlertAction(title: "Ok", style: .default, handler: nil)
+        alertController.addAction(okeyButton)
+        present(alertController, animated: true)
     }
 }
