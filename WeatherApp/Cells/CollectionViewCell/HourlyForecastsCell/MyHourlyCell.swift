@@ -16,7 +16,7 @@ class MyHourlyCell: UICollectionViewCell {
               let temp = weather.temp,
               let time = weather.dt?.changeDate(dateFormat: .hours)
         else { return }
-        timeLabel.text = isFirst ? "Now" : "\(time)h"
+        timeLabel.text = isFirst ? "Now".localized() : "\(time)"
         imageView.getImageFromTheInternet(icon)
         temperatureLabel.text = "\(Int(temp))˚"
     }

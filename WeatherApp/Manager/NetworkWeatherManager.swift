@@ -76,7 +76,7 @@ enum Languages {
     var shortName: String {
         switch self {
         case .russian: return "ru"
-        case .english: return "en"
+        case .english: return "en Languages".localized()
         case .arabic: return "ar"
         case .german: return "de"
         case .french: return "fr"

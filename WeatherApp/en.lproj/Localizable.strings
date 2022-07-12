@@ -1,0 +1,54 @@
+//MARK: - titleForHeaderInSection
+"Current weather" = "Current weather";
+"Hourly forecasts" = "Hourly forecasts";
+"Daily forecasts" = "Daily forecasts";
+
+//MARK: - CurrentWeatherCell
+"WIND SPEED" = "WIND SPEED";
+"FEELS LIKE" = "FEELS LIKE";
+"HUMIDITY" = "HUMIDITY";
+"km/h CurrentWeatherCell" = " km/h";
+
+//MARK: - DailyWeatherCell
+"km/h DailyWeatherCell" = "km/h";
+"Today" = "Today";
+
+//MARK: - MyHourlyCell
+"Now" = "Now";
+
+//MARK: - MarkerWindowView
+"WIND SPEED MARKER" = "WIND SPEED";
+"TEMPERATURE MARKER" = "TEMPERATURE";
+"km/h MarkerWindowView" = " km/h";
+
+//MARK: - changeDate
+"en_US changeDate" = "en_US";
+
+//MARK: - Languages
+"en Languages" = "en";
+
+//MARK: - presentSearchAlertController
+"Enter city name" = "Enter city name";
+"Search" = "Search";
+"Cancel" = "Cancel";
+"Moscow" = "Moscow";
+"Minsk" = "Minsk";
+"Istambul" = "Istambul";
+"Viena" = "Viena";
+"Brest" = "Brest";
+
+//MARK: - showErrorAlert
+"Ok" = "Ok";
+"City not found!" = "City not found!";
+"Check city name and try again" = "Check city name and try again";
+"Oops" = "Oops";
+"Something went wrong" = "Something went wrong";
+
+//MARK: - setLocalNotification
+"Attention!" = "Attention!";
+"There will be a storm soon!" = "There will be a storm soon!";
+"There will be a rain soon!" = "There will be a rain soon!";
+"There will be a snow soon!" = "There will be a snow soon!";
+
+//MARK: - MapViewController
+"Map" = "Map";

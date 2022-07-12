@@ -6,13 +6,18 @@ class MarkerWindowView: UIView {
     @IBOutlet weak var windSpeed: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
     
+    @IBOutlet weak var windSpeedNameLabel: UILabel!
+    @IBOutlet weak var tempNameLabel: UILabel!
+    
     func configure(weather: WeatherData, url: URL) {
         guard let windSpeed = weather.current?.windSpeed,
               let temperature = weather.current?.temp,
               let data = try? Data(contentsOf: url)
         else { return }
+        self.windSpeedNameLabel.text = "WIND SPEED MARKER".localized()
+        self.tempNameLabel.text = "TEMPERATURE MARKER".localized()
         self.imageView.image = UIImage(data: data)
-        self.windSpeed.text = "\(windSpeed) km/h"
+        self.windSpeed.text = "\(windSpeed)"+"km/h MarkerWindowView".localized()
         self.temperatureLabel.text = "\(Int(temperature))˚C"
         self.layer.cornerRadius = 40
         self.layer.borderWidth = 1

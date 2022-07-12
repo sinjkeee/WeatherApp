@@ -1,0 +1,4 @@
+NSLocationAlwaysAndWhenInUseUsageDescription = "Нам нужны данные о вашем местоположении, чтобы предоставлять информацию о погоде.";
+NSLocationUsageDescription = "Нам нужны данные о вашем местоположении, чтобы предоставлять информацию о погоде.";
+NSLocationWhenInUseUsageDescription = "Нам нужны данные о вашем местоположении, чтобы предоставлять информацию о погоде.";
+CFBundleDisplayName = "Погода";

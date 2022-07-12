@@ -25,6 +25,8 @@ class MapViewController: UIViewController {
             make.top.trailing.leading.equalToSuperview()
             make.bottom.equalToSuperview().inset(frame)
         }
+        
+        self.title = "Map".localized()
     }
     
     //MARK: - viewDidAppear

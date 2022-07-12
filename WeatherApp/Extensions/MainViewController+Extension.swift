@@ -5,7 +5,7 @@ import SnapKit
 extension MainViewController {
     func presentSearchAlertController(withTitle title: String?, message: String?, style: UIAlertController.Style) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: style)
-        let searchButton = UIAlertAction(title: "Search", style: .cancel) { _ in
+        let searchButton = UIAlertAction(title: "Search".localized(), style: .cancel) { _ in
             guard let textField = alert.textFields?.first else { return }
             guard let cityName = textField.text else { return }
             if textField.hasText {
@@ -17,7 +17,7 @@ extension MainViewController {
                         print(error.localizedDescription)
                         DispatchQueue.main.async {
                             self.hideBlurView()
-                            self.showErrorAlert(title: "Oops", message: "Something went wrong")
+                            self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
                         }
                     case .success(let geocoding):
                         if !geocoding.isEmpty {
@@ -29,7 +29,7 @@ extension MainViewController {
                                     print(error.localizedDescription)
                                     DispatchQueue.main.async {
                                         self.hideBlurView()
-                                        self.showErrorAlert(title: "Oops", message: "Something went wrong")
+                                        self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
                                     }
                                 case .success(let weatherData):
                                     self.combiningMethods(weatherData: weatherData)
@@ -45,7 +45,7 @@ extension MainViewController {
                         } else {
                             DispatchQueue.main.async {
                                 self.hideBlurView()
-                                self.showErrorAlert(title: "City not found!", message: "Check city name and try again")
+                                self.showErrorAlert(title: "City not found!".localized(), message: "Check city name and try again".localized())
                             }
                         }
                     }
@@ -53,9 +53,9 @@ extension MainViewController {
             }
         }
         
-        let cancelButton = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+        let cancelButton = UIAlertAction(title: "Cancel".localized(), style: .default, handler: nil)
         alert.addTextField { textField in
-            let cities = ["Moscow", "Minsk", "Istambul", "Viena", "Brest"]
+            let cities = ["Moscow".localized(), "Minsk".localized(), "Istambul".localized(), "Viena".localized(), "Brest".localized()]
             textField.placeholder = cities.randomElement()
         }
         
@@ -106,7 +106,7 @@ extension MainViewController {
     
     func showErrorAlert(title: String, message: String) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let okeyButton = UIAlertAction(title: "Ok", style: .default, handler: nil)
+        let okeyButton = UIAlertAction(title: "Ok".localized(), style: .default, handler: nil)
         alertController.addAction(okeyButton)
         present(alertController, animated: true)
     }

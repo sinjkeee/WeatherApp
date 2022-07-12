@@ -51,7 +51,7 @@ class HistoryCell: UITableViewCell {
         guard let long = data.coordinate?.lot, let latit = data.coordinate?.lat else { return }
         self.dateLabel.text = data.time.changeDate(dateFormat: .fullTime)
         self.coordinateLabel.text = "longitude: \(long) latitude: \(latit)"
-        self.temperatureLabel.text = "температура: \(Int(data.temp)) °C"
+        self.temperatureLabel.text = "temperature: \(Int(data.temp)) °C"
         self.cityName.text = data.timeZone
     }
     

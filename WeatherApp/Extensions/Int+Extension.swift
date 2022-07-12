@@ -5,7 +5,7 @@ extension Int {
     func changeDate(dateFormat: DateFormat) -> String {
         let date = Date(timeIntervalSince1970: TimeInterval(self))
         let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "en_US")
+        dateFormatter.locale = Locale(identifier: "en_US changeDate".localized())
         dateFormatter.dateFormat = dateFormat.getString
         dateFormatter.timeZone = .current
         return dateFormatter.string(from: date)

@@ -9,9 +9,12 @@ class DailyWeatherCell: UITableViewCell {
     @IBOutlet weak var tempMaxLabel: UILabel!
     @IBOutlet weak var tmepMinLabel: UILabel!
     
+    @IBOutlet weak var windSpeedKm: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         
+        self.windSpeedKm.text = "km/h DailyWeatherCell".localized()
     }
     
     func configureDailyCell(data: DailyWeatherData, isFirst: Bool) {
@@ -22,7 +25,7 @@ class DailyWeatherCell: UITableViewCell {
         else { return }
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            self.dayNameLabel.text = isFirst ? "Today" : data.dt?.changeDate(dateFormat: .weekday)
+            self.dayNameLabel.text = isFirst ? "Today".localized() : data.dt?.changeDate(dateFormat: .weekday).capitalized
             self.imageViewForThisCell.getImageFromTheInternet(icon)
             self.windSpeedLabel.text = "\(windSpeed)"
             self.tempMaxLabel.text = "\(Int(tempMax))˚"
