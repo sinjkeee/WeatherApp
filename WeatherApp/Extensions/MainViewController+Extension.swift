@@ -117,7 +117,7 @@ extension MainViewController {
 extension MainViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         
-        if CharacterSet(charactersIn: "qwertyuiopasdfghjklzxcvbnm ёйцукенгшщзхъфывапролджэячсмитьбю QWERTYUIOPASDFGHJKLZXCVBNM ЁЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ").isSuperset(of: CharacterSet(charactersIn: string)) {
+        if CharacterSet(charactersIn: "qwertyuiopasdfghjklzxcvbnm ёйцукенгшщзхъфывапролджэячсмитьбю QWERTYUIOPASDFGHJKLZXCVBNM ЁЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ-").isSuperset(of: CharacterSet(charactersIn: string)) {
             return true
         } else {
             return false
