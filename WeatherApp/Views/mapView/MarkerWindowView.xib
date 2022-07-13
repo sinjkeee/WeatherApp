@@ -82,8 +82,10 @@
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
                 <outlet property="imageView" destination="AQg-lG-VQj" id="A1g-Gp-vNt"/>
+                <outlet property="tempNameLabel" destination="Dwx-JE-BZn" id="vS1-w1-ibn"/>
                 <outlet property="temperatureLabel" destination="v5g-3m-NeN" id="ysu-YO-KlN"/>
                 <outlet property="windSpeed" destination="ExI-cB-sJ4" id="hd9-NT-8Dh"/>
+                <outlet property="windSpeedNameLabel" destination="E6F-2V-uJv" id="ikr-Tu-ycN"/>
             </connections>
             <point key="canvasLocation" x="280" y="-151"/>
         </view>

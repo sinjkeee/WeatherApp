@@ -1,0 +1,65 @@
+//MARK: - titleForHeaderInSection
+"Current weather" = "Текущая погода";
+"Hourly forecasts" = "Почасовой прогноз погоды";
+"Daily forecasts" = "Суточный прогноз погоды";
+
+//MARK: - CurrentWeatherCell
+"FEELS LIKE" = "ПО ОЩУЩЕНИЯМ";
+"HUMIDITY" = "ВЛАЖНОСТЬ";
+
+//MARK: - wind speed
+"WIND SPEED" = "ВЕТЕР";
+
+////MARK: - city name
+"key" = "ru";
+
+//MARK: - km/h
+"km/h" = "км/ч";
+
+//MARK: - DailyWeatherCell
+"Today" = "Сегодня";
+
+//MARK: - MyHourlyCell
+"Now" = "Сейчас";
+
+//MARK: - MarkerWindowView
+"TEMPERATURE MARKER" = "ТЕМПЕРАТУРА";
+
+//MARK: - Languages
+"languages" = "ru";
+
+//MARK: - presentSearchAlertController
+"Enter city name" = "Введите город";
+"Search" = "Поиск";
+"Cancel" = "Отмена";
+"Moscow" = "Москва";
+"Minsk" = "Минск";
+"Istambul" = "Стамбул";
+"Viena" = "Вена";
+"Brest" = "Брест";
+
+//MARK: - showErrorAlert
+"Ok" = "Понял";
+"City not found!" = "Город не найден!";
+"Check city name and try again" = "Проверьте название города и попробуйте снова";
+"Oops" = "Ой";
+"Something went wrong" = "Что-то пошло не так";
+
+//MARK: - setLocalNotification
+"Attention!" = "Внимание!";
+"There will be a storm soon!" = "Скоро будет гроза!";
+"There will be a rain soon!" = "Скоро будет дождь!";
+"There will be a snow soon!" = "Скоро будет снег!";
+
+//MARK: - HistoryCell
+"Longitude:" = "Долгота:";
+"Latitude:" = "Широта:";
+"Temperature:" = "Температура воздуха:";
+"Wind speed:" = "Скорость ветра:";
+"km/h HistoryCell" = " км/ч";
+"Data from the request from the maps" = "Данные получены с карты";
+"Data from the request from the main screen" = "Данные получены из запроса на главном экране";
+
+//MARK: - TabBarItem
+"Map" = "Карта";
+"History" = "История";

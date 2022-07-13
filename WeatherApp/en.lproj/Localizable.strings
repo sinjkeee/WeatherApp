@@ -1,0 +1,65 @@
+//MARK: - titleForHeaderInSection
+"Current weather" = "Current weather";
+"Hourly forecasts" = "Hourly forecasts";
+"Daily forecasts" = "Daily forecasts";
+
+//MARK: - CurrentWeatherCell
+"FEELS LIKE" = "FEELS LIKE";
+"HUMIDITY" = "HUMIDITY";
+
+//MARK: - wind speed
+"WIND SPEED" = "WIND SPEED";
+
+////MARK: - city name
+"key" = "en";
+
+//MARK: - km/h
+"km/h" = "km/h";
+
+//MARK: - DailyWeatherCell
+"Today" = "Today";
+
+//MARK: - MyHourlyCell
+"Now" = "Now";
+
+//MARK: - MarkerWindowView
+"TEMPERATURE MARKER" = "TEMPERATURE";
+
+//MARK: - Languages
+"languages" = "en";
+
+//MARK: - presentSearchAlertController
+"Enter city name" = "Enter city name";
+"Search" = "Search";
+"Cancel" = "Cancel";
+"Moscow" = "Moscow";
+"Minsk" = "Minsk";
+"Istambul" = "Istambul";
+"Viena" = "Viena";
+"Brest" = "Brest";
+
+//MARK: - showErrorAlert
+"Ok" = "Ok";
+"City not found!" = "City not found!";
+"Check city name and try again" = "Check city name and try again";
+"Oops" = "Oops";
+"Something went wrong" = "Something went wrong";
+
+//MARK: - setLocalNotification
+"Attention!" = "Attention!";
+"There will be a storm soon!" = "There will be a storm soon!";
+"There will be a rain soon!" = "There will be a rain soon!";
+"There will be a snow soon!" = "There will be a snow soon!";
+
+//MARK: - HistoryCell
+"Longitude:" = "Longitude:";
+"Latitude:" = "Latitude:";
+"Temperature:" = "Temperature:";
+"Wind speed:" = "Wind speed:";
+"km/h HistoryCell" = " km/h";
+"Data from the request from the maps" = "Data from the request from the maps";
+"Data from the request from the main screen" = "Data from the request from the main screen";
+
+//MARK: - TabBarItem
+"Map" = "Map";
+"History" = "History";

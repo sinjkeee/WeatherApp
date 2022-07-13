@@ -1,0 +1,4 @@
+NSLocationAlwaysAndWhenInUseUsageDescription = "We need your lication data to provide weather information.";
+NSLocationUsageDescription = "We need your lication data to provide weather information.";
+NSLocationWhenInUseUsageDescription = "We need your lication data to provide weather information.";
+CFBundleDisplayName = "WeatherApp";

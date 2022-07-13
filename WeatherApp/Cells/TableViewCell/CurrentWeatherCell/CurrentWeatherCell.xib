@@ -134,10 +134,13 @@
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <connections>
                 <outlet property="descriptionLabel" destination="OeC-Aw-5KF" id="XQM-Tj-fxo"/>
+                <outlet property="feelsLike" destination="1F9-VE-wBl" id="bGh-Sk-4wA"/>
                 <outlet property="feelsLikeLabel" destination="WG5-Fw-Hr9" id="L39-rC-5w1"/>
+                <outlet property="humidity" destination="ZRq-HW-hpz" id="Lvy-5g-h6H"/>
                 <outlet property="humidityLabel" destination="af3-UK-2sN" id="kJ3-ot-Akh"/>
                 <outlet property="imageViewForCurrentWeather" destination="Oth-UU-PHt" id="QoY-h3-Xdd"/>
                 <outlet property="temperatureLabel" destination="UbD-cx-71R" id="koZ-eO-MTd"/>
+                <outlet property="windSpeed" destination="qNh-7Y-BVs" id="vvj-3B-4TN"/>
                 <outlet property="windSpeedLabel" destination="YrJ-Mz-rrF" id="6lW-Kr-XaK"/>
             </connections>
             <point key="canvasLocation" x="105.07246376811595" y="170.42410714285714"/>

@@ -9,9 +9,16 @@ class CurrentWeatherCell: UITableViewCell {
     @IBOutlet weak var feelsLikeLabel: UILabel!
     @IBOutlet weak var humidityLabel: UILabel!
     
+    @IBOutlet weak var windSpeed: UILabel!
+    @IBOutlet weak var feelsLike: UILabel!
+    @IBOutlet weak var humidity: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        
+        self.windSpeed.text = "WIND SPEED".localized()
+        self.feelsLike.text = "FEELS LIKE".localized()
+        self.humidity.text = "HUMIDITY".localized()
     }
     
     func configureCurrentWeatherCell(data: WeatherData) {
@@ -26,7 +33,7 @@ class CurrentWeatherCell: UITableViewCell {
         self.descriptionLabel.text = description.capitalized
         self.imageViewForCurrentWeather.getImageFromTheInternet(icon)
         self.temperatureLabel.text = "\(Int(temp))˚"
-        self.windSpeedLabel.text = "\(windSpeed) km/h"
+        self.windSpeedLabel.text = "\(windSpeed) \("km/h".localized())"
         self.feelsLikeLabel.text = "\(Int(feelsLikeTemp))˚"
         self.humidityLabel.text = "\(humidity) %"
     }

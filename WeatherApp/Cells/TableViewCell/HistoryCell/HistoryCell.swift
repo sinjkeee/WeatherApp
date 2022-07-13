@@ -3,56 +3,33 @@ import SnapKit
 
 class HistoryCell: UITableViewCell {
     
-    var dateLabel = UILabel()
-    var coordinateLabel = UILabel()
-    var temperatureLabel = UILabel()
-    var cityName = UILabel()
-    
+    @IBOutlet weak var dateLabel: UILabel!
+    @IBOutlet weak var longNameLabel: UILabel!
+    @IBOutlet weak var longValueLabel: UILabel!
+    @IBOutlet weak var latNameLabel: UILabel!
+    @IBOutlet weak var latValueLabel: UILabel!
+    @IBOutlet weak var tempNameLabel: UILabel!
+    @IBOutlet weak var tempValueLabel: UILabel!
+    @IBOutlet weak var windSpeedNameLabel: UILabel!
+    @IBOutlet weak var windSpeedValueLabel: UILabel!
+    @IBOutlet weak var fromDataLabel: UILabel!
+      
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        cityName.text = ""
-        dateLabel.text = ""
-        coordinateLabel.text = ""
-        temperatureLabel.text = ""
-        cityName.textColor = .red
-        contentView.addSubview(dateLabel)
-        contentView.addSubview(cityName)
-        contentView.addSubview(coordinateLabel)
-        contentView.addSubview(temperatureLabel)
-        
-        dateLabel.snp.makeConstraints { make in
-            make.height.equalTo(30)
-            make.top.equalToSuperview().inset(8)
-            make.right.left.equalToSuperview().inset(16)
-        }
-        
-        cityName.snp.makeConstraints { make in
-            make.height.equalTo(30)
-            make.right.left.equalToSuperview().inset(16)
-            make.top.equalTo(dateLabel.snp.bottom).inset(4)
-        }
-        
-        coordinateLabel.snp.makeConstraints { make in
-            make.height.equalTo(30)
-            make.left.right.equalToSuperview().inset(16)
-            make.top.equalTo(cityName.snp.bottom).inset(4)
-        }
-        
-        temperatureLabel.snp.makeConstraints { make in
-            make.height.equalTo(30)
-            make.right.left.equalToSuperview().inset(16)
-            make.top.equalTo(coordinateLabel.snp.bottom).inset(4)
-            make.bottom.equalToSuperview().inset(8)
-        }
+        self.longNameLabel.text = "Longitude:".localized()
+        self.latNameLabel.text = "Latitude:".localized()
+        self.tempNameLabel.text = "Temperature:".localized()
+        self.windSpeedNameLabel.text = "Wind speed:".localized()
     }
     
     func configure(data: CurrentWeatherForRealm) {
-        guard let long = data.coordinate?.lot, let latit = data.coordinate?.lat else { return }
-        self.dateLabel.text = data.time.changeDate(dateFormat: .fullTime)
-        self.coordinateLabel.text = "longitude: \(long) latitude: \(latit)"
-        self.temperatureLabel.text = "температура: \(Int(data.temp)) °C"
-        self.cityName.text = data.timeZone
+        guard let long = data.coordinate?.lot, let lat = data.coordinate?.lat else { return }
+        self.dateLabel.text = data.time.changeDate(dateFormat: .fullTime).capitalized
+        self.longValueLabel.text = "\(long)"
+        self.latValueLabel.text = "\(lat)"
+        self.tempValueLabel.text = "\(data.temp)˚"
+        self.windSpeedValueLabel.text = "\(data.windSpeed)"+"km/h HistoryCell".localized()
+        self.fromDataLabel.text = data.isMap ? "Data from the request from the maps".localized() : "Data from the request from the main screen".localized()
     }
-    
 }
