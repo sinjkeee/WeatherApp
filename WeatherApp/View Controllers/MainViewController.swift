@@ -47,12 +47,12 @@ class MainViewController: UIViewController {
         
         self.addGradient()
         
-        let appearance = UITabBarAppearance()
-        appearance.backgroundEffect = .none
-        appearance.backgroundColor = .clear
-        appearance.shadowColor = .clear
-        tabBarController?.tabBar.backgroundColor = .clear
-        tabBarController?.tabBar.scrollEdgeAppearance = appearance
+//        let appearance = UITabBarAppearance()
+//        appearance.backgroundEffect = .none
+//        appearance.backgroundColor = .clear
+//        appearance.shadowColor = .clear
+//        tabBarController?.tabBar.backgroundColor = .clear
+//        tabBarController?.tabBar.scrollEdgeAppearance = appearance
         
         if locationManager.authorizationStatus == .denied || locationManager.authorizationStatus == .notDetermined {
             let lastCity = UserDefaults.standard.value(forKey: "city") != nil ? UserDefaults.standard.value(forKey: "city") as! String : "Kaliningrad"

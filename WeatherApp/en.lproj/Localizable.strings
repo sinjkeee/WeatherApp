@@ -50,9 +50,6 @@
 "There will be a rain soon!" = "There will be a rain soon!";
 "There will be a snow soon!" = "There will be a snow soon!";
 
-//MARK: - MapViewController
-"Map" = "Map";
-
 //MARK: - HistoryCell
 "Longitude:" = "Longitude:";
 "Latitude:" = "Latitude:";
@@ -61,3 +58,7 @@
 "km/h HistoryCell" = " km/h";
 "Data from the request from the maps" = "Data from the request from the maps";
 "Data from the request from the main screen" = "Data from the request from the main screen";
+
+//MARK: - TabBarItem
+"Map" = "Map";
+"History" = "History";

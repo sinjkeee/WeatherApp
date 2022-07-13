@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="dZQ-ar-zuI">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="NfI-pY-ljc">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
@@ -8,27 +8,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Tab Bar Controller-->
-        <scene sceneID="GI9-Jm-30T">
-            <objects>
-                <tabBarController id="dZQ-ar-zuI" sceneMemberID="viewController">
-                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Cxd-9s-CDI">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="49"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <tabBarAppearance key="standardAppearance"/>
-                        <tabBarAppearance key="scrollEdgeAppearance"/>
-                    </tabBar>
-                    <connections>
-                        <segue destination="F2N-k4-sqV" kind="relationship" relationship="viewControllers" id="Z7l-ZM-EqD"/>
-                        <segue destination="9C0-bx-sNO" kind="relationship" relationship="viewControllers" id="rSc-3m-Nax"/>
-                        <segue destination="rWz-5s-psL" kind="relationship" relationship="viewControllers" id="koM-hp-oBO"/>
-                    </connections>
-                </tabBarController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="OuZ-mi-9eB" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1566" y="708"/>
-        </scene>
-        <!--Main View Controller-->
+        <!--City name-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController storyboardIdentifier="MainViewController" id="BYZ-38-t0r" customClass="MainViewController" customModule="WeatherApp" customModuleProvider="target" sceneMemberID="viewController">
@@ -37,7 +17,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="0Kb-fK-oho">
-                                <rect key="frame" x="0.0" y="44" width="375" height="574"/>
+                                <rect key="frame" x="0.0" y="44" width="375" height="623"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="separatorColor" red="0.44708836079999997" green="0.47892314200000002" blue="0.45097696780000002" alpha="0.40000000000000002" colorSpace="custom" customColorSpace="displayP3"/>
                                 <color key="sectionIndexBackgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -52,7 +32,7 @@
                             <constraint firstItem="0Kb-fK-oho" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="ege-IU-iBr"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="Feq-6N-WcL">
+                    <navigationItem key="navigationItem" title="City name" id="Feq-6N-WcL">
                         <rightBarButtonItems>
                             <barButtonItem style="done" id="GET-r8-oce">
                                 <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="vzr-ve-gRw">
@@ -91,7 +71,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3624.6376811594205" y="706.47321428571422"/>
+            <point key="canvasLocation" x="3288.8000000000002" y="769.56521739130437"/>
         </scene>
         <!--Map-->
         <scene sceneID="Bek-Hv-MaJ">
@@ -110,7 +90,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8V2-MT-A3i" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3397.1014492753625" y="1592.4107142857142"/>
+            <point key="canvasLocation" x="4007.1999999999998" y="769.56521739130437"/>
         </scene>
         <!--History-->
         <scene sceneID="JUS-5y-gGh">
@@ -126,54 +106,31 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ICj-o1-zHi" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5305.7971014492759" y="1593.0803571428571"/>
+            <point key="canvasLocation" x="4716" y="769.56521739130437"/>
         </scene>
-        <!--Weather-->
-        <scene sceneID="e5F-15-6IE">
+        <!--Navigation Controller-->
+        <scene sceneID="kVM-gI-mS8">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="F2N-k4-sqV" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Weather" image="thermometer" catalog="system" id="OQ7-MC-HyW"/>
+                <navigationController storyboardIdentifier="firstNavi" automaticallyAdjustsScrollViewInsets="NO" id="NfI-pY-ljc" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="RmV-Vv-k3j">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="ifo-up-7Mw">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="Psd-Hc-28o"/>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="QkH-7N-JRw"/>
                     </connections>
                 </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Rdz-m2-qTe" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Sih-2u-mCc" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2686" y="707"/>
-        </scene>
-        <!--History-->
-        <scene sceneID="qgF-Vj-CJI">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="rWz-5s-psL" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="History" image="chart.bar.doc.horizontal" catalog="system" id="cXe-Tv-jMh"/>
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="EBw-yL-OJU">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="96"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="RiJ-Q0-jvO" kind="relationship" relationship="rootViewController" id="fSs-8L-HCl"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="po0-gm-kzw" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="4366.666666666667" y="1593.0803571428571"/>
+            <point key="canvasLocation" x="2349.5999999999999" y="769.56521739130437"/>
         </scene>
     </scenes>
     <resources>
-        <image name="chart.bar.doc.horizontal" catalog="system" width="115" height="128"/>
         <image name="globe.europe.africa" catalog="system" width="128" height="121"/>
         <image name="location" catalog="system" width="128" height="118"/>
         <image name="magnifyingglass" catalog="system" width="128" height="115"/>
-        <image name="thermometer" catalog="system" width="81" height="128"/>
         <systemColor name="secondarySystemBackgroundColor">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>

@@ -57,6 +57,7 @@ extension MainViewController {
         alert.addTextField { textField in
             let cities = ["Moscow".localized(), "Minsk".localized(), "Istambul".localized(), "Viena".localized(), "Brest".localized()]
             textField.placeholder = cities.randomElement()
+            textField.delegate = self
         }
         
         alert.addAction(searchButton)
@@ -109,5 +110,17 @@ extension MainViewController {
         let okeyButton = UIAlertAction(title: "Ok".localized(), style: .default, handler: nil)
         alertController.addAction(okeyButton)
         present(alertController, animated: true)
+    }
+}
+
+
+extension MainViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        if CharacterSet(charactersIn: "qwertyuiopasdfghjklzxcvbnm ёйцукенгшщзхъфывапролджэячсмитьбю").isSuperset(of: CharacterSet(charactersIn: string)) {
+            return true
+        } else {
+            return false
+        }
     }
 }

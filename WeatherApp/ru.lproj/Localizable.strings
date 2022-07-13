@@ -50,9 +50,6 @@
 "There will be a rain soon!" = "Скоро будет дождь!";
 "There will be a snow soon!" = "Скоро будет снег!";
 
-//MARK: - MapViewController
-"Map" = "Карта";
-
 //MARK: - HistoryCell
 "Longitude:" = "Долгота:";
 "Latitude:" = "Широта:";
@@ -61,3 +58,7 @@
 "km/h HistoryCell" = " км/ч";
 "Data from the request from the maps" = "Данные получены с карты";
 "Data from the request from the main screen" = "Данные получены из запроса на главном экране";
+
+//MARK: - TabBarItem
+"Map" = "Карта";
+"History" = "История";
