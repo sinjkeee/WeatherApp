@@ -4,28 +4,29 @@
 "Daily forecasts" = "Daily forecasts";
 
 //MARK: - CurrentWeatherCell
-"WIND SPEED" = "WIND SPEED";
 "FEELS LIKE" = "FEELS LIKE";
 "HUMIDITY" = "HUMIDITY";
-"km/h CurrentWeatherCell" = " km/h";
+
+//MARK: - wind speed
+"WIND SPEED" = "WIND SPEED";
+
+////MARK: - city name
+"key" = "en";
+
+//MARK: - km/h
+"km/h" = "km/h";
 
 //MARK: - DailyWeatherCell
-"km/h DailyWeatherCell" = "km/h";
 "Today" = "Today";
 
 //MARK: - MyHourlyCell
 "Now" = "Now";
 
 //MARK: - MarkerWindowView
-"WIND SPEED MARKER" = "WIND SPEED";
 "TEMPERATURE MARKER" = "TEMPERATURE";
-"km/h MarkerWindowView" = " km/h";
-
-//MARK: - changeDate
-"en_US changeDate" = "en_US";
 
 //MARK: - Languages
-"en Languages" = "en";
+"languages" = "en";
 
 //MARK: - presentSearchAlertController
 "Enter city name" = "Enter city name";

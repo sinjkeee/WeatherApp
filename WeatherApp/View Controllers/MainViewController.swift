@@ -47,13 +47,6 @@ class MainViewController: UIViewController {
         
         self.addGradient()
         
-//        let appearance = UITabBarAppearance()
-//        appearance.backgroundEffect = .none
-//        appearance.backgroundColor = .clear
-//        appearance.shadowColor = .clear
-//        tabBarController?.tabBar.backgroundColor = .clear
-//        tabBarController?.tabBar.scrollEdgeAppearance = appearance
-        
         if locationManager.authorizationStatus == .denied || locationManager.authorizationStatus == .notDetermined {
             let lastCity = UserDefaults.standard.value(forKey: "city") != nil ? UserDefaults.standard.value(forKey: "city") as! String : "Kaliningrad"
             self.networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] (result: Result<[Geocoding], Error>) in
@@ -68,7 +61,7 @@ class MainViewController: UIViewController {
                 case .success(let geocoding):
                     self.geoData = geocoding
                     guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
-                    self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
+                    self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
                         switch result {
                         case .failure(let error):
                             print(error.localizedDescription)
@@ -100,7 +93,7 @@ class MainViewController: UIViewController {
                     case .success(let geocoding):
                         self.geoData = geocoding
                         guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
-                        self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
+                        self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
                             switch result {
                             case .failure(let error):
                                 print(error.localizedDescription)
@@ -153,7 +146,7 @@ class MainViewController: UIViewController {
                 case .success(let geocoding):
                     self.geoData = geocoding
                     guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
-                    self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
+                    self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
                         switch result {
                         case .failure(let error):
                             print(error.localizedDescription)
@@ -171,7 +164,7 @@ class MainViewController: UIViewController {
             self.createAndShowBlurEffectWithActivityIndicator()
             locationManager.requestLocation()
             guard let coordinate = coordinate else { return }
-            self.networkWeatherManager.getWeatherForCityCoordinates(long: coordinate.longitude, lat: coordinate.latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { [weak self] (result: Result<WeatherData, Error>) in
+            self.networkWeatherManager.getWeatherForCityCoordinates(long: coordinate.longitude, lat: coordinate.latitude, withUnitsOfmeasurement: .celsius) { [weak self] (result: Result<WeatherData, Error>) in
                 guard let self = self else { return }
                 switch result {
                 case .success(let weatherData):
@@ -268,8 +261,11 @@ class MainViewController: UIViewController {
             self.title = self.currentWeather?.timeZone
         } else {
             guard let name = self.geoData?.first?.cityName,
+                  let ruName = self.geoData?.first?.localNames?.ru,
                   let country = self.geoData?.first?.country else  { return }
-            self.title = "\(name), \(country)"
+            let localeNames = ["ru": ruName, "en": name]
+            guard let finalName = localeNames["key".localized()] else { return }
+            self.title = "\(finalName), \(country)"
         }
         self.tableView.reloadData()
         self.removeAllNotification()
@@ -358,7 +354,7 @@ extension MainViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = manager.location?.coordinate else { return }
         self.coordinate = location
-        self.networkWeatherManager.getWeatherForCityCoordinates(long: location.longitude, lat: location.latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { [weak self] (result: Result<WeatherData, Error>) in
+        self.networkWeatherManager.getWeatherForCityCoordinates(long: location.longitude, lat: location.latitude, withUnitsOfmeasurement: .celsius) { [weak self] (result: Result<WeatherData, Error>) in
             guard let self = self else { return }
             switch result {
             case .failure(let error):

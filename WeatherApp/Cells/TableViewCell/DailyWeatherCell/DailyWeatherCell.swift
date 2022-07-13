@@ -14,7 +14,7 @@ class DailyWeatherCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        self.windSpeedKm.text = "km/h DailyWeatherCell".localized()
+        self.windSpeedKm.text = "km/h".localized()
     }
     
     func configureDailyCell(data: DailyWeatherData, isFirst: Bool) {

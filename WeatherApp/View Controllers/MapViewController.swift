@@ -11,6 +11,7 @@ class MapViewController: UIViewController {
     private var networkWeatherManager: RestAPIProviderProtocol = NetworkWeatherManager()
     var currentWeather: WeatherData?
     var map = GMSMapView()
+    var camera: GMSCameraPosition = GMSCameraPosition.camera(withLatitude: 54.029, longitude: 27.597, zoom: 6.0)
     
     //MARK: - viewDidLoad
     override func viewDidLoad() {
@@ -29,8 +30,8 @@ class MapViewController: UIViewController {
     
     //MARK: - viewDidAppear
     override func viewDidAppear(_ animated: Bool) {
-        let camera = GMSCameraPosition.camera(withLatitude: 54.029, longitude: 27.597, zoom: 6.0)
-        map =  GMSMapView.map(withFrame: mapView.frame, camera: camera)
+        //self.camera = GMSCameraPosition.camera(withLatitude: 54.029, longitude: 27.597, zoom: 6.0)
+        map = GMSMapView.map(withFrame: mapView.frame, camera: self.camera)
         map.delegate = self
         self.mapView.addSubview(map)
     }
@@ -48,7 +49,7 @@ class MapViewController: UIViewController {
 //MARK: - extension GMSMapViewDelegate
 extension MapViewController:GMSMapViewDelegate {
     func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
-        networkWeatherManager.getWeatherForCityCoordinates(long: coordinate.longitude, lat: coordinate.latitude, withLang: .russian, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
+        networkWeatherManager.getWeatherForCityCoordinates(long: coordinate.longitude, lat: coordinate.latitude, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
             switch result {
             case .success(let weatherData):
                 DispatchQueue.main.async { [weak self] in

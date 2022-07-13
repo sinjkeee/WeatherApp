@@ -14,10 +14,10 @@ class MarkerWindowView: UIView {
               let temperature = weather.current?.temp,
               let data = try? Data(contentsOf: url)
         else { return }
-        self.windSpeedNameLabel.text = "WIND SPEED MARKER".localized()
+        self.windSpeedNameLabel.text = "WIND SPEED".localized()
         self.tempNameLabel.text = "TEMPERATURE MARKER".localized()
         self.imageView.image = UIImage(data: data)
-        self.windSpeed.text = "\(windSpeed)"+"km/h MarkerWindowView".localized()
+        self.windSpeed.text = "\(windSpeed) \("km/h".localized())"
         self.temperatureLabel.text = "\(Int(temperature))˚C"
         self.layer.cornerRadius = 40
         self.layer.borderWidth = 1

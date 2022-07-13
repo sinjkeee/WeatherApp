@@ -23,7 +23,7 @@ extension MainViewController {
                         if !geocoding.isEmpty {
                             self.geoData = geocoding
                             guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
-                            self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, withLang: .english, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
+                            self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
                                 switch result {
                                 case .failure(let error):
                                     print(error.localizedDescription)
@@ -117,7 +117,7 @@ extension MainViewController {
 extension MainViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         
-        if CharacterSet(charactersIn: "qwertyuiopasdfghjklzxcvbnm ёйцукенгшщзхъфывапролджэячсмитьбю").isSuperset(of: CharacterSet(charactersIn: string)) {
+        if CharacterSet(charactersIn: "qwertyuiopasdfghjklzxcvbnm ёйцукенгшщзхъфывапролджэячсмитьбю QWERTYUIOPASDFGHJKLZXCVBNM ЁЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ").isSuperset(of: CharacterSet(charactersIn: string)) {
             return true
         } else {
             return false

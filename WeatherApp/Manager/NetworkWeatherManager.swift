@@ -2,7 +2,7 @@ import Foundation
 
 protocol RestAPIProviderProtocol {
     func getCoordinatesByName(forCity city: String, completionHandler: @escaping (Result<[Geocoding], Error>) -> Void)
-    func getWeatherForCityCoordinates(long: Double, lat: Double, withLang lang: Languages, withUnitsOfmeasurement units: Units, completionHandler: @escaping (Result<WeatherData, Error>) -> Void)
+    func getWeatherForCityCoordinates(long: Double, lat: Double, withUnitsOfmeasurement units: Units, completionHandler: @escaping (Result<WeatherData, Error>) -> Void)
 }
 
 class NetworkWeatherManager: RestAPIProviderProtocol {
@@ -27,8 +27,8 @@ class NetworkWeatherManager: RestAPIProviderProtocol {
         }
     }
     
-    func getWeatherForCityCoordinates(long: Double, lat: Double, withLang lang: Languages, withUnitsOfmeasurement units: Units, completionHandler: @escaping (Result<WeatherData, Error>) -> Void) {
-        let endpoint = Endpoint.currentWeather(lat: lat, lon: long, key: apiKey, lang: lang.shortName, units: units.code)
+    func getWeatherForCityCoordinates(long: Double, lat: Double, withUnitsOfmeasurement units: Units, completionHandler: @escaping (Result<WeatherData, Error>) -> Void) {
+        let endpoint = Endpoint.currentWeather(lat: lat, lon: long, key: apiKey, lang: "languages".localized(), units: units.code)
         guard let url = endpoint.url else {
             completionHandler(.failure(Error.self as! Error))
             return
@@ -58,33 +58,6 @@ class NetworkWeatherManager: RestAPIProviderProtocol {
             }
         }
         dataTask.resume()
-    }
-}
-
-//MARK: - enum Languages
-enum Languages {
-    case russian
-    case english
-    case arabic
-    case german
-    case french
-    case japanese
-    case chinese
-    case italian
-    case ukrainian
-    
-    var shortName: String {
-        switch self {
-        case .russian: return "ru"
-        case .english: return "en Languages".localized()
-        case .arabic: return "ar"
-        case .german: return "de"
-        case .french: return "fr"
-        case .japanese: return "ja"
-        case .chinese: return "zh_tw"
-        case .italian: return "it"
-        case .ukrainian: return "ua"
-        }
     }
 }
 

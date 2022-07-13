@@ -4,28 +4,29 @@
 "Daily forecasts" = "Суточный прогноз погоды";
 
 //MARK: - CurrentWeatherCell
-"WIND SPEED" = "ВЕТЕР";
 "FEELS LIKE" = "ПО ОЩУЩЕНИЯМ";
 "HUMIDITY" = "ВЛАЖНОСТЬ";
-"km/h CurrentWeatherCell" = " км/ч";
+
+//MARK: - wind speed
+"WIND SPEED" = "ВЕТЕР";
+
+////MARK: - city name
+"key" = "ru";
+
+//MARK: - km/h
+"km/h" = "км/ч";
 
 //MARK: - DailyWeatherCell
-"km/h DailyWeatherCell" = "км/ч";
 "Today" = "Сегодня";
 
 //MARK: - MyHourlyCell
 "Now" = "Сейчас";
 
 //MARK: - MarkerWindowView
-"WIND SPEED MARKER" = "ВЕТЕР";
 "TEMPERATURE MARKER" = "ТЕМПЕРАТУРА";
-"km/h MarkerWindowView" = " км/ч";
-
-//MARK: - changeDate
-"en_US changeDate" = "ru_RU";
 
 //MARK: - Languages
-"en Languages" = "ru";
+"languages" = "ru";
 
 //MARK: - presentSearchAlertController
 "Enter city name" = "Введите город";

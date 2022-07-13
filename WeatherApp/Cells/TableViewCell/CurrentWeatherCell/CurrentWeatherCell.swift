@@ -33,7 +33,7 @@ class CurrentWeatherCell: UITableViewCell {
         self.descriptionLabel.text = description.capitalized
         self.imageViewForCurrentWeather.getImageFromTheInternet(icon)
         self.temperatureLabel.text = "\(Int(temp))˚"
-        self.windSpeedLabel.text = "\(windSpeed)"+"km/h CurrentWeatherCell".localized()
+        self.windSpeedLabel.text = "\(windSpeed) \("km/h".localized())"
         self.feelsLikeLabel.text = "\(Int(feelsLikeTemp))˚"
         self.humidityLabel.text = "\(humidity) %"
     }
