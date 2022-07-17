@@ -73,7 +73,7 @@
             </objects>
             <point key="canvasLocation" x="3288.8000000000002" y="769.56521739130437"/>
         </scene>
-        <!--Settings-->
+        <!--Settings View Controller-->
         <scene sceneID="Oue-WW-adN">
             <objects>
                 <viewController storyboardIdentifier="SettingsViewController" id="RJq-e1-L5m" customClass="SettingsViewController" customModule="WeatherApp" customModuleProvider="target" sceneMemberID="viewController">
@@ -151,7 +151,7 @@
                             <constraint firstItem="Uq3-sL-Fdj" firstAttribute="trailing" secondItem="BSX-0z-aP4" secondAttribute="trailing" constant="32" id="xeC-I2-30H"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Settings" largeTitleDisplayMode="always" id="WA0-Ag-d9Q"/>
+                    <navigationItem key="navigationItem" largeTitleDisplayMode="always" id="WA0-Ag-d9Q"/>
                     <connections>
                         <outlet property="notificationButton" destination="4jw-nG-TTW" id="8Pk-pO-1EO"/>
                         <outlet property="timeChangeButton" destination="PI2-xE-JDC" id="S70-HU-yhM"/>

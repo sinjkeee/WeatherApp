@@ -11,6 +11,7 @@ class SettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.title = "Settings".localized()
         self.timeChangeButton.setTitle("Time settings".localized(), for: .normal)
         self.unitsOfMeasurementButton.setTitle("Measurements".localized(), for: .normal)
         self.notificationButton.setTitle("Notifications settings".localized(), for: .normal)

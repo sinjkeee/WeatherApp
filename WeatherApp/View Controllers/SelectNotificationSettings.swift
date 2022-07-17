@@ -52,6 +52,109 @@ class SelectNotificationSettings: UIViewController {
         
         array = [false, false, false]
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        updateStartInterface()
+    }
+    
+    //MARK: - Methods
+    func updateStartInterface() {
+        let unitsTime = UserDefaults.standard.value(forKey: "timeSetting") as? Bool
+        if unitsTime ?? false {
+            self.firstTimeButton.isSelected = true
+            self.firstTimeButton.layer.borderWidth = 1
+            self.firstTimeButton.layer.borderColor = UIColor.red.cgColor
+        } else {
+            self.secondTimeButton.isSelected = true
+            self.secondTimeButton.layer.borderWidth = 1
+            self.secondTimeButton.layer.borderColor = UIColor.red.cgColor
+        }
+        
+        let unitsOfMeasurement = UserDefaults.standard.value(forKey: "isMetric") as? Bool
+        if unitsOfMeasurement ?? true {
+            self.metricUnitsButton.isSelected = true
+            self.metricUnitsButton.layer.borderWidth = 1
+            self.metricUnitsButton.layer.borderColor = UIColor.red.cgColor
+        } else {
+            self.imperialUnitsButton.isSelected = true
+            self.imperialUnitsButton.layer.borderWidth = 1
+            self.imperialUnitsButton.layer.borderColor = UIColor.red.cgColor
+        }
+        
+        let unitsOfNotifications = UserDefaults.standard.value(forKey: "notifications") as? [Bool]
+        self.stormButton.layer.borderWidth = 1
+        self.rainButton.layer.borderWidth = 1
+        self.snowButton.layer.borderWidth = 1
+        self.stormButton.layer.borderColor = UIColor.clear.cgColor
+        self.rainButton.layer.borderColor = UIColor.clear.cgColor
+        self.snowButton.layer.borderColor = UIColor.clear.cgColor
+        switch unitsOfNotifications {
+        case [false, false, false]:
+            self.stormButton.isSelected = false
+            self.rainButton.isSelected = false
+            self.snowButton.isSelected = false
+            array[2] = self.snowButton.isSelected ? true : false
+            array[1] = self.rainButton.isSelected ? true : false
+            array[0] = self.stormButton.isSelected ? true : false
+        case [true, false, false]:
+            self.stormButton.layer.borderColor = UIColor.red.cgColor
+            self.stormButton.isSelected = true
+            array[0] = self.stormButton.isSelected ? true : false
+        case [false, true, false]:
+            self.rainButton.isSelected = true
+            self.rainButton.layer.borderColor = UIColor.red.cgColor
+            array[1] = self.rainButton.isSelected ? true : false
+        case [false, false, true]:
+            self.snowButton.isSelected = true
+            self.snowButton.layer.borderColor = UIColor.red.cgColor
+            array[2] = self.snowButton.isSelected ? true : false
+        case [true, true, true]:
+            self.stormButton.isSelected = true
+            self.rainButton.isSelected = true
+            self.snowButton.isSelected = true
+            self.stormButton.layer.borderColor = UIColor.red.cgColor
+            self.rainButton.layer.borderColor = UIColor.red.cgColor
+            self.snowButton.layer.borderColor = UIColor.red.cgColor
+            array[2] = self.snowButton.isSelected ? true : false
+            array[1] = self.rainButton.isSelected ? true : false
+            array[0] = self.stormButton.isSelected ? true : false
+        case [false, true, true]:
+            self.rainButton.isSelected = true
+            self.snowButton.isSelected = true
+            self.rainButton.layer.borderColor = UIColor.red.cgColor
+            self.snowButton.layer.borderColor = UIColor.red.cgColor
+            array[2] = self.snowButton.isSelected ? true : false
+            array[1] = self.rainButton.isSelected ? true : false
+        case [true, false, true]:
+            self.stormButton.isSelected = true
+            self.snowButton.isSelected = true
+            self.stormButton.layer.borderColor = UIColor.red.cgColor
+            self.snowButton.layer.borderColor = UIColor.red.cgColor
+            array[2] = self.snowButton.isSelected ? true : false
+            array[0] = self.stormButton.isSelected ? true : false
+        case [true, true, false]:
+            self.stormButton.isSelected = true
+            self.rainButton.isSelected = true
+            self.stormButton.layer.borderColor = UIColor.red.cgColor
+            self.rainButton.layer.borderColor = UIColor.red.cgColor
+            array[1] = self.rainButton.isSelected ? true : false
+            array[0] = self.stormButton.isSelected ? true : false
+        default:
+            self.stormButton.isSelected = true
+            self.rainButton.isSelected = true
+            self.snowButton.isSelected = true
+            self.stormButton.layer.borderColor = UIColor.red.cgColor
+            self.rainButton.layer.borderColor = UIColor.red.cgColor
+            self.snowButton.layer.borderColor = UIColor.red.cgColor
+            array[2] = self.snowButton.isSelected ? true : false
+            array[1] = self.rainButton.isSelected ? true : false
+            array[0] = self.stormButton.isSelected ? true : false
+        }
+    }
+    
+    
     //MARK: - IBActions
     @IBAction func selectButtonPressed(_ sender: UIButton) {
         if sender == stormButton {
