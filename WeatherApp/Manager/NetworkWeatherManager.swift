@@ -2,7 +2,7 @@ import Foundation
 
 protocol RestAPIProviderProtocol {
     func getCoordinatesByName(forCity city: String, completionHandler: @escaping (Result<[Geocoding], Error>) -> Void)
-    func getWeatherForCityCoordinates(long: Double, lat: Double, withUnitsOfmeasurement units: Units, completionHandler: @escaping (Result<WeatherData, Error>) -> Void)
+    func getWeatherForCityCoordinates(long: Double, lat: Double, completionHandler: @escaping (Result<WeatherData, Error>) -> Void)
 }
 
 class NetworkWeatherManager: RestAPIProviderProtocol {
@@ -27,8 +27,10 @@ class NetworkWeatherManager: RestAPIProviderProtocol {
         }
     }
     
-    func getWeatherForCityCoordinates(long: Double, lat: Double, withUnitsOfmeasurement units: Units, completionHandler: @escaping (Result<WeatherData, Error>) -> Void) {
-        let endpoint = Endpoint.currentWeather(lat: lat, lon: long, key: apiKey, lang: "languages".localized(), units: units.code)
+    func getWeatherForCityCoordinates(long: Double, lat: Double, completionHandler: @escaping (Result<WeatherData, Error>) -> Void) {
+        let isMetric = UserDefaults.standard.value(forKey: "isMetric") as? Bool ?? true
+        let units = isMetric ? "metric" : "imperial"
+        let endpoint = Endpoint.currentWeather(lat: lat, lon: long, key: apiKey, lang: "languages".localized(), units: units)
         guard let url = endpoint.url else {
             completionHandler(.failure(Error.self as! Error))
             return

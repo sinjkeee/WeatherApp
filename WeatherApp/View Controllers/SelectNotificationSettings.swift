@@ -1,0 +1,127 @@
+import UIKit
+
+class SelectNotificationSettings: UIViewController {
+    //MARK: - IBOutlets
+    // notification settings outlets
+    @IBOutlet weak var stormButton: UIButton!
+    @IBOutlet weak var rainButton: UIButton!
+    @IBOutlet weak var snowButton: UIButton!
+    @IBOutlet weak var saveButton: UIButton!
+    @IBOutlet weak var notificationSettingsView: UIView!
+    // time settings outlets
+    @IBOutlet weak var timeSettingsView: UIView!
+    @IBOutlet weak var firstTimeButton: UIButton!
+    @IBOutlet weak var secondTimeButton: UIButton!
+    @IBOutlet weak var saveTimeSettingsButton: UIButton!
+    // units of measurement outlets
+    @IBOutlet weak var unitsOfMeasurementView: UIView!
+    @IBOutlet weak var metricUnitsButton: UIButton!
+    @IBOutlet weak var imperialUnitsButton: UIButton!
+    @IBOutlet weak var saveUnitsSettingsButton: UIButton!
+    
+    var index = 0
+    var array: [Bool] = []
+    //MARK: - viewDidLoad
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        self.saveButton.setTitle("Apply".localized(), for: .normal)
+        self.saveTimeSettingsButton.setTitle("Apply".localized(), for: .normal)
+        self.saveUnitsSettingsButton.setTitle("Apply".localized(), for: .normal)
+        
+        self.snowButton.setTitle("Snow".localized(), for: .normal)
+        self.rainButton.setTitle("Rain".localized(), for: .normal)
+        self.stormButton.setTitle("Thunderstorm".localized(), for: .normal)
+        
+        self.metricUnitsButton.setTitle("Metric".localized(), for: .normal)
+        self.imperialUnitsButton.setTitle("Imperial".localized(), for: .normal)
+        
+        if index == 0 {
+            notificationSettingsView.isHidden = false
+            timeSettingsView.isHidden = true
+            unitsOfMeasurementView.isHidden = true
+        } else if index == 1 {
+            notificationSettingsView.isHidden = true
+            timeSettingsView.isHidden = false
+            unitsOfMeasurementView.isHidden = true
+        } else if index == 2 {
+            unitsOfMeasurementView.isHidden = false
+            notificationSettingsView.isHidden = true
+            timeSettingsView.isHidden = true
+        }
+        
+        array = [false, false, false]
+    }
+    //MARK: - IBActions
+    @IBAction func selectButtonPressed(_ sender: UIButton) {
+        if sender == stormButton {
+            self.stormButton.isSelected = !self.stormButton.isSelected
+            self.stormButton.layer.borderColor = self.stormButton.isSelected ? UIColor.red.cgColor : UIColor.clear.cgColor
+            self.stormButton.layer.borderWidth = 1
+            array[0] = self.stormButton.isSelected ? true : false
+        } else if sender == rainButton {
+            self.rainButton.isSelected = !self.rainButton.isSelected
+            self.rainButton.layer.borderColor = self.rainButton.isSelected ? UIColor.red.cgColor : UIColor.clear.cgColor
+            self.rainButton.layer.borderWidth = 1
+            array[1] = self.rainButton.isSelected ? true : false
+        } else if sender == snowButton {
+            self.snowButton.isSelected = !self.snowButton.isSelected
+            self.snowButton.layer.borderColor = self.snowButton.isSelected ? UIColor.red.cgColor : UIColor.clear.cgColor
+            self.snowButton.layer.borderWidth = 1
+            array[2] = self.snowButton.isSelected ? true : false
+        }
+    }
+    
+    @IBAction func timeButtonsPressed(_ sender: UIButton) {
+        if sender == firstTimeButton {
+            self.firstTimeButton.isSelected = !self.firstTimeButton.isSelected
+            self.secondTimeButton.isSelected = false
+            self.secondTimeButton.layer.borderColor = UIColor.clear.cgColor
+            self.firstTimeButton.layer.borderWidth = 1
+            self.firstTimeButton.layer.borderColor = self.firstTimeButton.isSelected ? UIColor.red.cgColor : UIColor.clear.cgColor
+            UserDefaults.standard.set(true, forKey: "timeSetting")
+        } else if sender == secondTimeButton {
+            self.secondTimeButton.isSelected = !self.secondTimeButton.isSelected
+            self.firstTimeButton.isSelected = false
+            self.firstTimeButton.layer.borderColor = UIColor.clear.cgColor
+            self.secondTimeButton.layer.borderWidth = 1
+            self.secondTimeButton.layer.borderColor = self.secondTimeButton.isSelected ? UIColor.red.cgColor : UIColor.clear.cgColor
+            UserDefaults.standard.set(false, forKey: "timeSetting")
+        }
+    }
+    
+    @IBAction func unitsButtonPressed(_ sender: UIButton) {
+        if sender == metricUnitsButton {
+            self.metricUnitsButton.isSelected = !self.metricUnitsButton.isSelected
+            self.imperialUnitsButton.isSelected = false
+            self.imperialUnitsButton.layer.borderColor = UIColor.clear.cgColor
+            self.metricUnitsButton.layer.borderWidth = 1
+            self.metricUnitsButton.layer.borderColor = self.metricUnitsButton.isSelected ? UIColor.red.cgColor : UIColor.clear.cgColor
+            UserDefaults.standard.set(true, forKey: "isMetric")
+        } else if sender == imperialUnitsButton {
+            self.imperialUnitsButton.isSelected = !self.imperialUnitsButton.isSelected
+            self.metricUnitsButton.isSelected = false
+            self.metricUnitsButton.layer.borderColor = UIColor.clear.cgColor
+            self.imperialUnitsButton.layer.borderWidth = 1
+            self.imperialUnitsButton.layer.borderColor = self.imperialUnitsButton.isSelected ? UIColor.red.cgColor : UIColor.clear.cgColor
+            let value = imperialUnitsButton.isSelected ? false : true
+            UserDefaults.standard.set(value, forKey: "isMetric")
+        }
+    }
+    
+    @IBAction func saveButtonPressed(_ sender: UIButton) {
+        UserDefaults.standard.set(array, forKey: "notifications")
+        NotificationCenter.default.post(name: .updateMainInterface, object: nil)
+        dismiss(animated: true)
+    }
+    
+    @IBAction func saveTimeButtonPressed(_ sender: UIButton) {
+        NotificationCenter.default.post(name: .updateMainInterface, object: nil)
+        dismiss(animated: true)
+    }
+    
+    @IBAction func saveUnitsButtonPressed(_ sender: UIButton) {
+        NotificationCenter.default.post(name: .updateMainInterface, object: nil)
+        dismiss(animated: true)
+    }
+}

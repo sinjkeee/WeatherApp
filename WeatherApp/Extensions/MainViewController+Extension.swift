@@ -23,7 +23,7 @@ extension MainViewController {
                         if !geocoding.isEmpty {
                             self.geoData = geocoding
                             guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
-                            self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
+                            self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude) { (result: Result<WeatherData, Error>) in
                                 switch result {
                                 case .failure(let error):
                                     print(error.localizedDescription)

@@ -13,8 +13,6 @@ class DailyWeatherCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
-        self.windSpeedKm.text = "km/h".localized()
     }
     
     func configureDailyCell(data: DailyWeatherData, isFirst: Bool) {
@@ -30,6 +28,9 @@ class DailyWeatherCell: UITableViewCell {
             self.windSpeedLabel.text = "\(windSpeed)"
             self.tempMaxLabel.text = "\(Int(tempMax))˚"
             self.tmepMinLabel.text = "\(Int(tempMin))˚"
+            let isMetric = UserDefaults.standard.value(forKey: "isMetric") as? Bool ?? true
+            let units = isMetric ? "km/h".localized() : "ml/h".localized()
+            self.windSpeedKm.text = units
         }
     }
 }

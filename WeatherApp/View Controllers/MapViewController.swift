@@ -49,7 +49,7 @@ class MapViewController: UIViewController {
 //MARK: - extension GMSMapViewDelegate
 extension MapViewController:GMSMapViewDelegate {
     func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
-        networkWeatherManager.getWeatherForCityCoordinates(long: coordinate.longitude, lat: coordinate.latitude, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
+        networkWeatherManager.getWeatherForCityCoordinates(long: coordinate.longitude, lat: coordinate.latitude) { (result: Result<WeatherData, Error>) in
             switch result {
             case .success(let weatherData):
                 DispatchQueue.main.async { [weak self] in

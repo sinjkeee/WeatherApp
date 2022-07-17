@@ -32,6 +32,8 @@
 		2A7D821128663C45008D3153 /* DailyWeatherCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2A7D820F28663C45008D3153 /* DailyWeatherCell.xib */; };
 		2A8BBF7B2868E45700D05D40 /* Int+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8BBF7A2868E45700D05D40 /* Int+Extension.swift */; };
 		2A8BBF7D2869AE2C00D05D40 /* UIImageView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8BBF7C2869AE2C00D05D40 /* UIImageView+Extension.swift */; };
+		2A8ED44928815B39009AB8AE /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8ED44828815B38009AB8AE /* SettingsViewController.swift */; };
+		2A8ED44B28817003009AB8AE /* SelectNotificationSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8ED44A28817003009AB8AE /* SelectNotificationSettings.swift */; };
 		2AB5FA48287438C400FD53FF /* CellWithCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AB5FA46287438C400FD53FF /* CellWithCollectionView.swift */; };
 		2AB5FA49287438C400FD53FF /* CellWithCollectionView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2AB5FA47287438C400FD53FF /* CellWithCollectionView.xib */; };
 		2AB5FA4D2874399500FD53FF /* MyHourlyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AB5FA4B2874399500FD53FF /* MyHourlyCell.swift */; };
@@ -74,6 +76,8 @@
 		2A7D820F28663C45008D3153 /* DailyWeatherCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DailyWeatherCell.xib; sourceTree = "<group>"; };
 		2A8BBF7A2868E45700D05D40 /* Int+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Extension.swift"; sourceTree = "<group>"; };
 		2A8BBF7C2869AE2C00D05D40 /* UIImageView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extension.swift"; sourceTree = "<group>"; };
+		2A8ED44828815B38009AB8AE /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		2A8ED44A28817003009AB8AE /* SelectNotificationSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectNotificationSettings.swift; sourceTree = "<group>"; };
 		2AB5FA46287438C400FD53FF /* CellWithCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellWithCollectionView.swift; sourceTree = "<group>"; };
 		2AB5FA47287438C400FD53FF /* CellWithCollectionView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CellWithCollectionView.xib; sourceTree = "<group>"; };
 		2AB5FA4B2874399500FD53FF /* MyHourlyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyHourlyCell.swift; sourceTree = "<group>"; };
@@ -281,6 +285,8 @@
 				CE64361B285C840A0055166C /* MainViewController.swift */,
 				2A7D82092865D0D7008D3153 /* MapViewController.swift */,
 				2A0AE9A7286AF3E500E16479 /* HistoryViewController.swift */,
+				2A8ED44828815B38009AB8AE /* SettingsViewController.swift */,
+				2A8ED44A28817003009AB8AE /* SelectNotificationSettings.swift */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -359,8 +365,8 @@
 			);
 			mainGroup = CE64360B285C840A0055166C;
 			packageReferences = (
-				2A7D820B2865D2DE008D3153 /* XCRemoteSwiftPackageReference "SnapKit.git" */,
-				2A0AE9AB286AF80D00E16479 /* XCRemoteSwiftPackageReference "realm-swift.git" */,
+				2A7D820B2865D2DE008D3153 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				2A0AE9AB286AF80D00E16479 /* XCRemoteSwiftPackageReference "realm-swift" */,
 			);
 			productRefGroup = CE643615285C840A0055166C /* Products */;
 			projectDirPath = "";
@@ -447,6 +453,7 @@
 				CE643618285C840A0055166C /* AppDelegate.swift in Sources */,
 				2A7D820628645E21008D3153 /* Endpoint+Extension.swift in Sources */,
 				2A0AE9A8286AF3E500E16479 /* HistoryViewController.swift in Sources */,
+				2A8ED44928815B39009AB8AE /* SettingsViewController.swift in Sources */,
 				CE64361A285C840A0055166C /* SceneDelegate.swift in Sources */,
 				2A799027287B038C009E4F7F /* MarkerWindowView.swift in Sources */,
 				2A7D81FC28630F61008D3153 /* Geocoding.swift in Sources */,
@@ -454,6 +461,7 @@
 				2A0AE9B6286C3A6100E16479 /* RealmManager.swift in Sources */,
 				2AB5FA48287438C400FD53FF /* CellWithCollectionView.swift in Sources */,
 				2A7D821028663C45008D3153 /* DailyWeatherCell.swift in Sources */,
+				2A8ED44B28817003009AB8AE /* SelectNotificationSettings.swift in Sources */,
 				2A0AE9B3286B1DBA00E16479 /* HistoryCell.swift in Sources */,
 				2A16675C287D7C64005D7D60 /* String+Extension.swift in Sources */,
 				2AB5FA4D2874399500FD53FF /* MyHourlyCell.swift in Sources */,
@@ -633,9 +641,13 @@
 				DEVELOPMENT_TEAM = 2GHT8VU4HM;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "WeatherApp/Supporting files/Info.plist";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "We need your location data to provide weather information.";
+				INFOPLIST_KEY_NSLocationUsageDescription = "We need your location data to provide weather information.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location data to provide weather information.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIStatusBarHidden = NO;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -663,9 +675,13 @@
 				DEVELOPMENT_TEAM = 2GHT8VU4HM;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "WeatherApp/Supporting files/Info.plist";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "We need your location data to provide weather information.";
+				INFOPLIST_KEY_NSLocationUsageDescription = "We need your location data to provide weather information.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location data to provide weather information.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIStatusBarHidden = NO;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -706,7 +722,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		2A0AE9AB286AF80D00E16479 /* XCRemoteSwiftPackageReference "realm-swift.git" */ = {
+		2A0AE9AB286AF80D00E16479 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-swift.git";
 			requirement = {
@@ -714,7 +730,7 @@
 				minimumVersion = 10.19.0;
 			};
 		};
-		2A7D820B2865D2DE008D3153 /* XCRemoteSwiftPackageReference "SnapKit.git" */ = {
+		2A7D820B2865D2DE008D3153 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
 			requirement = {
@@ -727,17 +743,17 @@
 /* Begin XCSwiftPackageProductDependency section */
 		2A0AE9AC286AF80D00E16479 /* Realm */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2A0AE9AB286AF80D00E16479 /* XCRemoteSwiftPackageReference "realm-swift.git" */;
+			package = 2A0AE9AB286AF80D00E16479 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = Realm;
 		};
 		2A0AE9AE286AF80D00E16479 /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2A0AE9AB286AF80D00E16479 /* XCRemoteSwiftPackageReference "realm-swift.git" */;
+			package = 2A0AE9AB286AF80D00E16479 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = RealmSwift;
 		};
 		2A7D820C2865D2DE008D3153 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2A7D820B2865D2DE008D3153 /* XCRemoteSwiftPackageReference "SnapKit.git" */;
+			package = 2A7D820B2865D2DE008D3153 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
 		};
 /* End XCSwiftPackageProductDependency section */
