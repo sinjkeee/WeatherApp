@@ -25,11 +25,13 @@ class MainViewController: UIViewController {
     var hourlyWeather: [HourlyWeatherData]?
     var dailyWeather: [DailyWeatherData]?
     var networkWeatherManager: RestAPIProviderProtocol = NetworkWeatherManager()
+    var units: String = ""
     
     //MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.units = UserDefaults.standard.value(forKey: "isMetric") as? Bool ?? true ? "metric" : "imperial"
         self.geoData = nil
         self.findCityButton.tintColor = .systemCyan
         self.getLocationButton.tintColor = .systemCyan
@@ -63,7 +65,7 @@ class MainViewController: UIViewController {
                 case .success(let geocoding):
                     self.geoData = geocoding
                     guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
-                    self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude) { (result: Result<WeatherData, Error>) in
+                    self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, language: "languages".localized(), units: self.units) { (result: Result<WeatherData, Error>) in
                         switch result {
                         case .failure(let error):
                             print(error.localizedDescription)
@@ -95,7 +97,7 @@ class MainViewController: UIViewController {
                     case .success(let geocoding):
                         self.geoData = geocoding
                         guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
-                        self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude) { (result: Result<WeatherData, Error>) in
+                        self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, language: "languages".localized(), units: self.units) { (result: Result<WeatherData, Error>) in
                             switch result {
                             case .failure(let error):
                                 print(error.localizedDescription)
@@ -152,7 +154,7 @@ class MainViewController: UIViewController {
                 case .success(let geocoding):
                     self.geoData = geocoding
                     guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
-                    self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude) { (result: Result<WeatherData, Error>) in
+                    self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, language: "languages".localized(), units: self.units) { (result: Result<WeatherData, Error>) in
                         switch result {
                         case .failure(let error):
                             print(error.localizedDescription)
@@ -170,7 +172,7 @@ class MainViewController: UIViewController {
             self.createAndShowBlurEffectWithActivityIndicator()
             locationManager.requestLocation()
             guard let coordinate = coordinate else { return }
-            self.networkWeatherManager.getWeatherForCityCoordinates(long: coordinate.longitude, lat: coordinate.latitude) { [weak self] (result: Result<WeatherData, Error>) in
+            self.networkWeatherManager.getWeatherForCityCoordinates(long: coordinate.longitude, lat: coordinate.latitude, language: "languages".localized(), units: self.units) { [weak self] (result: Result<WeatherData, Error>) in
                 guard let self = self else { return }
                 switch result {
                 case .success(let weatherData):
@@ -188,8 +190,9 @@ class MainViewController: UIViewController {
     }
     
     @IBAction func updateMainInterface() {
+        self.units = UserDefaults.standard.value(forKey: "isMetric") as? Bool ?? true ? "metric" : "imperial"
         if locationManager.authorizationStatus == .denied || locationManager.authorizationStatus == .notDetermined {
-            let lastCity = UserDefaults.standard.value(forKey: "city") != nil ? UserDefaults.standard.value(forKey: "city") as! String : "Kaliningrad"
+            let lastCity = UserDefaults.standard.value(forKey: "city") as? String ?? "Kaliningrad"
             self.networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] (result: Result<[Geocoding], Error>) in
                 guard let self = self else { return }
                 switch result {
@@ -201,7 +204,7 @@ class MainViewController: UIViewController {
                 case .success(let geocoding):
                     self.geoData = geocoding
                     guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
-                    self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude) { (result: Result<WeatherData, Error>) in
+                    self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, language: "languages".localized(), units: self.units) { (result: Result<WeatherData, Error>) in
                         switch result {
                         case .failure(let error):
                             print(error.localizedDescription)
@@ -218,8 +221,7 @@ class MainViewController: UIViewController {
                 }
             }
         } else if locationManager.authorizationStatus == .authorizedAlways || locationManager.authorizationStatus == .authorizedWhenInUse {
-            if UserDefaults.standard.value(forKey: "city") != nil {
-                let lastCity = UserDefaults.standard.value(forKey: "city") as! String
+            if let lastCity = UserDefaults.standard.value(forKey: "city") as? String {
                 self.networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] (result: Result<[Geocoding], Error>) in
                     guard let self = self else { return }
                     switch result {
@@ -231,7 +233,7 @@ class MainViewController: UIViewController {
                     case .success(let geocoding):
                         self.geoData = geocoding
                         guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
-                        self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude) { (result: Result<WeatherData, Error>) in
+                        self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, language: "languages".localized(), units: self.units) { (result: Result<WeatherData, Error>) in
                             switch result {
                             case .failure(let error):
                                 print(error.localizedDescription)
@@ -441,7 +443,7 @@ extension MainViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = manager.location?.coordinate else { return }
         self.coordinate = location
-        self.networkWeatherManager.getWeatherForCityCoordinates(long: location.longitude, lat: location.latitude) { [weak self] (result: Result<WeatherData, Error>) in
+        self.networkWeatherManager.getWeatherForCityCoordinates(long: location.longitude, lat: location.latitude, language: "languages".localized(), units: self.units) { [weak self] (result: Result<WeatherData, Error>) in
             guard let self = self else { return }
             switch result {
             case .failure(let error):

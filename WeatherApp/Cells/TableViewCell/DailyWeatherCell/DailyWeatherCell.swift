@@ -29,7 +29,7 @@ class DailyWeatherCell: UITableViewCell {
             self.tempMaxLabel.text = "\(Int(tempMax))˚"
             self.tmepMinLabel.text = "\(Int(tempMin))˚"
             let isMetric = UserDefaults.standard.value(forKey: "isMetric") as? Bool ?? true
-            let units = isMetric ? "km/h".localized() : "ml/h".localized()
+            let units = isMetric ? Units.metric.distanceString : Units.imperial.distanceString
             self.windSpeedKm.text = units
         }
     }

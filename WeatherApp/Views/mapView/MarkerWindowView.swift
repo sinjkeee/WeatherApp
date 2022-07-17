@@ -15,8 +15,8 @@ class MarkerWindowView: UIView {
               let data = try? Data(contentsOf: url)
         else { return }
         let isMetric = UserDefaults.standard.value(forKey: "isMetric") as? Bool ?? true
-        let units = isMetric ? "km/h".localized() : "ml/h".localized()
-        let unitsTemp = isMetric ? "˚C" : "˚F"
+        let units = isMetric ? Units.metric.distanceString : Units.imperial.distanceString
+        let unitsTemp = isMetric ? Units.metric.temperatureString : Units.imperial.temperatureString
         self.windSpeedNameLabel.text = "WIND SPEED".localized()
         self.tempNameLabel.text = "TEMPERATURE MARKER".localized()
         self.imageView.image = UIImage(data: data)
