@@ -13,16 +13,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScen = (scene as? UIWindowScene) else { return }
         window?.windowScene = windowScen
         guard let second = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MapViewController") as? MapViewController else { return }
-        guard let third = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "HistoryViewController") as? HistoryViewController else { return }
         guard let firstNavi = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "firstNavi") as? UINavigationController else { return }
+        guard let settingsNavi = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "settingsNavi") as? UINavigationController else { return }
+        
         let tabBar = UITabBarController()
-        tabBar.setViewControllers([firstNavi, second, createNavigationController(viewController: third)], animated: true)
+        tabBar.setViewControllers([firstNavi, second, settingsNavi], animated: true)
         firstNavi.tabBarItem.title = "Main"
         firstNavi.tabBarItem.image = UIImage(systemName: "thermometer")
         second.tabBarItem.title = "Map".localized()
         second.tabBarItem.image = UIImage(systemName: "globe.europe.africa")
-        third.tabBarItem.title = "History".localized()
-        third.tabBarItem.image = UIImage(systemName: "chart.bar.doc.horizontal")
+        settingsNavi.tabBarItem.title = "Settings".localized()
+        settingsNavi.tabBarItem.image = UIImage(systemName: "gearshape")
         tabBar.tabBar.backgroundColor = UIColor.clear
         window?.rootViewController = tabBar
         window?.makeKeyAndVisible()

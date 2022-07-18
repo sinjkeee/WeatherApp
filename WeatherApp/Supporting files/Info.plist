@@ -2,18 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>We need your location data to provide weather information.</string>
-	<key>NSLocationUsageDescription</key>
-	<string>We need your location data to provide weather information.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We need your location data to provide weather information.</string>
-	<key>apiKey</key>
-	<string>f5b1b015006e1802f35638d295100520</string>
-	<key>googleMapsKey</key>
-	<string>AIzaSyC3NfBxD2kCla1WfGFIpxmSavRji48uhR0</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -33,5 +21,11 @@
 			</array>
 		</dict>
 	</dict>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleLightContent</string>
+	<key>apiKey</key>
+	<string>f5b1b015006e1802f35638d295100520</string>
+	<key>googleMapsKey</key>
+	<string>AIzaSyC3NfBxD2kCla1WfGFIpxmSavRji48uhR0</string>
 </dict>
 </plist>

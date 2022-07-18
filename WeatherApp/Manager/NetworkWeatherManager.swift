@@ -2,7 +2,7 @@ import Foundation
 
 protocol RestAPIProviderProtocol {
     func getCoordinatesByName(forCity city: String, completionHandler: @escaping (Result<[Geocoding], Error>) -> Void)
-    func getWeatherForCityCoordinates(long: Double, lat: Double, withUnitsOfmeasurement units: Units, completionHandler: @escaping (Result<WeatherData, Error>) -> Void)
+    func getWeatherForCityCoordinates(long: Double, lat: Double, language: String, units: String, completionHandler: @escaping (Result<WeatherData, Error>) -> Void)
 }
 
 class NetworkWeatherManager: RestAPIProviderProtocol {
@@ -27,8 +27,8 @@ class NetworkWeatherManager: RestAPIProviderProtocol {
         }
     }
     
-    func getWeatherForCityCoordinates(long: Double, lat: Double, withUnitsOfmeasurement units: Units, completionHandler: @escaping (Result<WeatherData, Error>) -> Void) {
-        let endpoint = Endpoint.currentWeather(lat: lat, lon: long, key: apiKey, lang: "languages".localized(), units: units.code)
+    func getWeatherForCityCoordinates(long: Double, lat: Double, language: String, units: String, completionHandler: @escaping (Result<WeatherData, Error>) -> Void) {
+        let endpoint = Endpoint.currentWeather(lat: lat, lon: long, key: apiKey, lang: language, units: units)
         guard let url = endpoint.url else {
             completionHandler(.failure(Error.self as! Error))
             return
@@ -58,20 +58,5 @@ class NetworkWeatherManager: RestAPIProviderProtocol {
             }
         }
         dataTask.resume()
-    }
-}
-
-//MARK: - enum Units
-enum Units {
-    case celsius
-    case fahrenheit
-    case kelvin
-    
-    var code: String {
-        switch self {
-        case .celsius: return "metric"
-        case .fahrenheit: return "imperial"
-        case .kelvin: return "standard"
-        }
     }
 }

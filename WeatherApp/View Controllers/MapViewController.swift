@@ -12,13 +12,13 @@ class MapViewController: UIViewController {
     var currentWeather: WeatherData?
     var map = GMSMapView()
     var camera: GMSCameraPosition = GMSCameraPosition.camera(withLatitude: 54.029, longitude: 27.597, zoom: 6.0)
+    var units: String = ""
     
     //MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         
         guard let frame = tabBarController?.tabBar.frame.height else { return }
-        
         view.layoutIfNeeded()
         view.addSubview(mapView)
         
@@ -49,7 +49,8 @@ class MapViewController: UIViewController {
 //MARK: - extension GMSMapViewDelegate
 extension MapViewController:GMSMapViewDelegate {
     func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
-        networkWeatherManager.getWeatherForCityCoordinates(long: coordinate.longitude, lat: coordinate.latitude, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
+        self.units = UserDefaults.standard.value(forKey: "isMetric") as? Bool ?? true ? "metric" : "imperial"
+        networkWeatherManager.getWeatherForCityCoordinates(long: coordinate.longitude, lat: coordinate.latitude, language: "languages".localized(), units: self.units) { (result: Result<WeatherData, Error>) in
             switch result {
             case .success(let weatherData):
                 DispatchQueue.main.async { [weak self] in

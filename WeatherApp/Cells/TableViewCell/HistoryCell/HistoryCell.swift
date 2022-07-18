@@ -29,7 +29,7 @@ class HistoryCell: UITableViewCell {
         self.longValueLabel.text = "\(long)"
         self.latValueLabel.text = "\(lat)"
         self.tempValueLabel.text = "\(data.temp)˚"
-        self.windSpeedValueLabel.text = "\(data.windSpeed)"+"km/h HistoryCell".localized()
+        self.windSpeedValueLabel.text = "\(data.windSpeed)"
         self.fromDataLabel.text = data.isMap ? "Data from the request from the maps".localized() : "Data from the request from the main screen".localized()
     }
 }

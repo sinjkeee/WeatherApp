@@ -30,11 +30,14 @@ class CurrentWeatherCell: UITableViewCell {
               let humidity = data.current?.humidity
         else { return }
         
+        let isMetric = UserDefaults.standard.value(forKey: "isMetric") as? Bool ?? true
+        let unitsTemp = isMetric ? Units.metric.temperatureString : Units.imperial.temperatureString
+        let units = isMetric ? Units.metric.distanceString : Units.imperial.distanceString
         self.descriptionLabel.text = description.capitalized
         self.imageViewForCurrentWeather.getImageFromTheInternet(icon)
         self.temperatureLabel.text = "\(Int(temp))˚"
-        self.windSpeedLabel.text = "\(windSpeed) \("km/h".localized())"
-        self.feelsLikeLabel.text = "\(Int(feelsLikeTemp))˚"
+        self.feelsLikeLabel.text = "\(Int(feelsLikeTemp))\(unitsTemp)"
         self.humidityLabel.text = "\(humidity) %"
+        self.windSpeedLabel.text = "\(windSpeed) \(units)"
     }
 }

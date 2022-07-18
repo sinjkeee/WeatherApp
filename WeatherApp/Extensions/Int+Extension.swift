@@ -20,7 +20,13 @@ enum DateFormat: String {
     
     var getString: String {
         switch self {
-        case .hours: return "HH"
+        case .hours:
+            guard let value = UserDefaults.standard.value(forKey: "timeSetting") as? Bool else { return "HH" }
+            if value {
+                return "h a"
+            } else {
+                return "HH"
+            }
         case .days: return "HH MMMM yyyy"
         case .fullTime: return "EEEE, d MMMM yyyy HH:mm:ss"
         case .weekday: return "EEEE"

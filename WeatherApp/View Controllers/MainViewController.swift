@@ -25,14 +25,18 @@ class MainViewController: UIViewController {
     var hourlyWeather: [HourlyWeatherData]?
     var dailyWeather: [DailyWeatherData]?
     var networkWeatherManager: RestAPIProviderProtocol = NetworkWeatherManager()
+    var units: String = ""
     
     //MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.units = UserDefaults.standard.value(forKey: "isMetric") as? Bool ?? true ? "metric" : "imperial"
         self.geoData = nil
         self.findCityButton.tintColor = .systemCyan
         self.getLocationButton.tintColor = .systemCyan
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(updateMainInterface), name: .updateMainInterface, object: nil)
         
         tableView.register(UINib(nibName: "CellWithCollectionView", bundle: nil), forCellReuseIdentifier: "CellWithCollectionView")
         tableView.register(UINib(nibName: "DailyWeatherCell", bundle: nil), forCellReuseIdentifier: "DailyWeatherCell")
@@ -61,7 +65,7 @@ class MainViewController: UIViewController {
                 case .success(let geocoding):
                     self.geoData = geocoding
                     guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
-                    self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
+                    self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, language: "languages".localized(), units: self.units) { (result: Result<WeatherData, Error>) in
                         switch result {
                         case .failure(let error):
                             print(error.localizedDescription)
@@ -93,7 +97,7 @@ class MainViewController: UIViewController {
                     case .success(let geocoding):
                         self.geoData = geocoding
                         guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
-                        self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
+                        self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, language: "languages".localized(), units: self.units) { (result: Result<WeatherData, Error>) in
                             switch result {
                             case .failure(let error):
                                 print(error.localizedDescription)
@@ -115,6 +119,10 @@ class MainViewController: UIViewController {
                 self.geoData = nil
             }
         }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     //MARK: - @IBAction
@@ -146,7 +154,7 @@ class MainViewController: UIViewController {
                 case .success(let geocoding):
                     self.geoData = geocoding
                     guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
-                    self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, withUnitsOfmeasurement: .celsius) { (result: Result<WeatherData, Error>) in
+                    self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, language: "languages".localized(), units: self.units) { (result: Result<WeatherData, Error>) in
                         switch result {
                         case .failure(let error):
                             print(error.localizedDescription)
@@ -164,7 +172,7 @@ class MainViewController: UIViewController {
             self.createAndShowBlurEffectWithActivityIndicator()
             locationManager.requestLocation()
             guard let coordinate = coordinate else { return }
-            self.networkWeatherManager.getWeatherForCityCoordinates(long: coordinate.longitude, lat: coordinate.latitude, withUnitsOfmeasurement: .celsius) { [weak self] (result: Result<WeatherData, Error>) in
+            self.networkWeatherManager.getWeatherForCityCoordinates(long: coordinate.longitude, lat: coordinate.latitude, language: "languages".localized(), units: self.units) { [weak self] (result: Result<WeatherData, Error>) in
                 guard let self = self else { return }
                 switch result {
                 case .success(let weatherData):
@@ -180,6 +188,74 @@ class MainViewController: UIViewController {
         }
         refresh.endRefreshing()
     }
+    
+    @IBAction func updateMainInterface() {
+        self.units = UserDefaults.standard.value(forKey: "isMetric") as? Bool ?? true ? "metric" : "imperial"
+        if locationManager.authorizationStatus == .denied || locationManager.authorizationStatus == .notDetermined {
+            let lastCity = UserDefaults.standard.value(forKey: "city") as? String ?? "Kaliningrad"
+            self.networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] (result: Result<[Geocoding], Error>) in
+                guard let self = self else { return }
+                switch result {
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
+                    }
+                case .success(let geocoding):
+                    self.geoData = geocoding
+                    guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
+                    self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, language: "languages".localized(), units: self.units) { (result: Result<WeatherData, Error>) in
+                        switch result {
+                        case .failure(let error):
+                            print(error.localizedDescription)
+                            DispatchQueue.main.async {
+                                self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
+                            }
+                        case .success(let weatherData):
+                            self.combiningMethods(weatherData: weatherData)
+                            DispatchQueue.main.async {
+                                self.findCityButton.tintColor = .systemPink
+                            }
+                        }
+                    }
+                }
+            }
+        } else if locationManager.authorizationStatus == .authorizedAlways || locationManager.authorizationStatus == .authorizedWhenInUse {
+            if let lastCity = UserDefaults.standard.value(forKey: "city") as? String {
+                self.networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] (result: Result<[Geocoding], Error>) in
+                    guard let self = self else { return }
+                    switch result {
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                        DispatchQueue.main.async {
+                            self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
+                        }
+                    case .success(let geocoding):
+                        self.geoData = geocoding
+                        guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
+                        self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, language: "languages".localized(), units: self.units) { (result: Result<WeatherData, Error>) in
+                            switch result {
+                            case .failure(let error):
+                                print(error.localizedDescription)
+                                DispatchQueue.main.async {
+                                    self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
+                                }
+                            case .success(let weatherData):
+                                self.combiningMethods(weatherData: weatherData)
+                                DispatchQueue.main.async {
+                                    self.findCityButton.tintColor = .systemPink
+                                }
+                            }
+                        }
+                    }
+                }
+            } else if UserDefaults.standard.value(forKey: "location") != nil {
+                locationManager.requestLocation()
+                self.geoData = nil
+            }
+        }
+    }
+    
     
     //MARK: - Methods
     func combiningMethods(weatherData: WeatherData) {
@@ -199,19 +275,32 @@ class MainViewController: UIViewController {
     func weatherCheck(hourlyWeather: [HourlyWeatherData]?) {
         guard let hourlyWeather = hourlyWeather else { return }
         var index = 0
+        guard let notifications = UserDefaults.standard.value(forKey: "notifications") as? [Bool] else { return }
         for hour in hourlyWeather {
             guard let id = hour.weather?.first?.id, let time = hour.dt else { return }
             //Если плохая погода впервые или перерыв между уведомлениями больше 3х часов, отправляем новое уведомление
             if index == 0 || index > 3 {
                 switch id {
                 case 200...232:
-                    setLocalNotification(body: "There will be a storm soon!".localized(), title: "Attention!".localized(), dateComponents: getDateComponentsFrom(date: time))
+                    if !notifications.isEmpty && notifications[0] {
+                        setLocalNotification(body: "There will be a storm soon!".localized(), title: "Attention!".localized(), dateComponents: getDateComponentsFrom(date: time))
+                    } else if notifications.isEmpty {
+                        setLocalNotification(body: "There will be a storm soon!".localized(), title: "Attention!".localized(), dateComponents: getDateComponentsFrom(date: time))
+                    }
                     index = 1
                 case 500...531:
-                    setLocalNotification(body: "There will be a rain soon!".localized(), title: "Attention!".localized(), dateComponents: getDateComponentsFrom(date: time))
+                    if !notifications.isEmpty && notifications[1] {
+                        setLocalNotification(body: "There will be a rain soon!".localized(), title: "Attention!".localized(), dateComponents: getDateComponentsFrom(date: time))
+                    } else if notifications.isEmpty {
+                        setLocalNotification(body: "There will be a rain soon!".localized(), title: "Attention!".localized(), dateComponents: getDateComponentsFrom(date: time))
+                    }
                     index = 1
                 case 600...622:
-                    setLocalNotification(body: "There will be a snow soon!".localized(), title: "Attention!".localized(), dateComponents: getDateComponentsFrom(date: time))
+                    if !notifications.isEmpty && notifications[2] {
+                        setLocalNotification(body: "There will be a snow soon!".localized(), title: "Attention!".localized(), dateComponents: getDateComponentsFrom(date: time))
+                    } else if notifications.isEmpty {
+                        setLocalNotification(body: "There will be a snow soon!".localized(), title: "Attention!".localized(), dateComponents: getDateComponentsFrom(date: time))
+                    }
                     index = 1
                 default: break
                 }
@@ -354,7 +443,7 @@ extension MainViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = manager.location?.coordinate else { return }
         self.coordinate = location
-        self.networkWeatherManager.getWeatherForCityCoordinates(long: location.longitude, lat: location.latitude, withUnitsOfmeasurement: .celsius) { [weak self] (result: Result<WeatherData, Error>) in
+        self.networkWeatherManager.getWeatherForCityCoordinates(long: location.longitude, lat: location.latitude, language: "languages".localized(), units: self.units) { [weak self] (result: Result<WeatherData, Error>) in
             guard let self = self else { return }
             switch result {
             case .failure(let error):

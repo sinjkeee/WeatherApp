@@ -56,10 +56,26 @@
 "Latitude:" = "Latitude:";
 "Temperature:" = "Temperature:";
 "Wind speed:" = "Wind speed:";
-"km/h HistoryCell" = " km/h";
 "Data from the request from the maps" = "Data from the request from the maps";
 "Data from the request from the main screen" = "Data from the request from the main screen";
 
 //MARK: - TabBarItem
 "Map" = "Map";
-"History" = "History";
+"Settings" = "Settings";
+
+//MARK: - SettingsViewController
+"Request history" = "Request history";
+"Notifications settings" = "Notifications settings";
+"Measurements" = "Measurements";
+"Time settings" = "Time settings";
+
+//MARK: - SelectNotificationSettings
+"Apply" = "Apply";
+"Snow" = "Snow";
+"Rain" = "Rain";
+"Thunderstorm" = "Thunderstorm";
+"Metric" = "Metric";
+"Imperial" = "Imperial";
+
+//MARK: - ml/h
+"ml/h" = "ml/h";

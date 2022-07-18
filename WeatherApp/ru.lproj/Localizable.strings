@@ -56,10 +56,26 @@
 "Latitude:" = "Широта:";
 "Temperature:" = "Температура воздуха:";
 "Wind speed:" = "Скорость ветра:";
-"km/h HistoryCell" = " км/ч";
 "Data from the request from the maps" = "Данные получены с карты";
 "Data from the request from the main screen" = "Данные получены из запроса на главном экране";
 
 //MARK: - TabBarItem
 "Map" = "Карта";
-"History" = "История";
+"Settings" = "Настройки";
+
+//MARK: - SettingsViewController
+"Request history" = "История запросов";
+"Notifications settings" = "Настройки уведомлений";
+"Measurements" = "Еденицы измерений";
+"Time settings" = "Настройки часов";
+
+//MARK: - SelectNotificationSettings
+"Apply" = "Применить";
+"Snow" = "Снег";
+"Rain" = "Дождь";
+"Thunderstorm" = "Гроза";
+"Metric" = "Метрическая";
+"Imperial" = "Имперская";
+
+//MARK: - ml/h
+"ml/h" = "миля/ч";
