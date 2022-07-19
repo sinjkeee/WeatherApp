@@ -3,6 +3,7 @@ import Foundation
 protocol RestAPIProviderProtocol {
     func getCoordinatesByName(forCity city: String, completionHandler: @escaping (Result<[Geocoding], Error>) -> Void)
     func getWeatherForCityCoordinates(long: Double, lat: Double, language: String, units: String, completionHandler: @escaping (Result<WeatherData, Error>) -> Void)
+    func getCityNameForCoordinates(lon: Double, lat: Double, completionHandler: @escaping (Result<[ReverseGeocoding], Error>) -> Void)
 }
 
 class NetworkWeatherManager: RestAPIProviderProtocol {
@@ -36,6 +37,19 @@ class NetworkWeatherManager: RestAPIProviderProtocol {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "GET"
         apiRequestAndParseJSON(urlRequest: urlRequest) { (result: Result<WeatherData, Error>) in
+            completionHandler(result)
+        }
+    }
+    
+    func getCityNameForCoordinates(lon: Double, lat: Double, completionHandler: @escaping (Result<[ReverseGeocoding], Error>) -> Void) {
+        let endpoint = Endpoint.getCityName(lon: lon, lat: lat, key: apiKey)
+        guard let url = endpoint.url else {
+            completionHandler(.failure(Error.self as! Error))
+            return
+        }
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "GET"
+        apiRequestAndParseJSON(urlRequest: urlRequest) { (result: Result<[ReverseGeocoding], Error>) in
             completionHandler(result)
         }
     }

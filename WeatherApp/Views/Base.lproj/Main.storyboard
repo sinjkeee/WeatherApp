@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="NfI-pY-ljc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="NfI-pY-ljc">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -17,14 +17,14 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="0Kb-fK-oho">
-                                <rect key="frame" x="0.0" y="44" width="375" height="623"/>
+                                <rect key="frame" x="0.0" y="96" width="375" height="571"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="separatorColor" red="0.44708836079999997" green="0.47892314200000002" blue="0.45097696780000002" alpha="0.40000000000000002" colorSpace="custom" customColorSpace="displayP3"/>
                                 <color key="sectionIndexBackgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </tableView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
-                        <color key="backgroundColor" systemColor="systemGroupedBackgroundColor"/>
+                        <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="0Kb-fK-oho" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="1Kb-DG-JDt"/>
                             <constraint firstItem="0Kb-fK-oho" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="Tnh-Hx-txe"/>
@@ -71,7 +71,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3288.8000000000002" y="769.56521739130437"/>
+            <point key="canvasLocation" x="3081" y="770"/>
         </scene>
         <!--Settings View Controller-->
         <scene sceneID="Oue-WW-adN">
@@ -144,7 +144,7 @@
                             </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Uq3-sL-Fdj"/>
-                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                        <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="BSX-0z-aP4" firstAttribute="top" secondItem="Uq3-sL-Fdj" secondAttribute="top" constant="64" id="FZD-1d-h4C"/>
                             <constraint firstItem="BSX-0z-aP4" firstAttribute="leading" secondItem="Uq3-sL-Fdj" secondAttribute="leading" constant="32" id="jhJ-K9-kPV"/>
@@ -157,11 +157,15 @@
                         <outlet property="timeChangeButton" destination="PI2-xE-JDC" id="S70-HU-yhM"/>
                         <outlet property="toHistoryVCButton" destination="eqr-Hp-1dH" id="s3w-b3-b43"/>
                         <outlet property="unitsOfMeasurementButton" destination="YhP-HJ-gnO" id="jmU-wq-cmy"/>
+                        <outletCollection property="buttons" destination="4jw-nG-TTW" collectionClass="NSMutableArray" id="iZu-z9-MKU"/>
+                        <outletCollection property="buttons" destination="YhP-HJ-gnO" collectionClass="NSMutableArray" id="gnO-jI-kTu"/>
+                        <outletCollection property="buttons" destination="PI2-xE-JDC" collectionClass="NSMutableArray" id="uM0-N5-gEH"/>
+                        <outletCollection property="buttons" destination="eqr-Hp-1dH" collectionClass="NSMutableArray" id="dwU-tI-fLL"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ibR-Qx-6uX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4007" y="1460"/>
+            <point key="canvasLocation" x="4578" y="1460"/>
         </scene>
         <!--Select Notification Settings-->
         <scene sceneID="aan-1M-jTC">
@@ -235,7 +239,7 @@
                                         </connections>
                                     </button>
                                 </subviews>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
                                 <constraints>
                                     <constraint firstItem="mgH-7S-tNT" firstAttribute="top" secondItem="fnc-1c-ndl" secondAttribute="top" constant="64" id="TeY-NK-xRW"/>
                                     <constraint firstItem="6id-ry-WUz" firstAttribute="top" secondItem="mgH-7S-tNT" secondAttribute="bottom" constant="32" id="VDo-Uq-wgP"/>
@@ -294,7 +298,7 @@
                                         </subviews>
                                     </stackView>
                                 </subviews>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
                                 <constraints>
                                     <constraint firstItem="WE6-kx-WIG" firstAttribute="centerX" secondItem="lAT-Un-HWV" secondAttribute="centerX" id="64h-jG-UIn"/>
                                     <constraint firstAttribute="trailing" secondItem="pGO-2u-p4z" secondAttribute="trailing" constant="32" id="K3K-K7-8pA"/>
@@ -353,7 +357,7 @@
                                         </connections>
                                     </button>
                                 </subviews>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
                                 <constraints>
                                     <constraint firstItem="Z56-Xy-Qyn" firstAttribute="centerX" secondItem="uR6-0L-ZOR" secondAttribute="centerX" id="8oj-eF-xlO"/>
                                     <constraint firstItem="UiT-wB-c1d" firstAttribute="top" secondItem="uR6-0L-ZOR" secondAttribute="top" constant="64" id="QP5-Fs-Jq7"/>
@@ -394,11 +398,21 @@
                         <outlet property="stormButton" destination="ahQ-mq-3x8" id="RDz-xO-cjc"/>
                         <outlet property="timeSettingsView" destination="lAT-Un-HWV" id="DLy-ji-HMw"/>
                         <outlet property="unitsOfMeasurementView" destination="uR6-0L-ZOR" id="s4B-91-8QJ"/>
+                        <outletCollection property="buttons" destination="ahQ-mq-3x8" collectionClass="NSMutableArray" id="5Lv-zw-rNS"/>
+                        <outletCollection property="buttons" destination="Fte-SE-HNp" collectionClass="NSMutableArray" id="h92-Lr-Ahu"/>
+                        <outletCollection property="buttons" destination="6bJ-FO-2d8" collectionClass="NSMutableArray" id="qCJ-T7-tZE"/>
+                        <outletCollection property="buttons" destination="6id-ry-WUz" collectionClass="NSMutableArray" id="07r-ki-pZF"/>
+                        <outletCollection property="buttons" destination="WE6-kx-WIG" collectionClass="NSMutableArray" id="bF7-zh-Jdx"/>
+                        <outletCollection property="buttons" destination="j5R-T1-pDn" collectionClass="NSMutableArray" id="Lkm-mU-5IE"/>
+                        <outletCollection property="buttons" destination="tYK-jw-nuO" collectionClass="NSMutableArray" id="Do8-8t-PlK"/>
+                        <outletCollection property="buttons" destination="TCy-Bb-OpP" collectionClass="NSMutableArray" id="L2J-z6-sPJ"/>
+                        <outletCollection property="buttons" destination="dWu-CG-PNI" collectionClass="NSMutableArray" id="0DZ-7T-fkw"/>
+                        <outletCollection property="buttons" destination="Z56-Xy-Qyn" collectionClass="NSMutableArray" id="SZw-52-Fdc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dpm-zI-mlK" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4708" y="1460"/>
+            <point key="canvasLocation" x="5254" y="1460"/>
         </scene>
         <!--Map-->
         <scene sceneID="Bek-Hv-MaJ">
@@ -408,7 +422,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="aDl-PR-PXA"/>
-                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                        <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="Map" image="globe.europe.africa" catalog="system" id="VSC-bD-8Zq">
                         <color key="badgeColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -417,7 +431,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8V2-MT-A3i" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4007.1999999999998" y="769.56521739130437"/>
+            <point key="canvasLocation" x="3838" y="770"/>
         </scene>
         <!--History-->
         <scene sceneID="JUS-5y-gGh">
@@ -433,7 +447,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ICj-o1-zHi" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4006" y="2132"/>
+            <point key="canvasLocation" x="3838" y="2140"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="kVM-gI-mS8">
@@ -453,6 +467,43 @@
             </objects>
             <point key="canvasLocation" x="2349.5999999999999" y="769.56521739130437"/>
         </scene>
+        <!--Cities-->
+        <scene sceneID="pPd-Um-5L8">
+            <objects>
+                <viewController storyboardIdentifier="CitiesViewController" id="tbm-RB-hqN" customClass="CitiesViewController" customModule="WeatherApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="w8o-fO-rkb">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="fkB-Ws-H38">
+                                <rect key="frame" x="0.0" y="96" width="375" height="571"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="3Eo-6R-5b2"/>
+                        <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="fkB-Ws-H38" firstAttribute="bottom" secondItem="3Eo-6R-5b2" secondAttribute="bottom" id="1Bq-wH-oF1"/>
+                            <constraint firstItem="fkB-Ws-H38" firstAttribute="leading" secondItem="3Eo-6R-5b2" secondAttribute="leading" id="IQv-kW-4Li"/>
+                            <constraint firstItem="fkB-Ws-H38" firstAttribute="top" secondItem="3Eo-6R-5b2" secondAttribute="top" id="OVl-ju-Bdh"/>
+                            <constraint firstItem="fkB-Ws-H38" firstAttribute="trailing" secondItem="3Eo-6R-5b2" secondAttribute="trailing" id="yGk-xn-UQ9"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Cities" largeTitleDisplayMode="always" id="RPe-TT-MiV">
+                        <barButtonItem key="rightBarButtonItem" style="plain" systemItem="add" id="NgI-OZ-ikf">
+                            <connections>
+                                <action selector="addNewCityPressed:" destination="tbm-RB-hqN" id="9cL-tm-GbH"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="citiesTableView" destination="fkB-Ws-H38" id="A7G-sJ-hkn"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="kdx-kp-r3C" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3080.8000000000002" y="1459.52023988006"/>
+        </scene>
         <!--Navigation Controller-->
         <scene sceneID="cmz-ft-zHU">
             <objects>
@@ -469,16 +520,31 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Kla-Zg-osX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3288.8000000000002" y="1460.4197901049477"/>
+            <point key="canvasLocation" x="3838" y="1460"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="Cbj-bo-iCe">
+            <objects>
+                <navigationController storyboardIdentifier="CitiesNaviController" automaticallyAdjustsScrollViewInsets="NO" id="n6h-3X-E73" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="05A-1X-dpb">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="96"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="tbm-RB-hqN" kind="relationship" relationship="rootViewController" id="0gG-AB-EG8"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="QEX-KO-sqz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2349.5999999999999" y="1459.52023988006"/>
         </scene>
     </scenes>
     <resources>
         <image name="globe.europe.africa" catalog="system" width="128" height="121"/>
         <image name="location" catalog="system" width="128" height="118"/>
         <image name="magnifyingglass" catalog="system" width="128" height="115"/>
-        <systemColor name="secondarySystemBackgroundColor">
-            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
         <systemColor name="secondarySystemGroupedBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
@@ -492,9 +558,6 @@
             <color red="0.89803921568627454" green="0.89803921568627454" blue="0.91764705882352937" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray6Color">
-            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="systemGroupedBackgroundColor">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>

@@ -49,6 +49,9 @@
 		CE643621285C840C0055166C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE643620285C840C0055166C /* Assets.xcassets */; };
 		CE643624285C840C0055166C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CE643622285C840C0055166C /* LaunchScreen.storyboard */; };
 		CE6E9872285C9C72001AF73B /* NetworkWeatherManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6E9871285C9C72001AF73B /* NetworkWeatherManager.swift */; };
+		D06937E82886A4F800790613 /* CitiesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D06937E72886A4F800790613 /* CitiesViewController.swift */; };
+		D06937EA2886AA8300790613 /* UIButton+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D06937E92886AA8300790613 /* UIButton+Extension.swift */; };
+		D06937EC2886BB5C00790613 /* ReverseGeocoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = D06937EB2886BB5C00790613 /* ReverseGeocoding.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -97,6 +100,9 @@
 		CE643623285C840C0055166C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CE643625285C840C0055166C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CE6E9871285C9C72001AF73B /* NetworkWeatherManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkWeatherManager.swift; sourceTree = "<group>"; };
+		D06937E72886A4F800790613 /* CitiesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CitiesViewController.swift; sourceTree = "<group>"; };
+		D06937E92886AA8300790613 /* UIButton+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIButton+Extension.swift"; path = "../../../../UIButton+Extension.swift"; sourceTree = "<group>"; };
+		D06937EB2886BB5C00790613 /* ReverseGeocoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReverseGeocoding.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,6 +155,7 @@
 				2A8BBF7A2868E45700D05D40 /* Int+Extension.swift */,
 				2A8BBF7C2869AE2C00D05D40 /* UIImageView+Extension.swift */,
 				2A16675B287D7C64005D7D60 /* String+Extension.swift */,
+				D06937E92886AA8300790613 /* UIButton+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -298,6 +305,7 @@
 				2A0AE9A7286AF3E500E16479 /* HistoryViewController.swift */,
 				2A8ED44828815B38009AB8AE /* SettingsViewController.swift */,
 				2A8ED44A28817003009AB8AE /* SelectNotificationSettings.swift */,
+				D06937E72886A4F800790613 /* CitiesViewController.swift */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -309,6 +317,7 @@
 				2A7D81FD28631401008D3153 /* WeatherData.swift */,
 				2A7D81FF28635BC0008D3153 /* DailyWeatherData.swift */,
 				2A7D820128635C00008D3153 /* HourlyWeatherData.swift */,
+				D06937EB2886BB5C00790613 /* ReverseGeocoding.swift */,
 				2A0AE9A9286AF69600E16479 /* CurrentWeatherModel.swift */,
 			);
 			path = Models;
@@ -461,13 +470,16 @@
 				2A7D820A2865D0D7008D3153 /* MapViewController.swift in Sources */,
 				CE64361C285C840A0055166C /* MainViewController.swift in Sources */,
 				2A7D81FA2861E8F6008D3153 /* MainViewController+Extension.swift in Sources */,
+				D06937E82886A4F800790613 /* CitiesViewController.swift in Sources */,
 				CE643618285C840A0055166C /* AppDelegate.swift in Sources */,
 				2A7D820628645E21008D3153 /* Endpoint+Extension.swift in Sources */,
 				2A0AE9A8286AF3E500E16479 /* HistoryViewController.swift in Sources */,
 				2A8ED44928815B39009AB8AE /* SettingsViewController.swift in Sources */,
+				D06937EA2886AA8300790613 /* UIButton+Extension.swift in Sources */,
 				CE64361A285C840A0055166C /* SceneDelegate.swift in Sources */,
 				2A799027287B038C009E4F7F /* MarkerWindowView.swift in Sources */,
 				2A7D81FC28630F61008D3153 /* Geocoding.swift in Sources */,
+				D06937EC2886BB5C00790613 /* ReverseGeocoding.swift in Sources */,
 				2A7D81FE28631401008D3153 /* WeatherData.swift in Sources */,
 				2A0AE9B6286C3A6100E16479 /* RealmManager.swift in Sources */,
 				2AB5FA48287438C400FD53FF /* CellWithCollectionView.swift in Sources */,
@@ -663,6 +675,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -697,6 +710,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -4,6 +4,7 @@ enum Endpoint {
     case geocodingURL(key: String, city: String)
     case getIcon(icon: String)
     case currentWeather(lat: Double, lon: Double, key: String, lang: String, units: String)
+    case getCityName(lon: Double, lat: Double, key: String)
 }
 
 extension Endpoint {
@@ -17,21 +18,26 @@ extension Endpoint {
     
     var url: URL? {
         switch self {
-        case .geocodingURL(let key, let city):
-            if let url = URL(string: baseURLForWeather.appending("geo/1.0/direct?q=\(city)&appid=\(key)")) {
-                return url
-            }
-            return nil
-        case .getIcon(let icon):
-            if let url = URL(string: baseURLForIcon.appending("img/wn/\(icon)@2x.png")) {
-                return url
-            }
-            return nil
-        case .currentWeather(let lat, let lon, let key, let lang, let units):
-            if let url = URL(string: baseURLForWeather.appending("data/2.5/onecall?lat=\(lat)&lon=\(lon)&appid=\(key)&lang=\(lang)&units=\(units)")) {
-                return url
-            }
-            return nil
+            case .geocodingURL(let key, let city):
+                if let url = URL(string: baseURLForWeather.appending("geo/1.0/direct?q=\(city)&appid=\(key)")) {
+                    return url
+                }
+                return nil
+            case .getIcon(let icon):
+                if let url = URL(string: baseURLForIcon.appending("img/wn/\(icon)@2x.png")) {
+                    return url
+                }
+                return nil
+            case .currentWeather(let lat, let lon, let key, let lang, let units):
+                if let url = URL(string: baseURLForWeather.appending("data/2.5/onecall?lat=\(lat)&lon=\(lon)&appid=\(key)&lang=\(lang)&units=\(units)")) {
+                    return url
+                }
+                return nil
+            case .getCityName(let lon, let lat, let key):
+                if let url = URL(string: baseURLForWeather.appending("geo/1.0/reverse?lat=\(lat)&lon=\(lon)&limit=1&appid=\(key)")) {
+                    return url
+                }
+                return nil
         }
     }
 }

@@ -18,13 +18,19 @@ class SelectNotificationSettings: UIViewController {
     @IBOutlet weak var metricUnitsButton: UIButton!
     @IBOutlet weak var imperialUnitsButton: UIButton!
     @IBOutlet weak var saveUnitsSettingsButton: UIButton!
+    @IBOutlet var buttons: [UIButton]!
+    
     
     var index = 0
     var array: [Bool] = []
     //MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        buttons.forEach { button in
+            button.cornerRadius()
+        }
+        
         self.saveButton.setTitle("Apply".localized(), for: .normal)
         self.saveTimeSettingsButton.setTitle("Apply".localized(), for: .normal)
         self.saveUnitsSettingsButton.setTitle("Apply".localized(), for: .normal)
@@ -66,6 +72,7 @@ class SelectNotificationSettings: UIViewController {
             self.firstTimeButton.isSelected = true
             self.firstTimeButton.layer.borderWidth = 1
             self.firstTimeButton.layer.borderColor = UIColor.red.cgColor
+//            self.firstTimeButton.layer.masksToBounds = true
         } else {
             self.secondTimeButton.isSelected = true
             self.secondTimeButton.layer.borderWidth = 1

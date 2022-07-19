@@ -7,10 +7,15 @@ class SettingsViewController: UIViewController {
     @IBOutlet weak var unitsOfMeasurementButton: UIButton!
     @IBOutlet weak var timeChangeButton: UIButton!
     
+    @IBOutlet var buttons: [UIButton]!
+    
     //MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        buttons.forEach { button in
+            button.cornerRadius()
+        }
         self.title = "Settings".localized()
         self.timeChangeButton.setTitle("Time settings".localized(), for: .normal)
         self.unitsOfMeasurementButton.setTitle("Measurements".localized(), for: .normal)

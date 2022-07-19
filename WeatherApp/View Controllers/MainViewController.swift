@@ -24,6 +24,7 @@ class MainViewController: UIViewController {
     var currentWeather: WeatherData?
     var hourlyWeather: [HourlyWeatherData]?
     var dailyWeather: [DailyWeatherData]?
+    var reverseGeocoding: [ReverseGeocoding]?
     var networkWeatherManager: RestAPIProviderProtocol = NetworkWeatherManager()
     var units: String = ""
     
@@ -172,6 +173,31 @@ class MainViewController: UIViewController {
             self.createAndShowBlurEffectWithActivityIndicator()
             locationManager.requestLocation()
             guard let coordinate = coordinate else { return }
+            self.networkWeatherManager.getCityNameForCoordinates(lon: coordinate.longitude, lat: coordinate.latitude) { [weak self] (result: Result<[ReverseGeocoding], Error>) in
+                guard let self = self else { return }
+                switch result {
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                        DispatchQueue.main.async {
+                            self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
+                        }
+                    case .success(let reverseGeo):
+                        self.reverseGeocoding = reverseGeo
+                        DispatchQueue.main.async {
+                            // какой вариант лучше, обновлять интерфейс сразу с того, что заберем из замыкания. или записать снчала это в массив, а потом с нашего массива обновлять интерфейс? вариант как у меня вроде как надежней..?
+                            
+//                            guard let name = self.reverseGeocoding?.first?.name else { return }
+//                            let ruName = self.reverseGeocoding?.first?.localNames?.ru ?? name
+//                            let enName = self.reverseGeocoding?.first?.localNames?.en ?? name
+                            guard let name = reverseGeo.first?.name else { return }
+                            let ruName = reverseGeo.first?.localNames?.ru ?? name
+                            let enName = reverseGeo.first?.localNames?.en ?? name
+                            let nameDict = ["ru": ruName, "en": enName]
+                            guard let finalName = nameDict["key".localized()] else { return }
+                            self.title = finalName
+                        }
+                }
+            }
             self.networkWeatherManager.getWeatherForCityCoordinates(long: coordinate.longitude, lat: coordinate.latitude, language: "languages".localized(), units: self.units) { [weak self] (result: Result<WeatherData, Error>) in
                 guard let self = self else { return }
                 switch result {
@@ -344,10 +370,16 @@ class MainViewController: UIViewController {
     func removeAllNotification() {
         notificationCenter.removeAllPendingNotificationRequests()
     }
-    
+    //MARK: - Я тут не понял, как лучше. Оставить логику ниже в updateInterface или вынести отдельно и кидать в само замыкание
+    // пару раз ловил баг, когда первый раз запускаешь апп, и должно стартовать с геолокации, не пропадает блюр и не заходит в апп. где-то что-то теряет походу, но опять же не понимаю где. Вроде ничего такого не написал лишнего
     func updateInterface(hourlyWeather: [HourlyWeatherData]?) {
         if self.geoData == nil {
-            self.title = self.currentWeather?.timeZone
+//            guard let name = reverseGeocoding?.first?.name else { return }
+//            let ruName = reverseGeocoding?.first?.localNames?.ru ?? name
+//            let enName = reverseGeocoding?.first?.localNames?.en ?? name
+//            let nameDict = ["ru": ruName, "en": enName]
+//            guard let finalName = nameDict["key".localized()] else { return }
+//            self.title = finalName
         } else {
             guard let name = self.geoData?.first?.cityName,
                   let ruName = self.geoData?.first?.localNames?.ru,
@@ -443,6 +475,35 @@ extension MainViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = manager.location?.coordinate else { return }
         self.coordinate = location
+
+        self.networkWeatherManager.getCityNameForCoordinates(lon: location.longitude, lat: location.latitude) { [weak self] (result: Result<[ReverseGeocoding], Error>) in
+            guard let self = self else { return }
+            switch result {
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
+                    }
+                case .success(let reverseGeo):
+                    self.reverseGeocoding = reverseGeo
+                    
+                    /* Вот сюда ....
+                     Еще не понимаю, данные всегда будут, когда мне нужно получать имя города или нет? На момент, массив reverseGeocoding всегда будет полный, к моменту, когда будет все остальное подгружаться? или не факт? тогда как поправить?
+                     */
+                    DispatchQueue.main.async {
+//                        guard let name = self.reverseGeocoding?.first?.name else { return }
+//                        let ruName = self.reverseGeocoding?.first?.localNames?.ru ?? name
+//                        let enName = self.reverseGeocoding?.first?.localNames?.en ?? name
+                        guard let name = reverseGeo.first?.name else { return }
+                        let ruName = reverseGeo.first?.localNames?.ru ?? name
+                        let enName = reverseGeo.first?.localNames?.en ?? name
+                        let nameDict = ["ru": ruName, "en": enName]
+                        guard let finalName = nameDict["key".localized()] else { return }
+                        self.title = finalName
+                    }
+            }
+        }
+        
         self.networkWeatherManager.getWeatherForCityCoordinates(long: location.longitude, lat: location.latitude, language: "languages".localized(), units: self.units) { [weak self] (result: Result<WeatherData, Error>) in
             guard let self = self else { return }
             switch result {

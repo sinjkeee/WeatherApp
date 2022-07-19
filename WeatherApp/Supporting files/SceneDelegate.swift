@@ -15,11 +15,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let second = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MapViewController") as? MapViewController else { return }
         guard let firstNavi = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "firstNavi") as? UINavigationController else { return }
         guard let settingsNavi = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "settingsNavi") as? UINavigationController else { return }
+        guard let citiesViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "CitiesNaviController") as? UINavigationController else { return }
         
         let tabBar = UITabBarController()
-        tabBar.setViewControllers([firstNavi, second, settingsNavi], animated: true)
+        tabBar.setViewControllers([firstNavi, citiesViewController, second, settingsNavi], animated: true)
         firstNavi.tabBarItem.title = "Main"
         firstNavi.tabBarItem.image = UIImage(systemName: "thermometer")
+        citiesViewController.tabBarItem.title = "Cities".localized()
+        citiesViewController.tabBarItem.image = UIImage(systemName: "globe")
         second.tabBarItem.title = "Map".localized()
         second.tabBarItem.image = UIImage(systemName: "globe.europe.africa")
         settingsNavi.tabBarItem.title = "Settings".localized()
