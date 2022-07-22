@@ -134,9 +134,11 @@ class MainViewController: UIViewController {
     @IBAction func getLocationPressed(_ sender: UIButton) {
         if locationManager.authorizationStatus == .notDetermined {
             locationManager.requestWhenInUseAuthorization()
+            locationManager.requestLocation()
         } else if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
             locationManager.requestLocation()
         }
+//        locationManager.requestLocation()
     }
     
     @IBAction func refreshTableView() {
