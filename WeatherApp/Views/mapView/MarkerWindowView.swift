@@ -28,7 +28,7 @@ class MarkerWindowView: UIView {
         self.addGradient()
     }
     
-    func addGradient() {
+    private func addGradient() {
         let gradient = CAGradientLayer()
         gradient.colors = [UIColor.systemYellow.cgColor, UIColor.systemCyan.cgColor, UIColor.systemBlue.cgColor]
         gradient.opacity = 0.5

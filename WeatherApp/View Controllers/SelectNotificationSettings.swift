@@ -22,14 +22,17 @@ class SelectNotificationSettings: UIViewController {
     
     
     var index = 0
-    var array: [Bool] = []
+    private var array: [Bool] = []
     //MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        array = [false, false, false]
         buttons.forEach { button in
             button.cornerRadius()
         }
+        
+        updateStartInterface()
         
         self.saveButton.setTitle("Apply".localized(), for: .normal)
         self.saveTimeSettingsButton.setTitle("Apply".localized(), for: .normal)
@@ -56,23 +59,15 @@ class SelectNotificationSettings: UIViewController {
             timeSettingsView.isHidden = true
         }
         
-        array = [false, false, false]
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        updateStartInterface()
     }
     
     //MARK: - Methods
-    func updateStartInterface() {
+    private func updateStartInterface() {
         let unitsTime = UserDefaults.standard.value(forKey: "timeSetting") as? Bool
         if unitsTime ?? false {
             self.firstTimeButton.isSelected = true
             self.firstTimeButton.layer.borderWidth = 1
             self.firstTimeButton.layer.borderColor = UIColor.red.cgColor
-//            self.firstTimeButton.layer.masksToBounds = true
         } else {
             self.secondTimeButton.isSelected = true
             self.secondTimeButton.layer.borderWidth = 1
@@ -222,16 +217,16 @@ class SelectNotificationSettings: UIViewController {
     @IBAction func saveButtonPressed(_ sender: UIButton) {
         UserDefaults.standard.set(array, forKey: "notifications")
         NotificationCenter.default.post(name: .updateMainInterface, object: nil)
-        dismiss(animated: true)
+        navigationController?.popViewController(animated: true)
     }
     
     @IBAction func saveTimeButtonPressed(_ sender: UIButton) {
         NotificationCenter.default.post(name: .updateMainInterface, object: nil)
-        dismiss(animated: true)
+        navigationController?.popViewController(animated: true)
     }
     
     @IBAction func saveUnitsButtonPressed(_ sender: UIButton) {
         NotificationCenter.default.post(name: .updateMainInterface, object: nil)
-        dismiss(animated: true)
+        navigationController?.popViewController(animated: true)
     }
 }

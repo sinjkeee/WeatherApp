@@ -6,13 +6,13 @@ import RealmSwift
 class MapViewController: UIViewController {
     
     //MARK: - let/var
-    var mapView = UIView()
+    private var mapView = UIView()
     private var realmManager: RealmManagerProtocol = RealmManager()
     private var networkWeatherManager: RestAPIProviderProtocol = NetworkWeatherManager()
-    var currentWeather: WeatherData?
-    var map = GMSMapView()
-    var camera: GMSCameraPosition = GMSCameraPosition.camera(withLatitude: 54.029, longitude: 27.597, zoom: 6.0)
-    var units: String = ""
+    private var currentWeather: WeatherData?
+    private var map = GMSMapView()
+    private var camera: GMSCameraPosition = GMSCameraPosition.camera(withLatitude: 54.029, longitude: 27.597, zoom: 6.0)
+    private var units: String = ""
     
     //MARK: - viewDidLoad
     override func viewDidLoad() {
@@ -37,7 +37,7 @@ class MapViewController: UIViewController {
     }
     
     //MARK: - Methods
-    func createMarker(map: GMSMapView, latitude: CLLocationDegrees, longitude: CLLocationDegrees) {
+    private func createMarker(map: GMSMapView, latitude: CLLocationDegrees, longitude: CLLocationDegrees) {
         map.clear()
         let marker = GMSMarker()
         marker.position = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)

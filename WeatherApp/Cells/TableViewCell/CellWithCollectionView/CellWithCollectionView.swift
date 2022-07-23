@@ -1,9 +1,9 @@
 import UIKit
 
 class CellWithCollectionView: UITableViewCell {
-
+    
     @IBOutlet weak var collectionView: UICollectionView!
-    var hourlyArray: [HourlyWeatherData] = []
+    private var hourlyArray: [HourlyWeatherData] = []
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -34,5 +34,5 @@ extension CellWithCollectionView: UICollectionViewDelegate, UICollectionViewData
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0
-    } 
+    }
 }

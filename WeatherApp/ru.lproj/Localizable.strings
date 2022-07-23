@@ -80,3 +80,6 @@
 
 //MARK: - ml/h
 "ml/h" = "миля/ч";
+
+//MARK: - CitiesViewController
+"Cities" = "Города";

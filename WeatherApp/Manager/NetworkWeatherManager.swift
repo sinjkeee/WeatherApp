@@ -8,7 +8,7 @@ protocol RestAPIProviderProtocol {
 
 class NetworkWeatherManager: RestAPIProviderProtocol {
     //MARK: - вычисляемое свойство, которое достает ключ из info.plist
-    var apiKey: String {
+    private var apiKey: String {
         guard let key = Bundle.main.object(forInfoDictionaryKey: "apiKey") as? String else { return "" }
         return key
     }
@@ -54,7 +54,7 @@ class NetworkWeatherManager: RestAPIProviderProtocol {
         }
     }
     
-    func apiRequestAndParseJSON<T: Codable>(urlRequest: URLRequest, completionHandler: @escaping (Result<T, Error>) -> Void) {
+    private func apiRequestAndParseJSON<T: Codable>(urlRequest: URLRequest, completionHandler: @escaping (Result<T, Error>) -> Void) {
         let session = URLSession(configuration: .default)
         let dataTask = session.dataTask(with: urlRequest) { data, response, error in
             if let error = error {

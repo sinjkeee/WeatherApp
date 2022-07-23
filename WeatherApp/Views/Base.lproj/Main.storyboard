@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="NfI-pY-ljc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="NfI-pY-ljc">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--City name-->
+        <!--Main View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController storyboardIdentifier="MainViewController" id="BYZ-38-t0r" customClass="MainViewController" customModule="WeatherApp" customModuleProvider="target" sceneMemberID="viewController">
@@ -17,7 +17,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="0Kb-fK-oho">
-                                <rect key="frame" x="0.0" y="96" width="375" height="571"/>
+                                <rect key="frame" x="0.0" y="44" width="375" height="623"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="separatorColor" red="0.44708836079999997" green="0.47892314200000002" blue="0.45097696780000002" alpha="0.40000000000000002" colorSpace="custom" customColorSpace="displayP3"/>
                                 <color key="sectionIndexBackgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -32,11 +32,17 @@
                             <constraint firstItem="0Kb-fK-oho" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="ege-IU-iBr"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="City name" id="Feq-6N-WcL">
+                    <navigationItem key="navigationItem" id="Feq-6N-WcL">
                         <rightBarButtonItems>
+                            <barButtonItem title="Item" image="list.bullet" catalog="system" style="done" id="StK-nr-OY5">
+                                <color key="tintColor" systemColor="systemCyanColor"/>
+                                <connections>
+                                    <action selector="listOfCitiesPressed:" destination="BYZ-38-t0r" id="Whc-NR-DBg"/>
+                                </connections>
+                            </barButtonItem>
                             <barButtonItem style="done" id="GET-r8-oce">
                                 <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="vzr-ve-gRw">
-                                    <rect key="frame" x="309" y="5" width="50" height="34"/>
+                                    <rect key="frame" x="263.5" y="5" width="50" height="34"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <color key="tintColor" systemColor="systemCyanColor"/>
                                     <state key="normal" title="Button"/>
@@ -46,9 +52,9 @@
                                     </connections>
                                 </button>
                             </barButtonItem>
-                            <barButtonItem title="Bar Button Item" style="plain" id="gfx-6l-4GO">
+                            <barButtonItem title="Bar Button Item" style="done" id="gfx-6l-4GO">
                                 <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="RfR-X6-XS1">
-                                    <rect key="frame" x="251" y="5" width="50" height="34"/>
+                                    <rect key="frame" x="205.5" y="5" width="50" height="34"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <color key="tintColor" systemColor="systemCyanColor"/>
                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -433,7 +439,7 @@
             </objects>
             <point key="canvasLocation" x="3838" y="770"/>
         </scene>
-        <!--History-->
+        <!--History View Controller-->
         <scene sceneID="JUS-5y-gGh">
             <objects>
                 <viewController storyboardIdentifier="HistoryViewController" id="RiJ-Q0-jvO" customClass="HistoryViewController" customModule="WeatherApp" customModuleProvider="target" sceneMemberID="viewController">
@@ -443,11 +449,10 @@
                         <viewLayoutGuide key="safeArea" id="z01-YN-QXn"/>
                         <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
                     </view>
-                    <navigationItem key="navigationItem" title="History" largeTitleDisplayMode="always" id="sCS-qo-MXy"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ICj-o1-zHi" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3838" y="2140"/>
+            <point key="canvasLocation" x="5254" y="2125"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="kVM-gI-mS8">
@@ -490,7 +495,7 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Cities" largeTitleDisplayMode="always" id="RPe-TT-MiV">
-                        <barButtonItem key="rightBarButtonItem" style="plain" systemItem="add" id="NgI-OZ-ikf">
+                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="add" id="NgI-OZ-ikf">
                             <connections>
                                 <action selector="addNewCityPressed:" destination="tbm-RB-hqN" id="9cL-tm-GbH"/>
                             </connections>
@@ -543,6 +548,7 @@
     </scenes>
     <resources>
         <image name="globe.europe.africa" catalog="system" width="128" height="121"/>
+        <image name="list.bullet" catalog="system" width="128" height="88"/>
         <image name="location" catalog="system" width="128" height="118"/>
         <image name="magnifyingglass" catalog="system" width="128" height="115"/>
         <systemColor name="secondarySystemGroupedBackgroundColor">

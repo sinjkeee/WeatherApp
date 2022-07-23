@@ -1,7 +1,7 @@
 import UIKit
 
 class MyHourlyCell: UICollectionViewCell {
-
+    
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var temperatureLabel: UILabel!
@@ -10,7 +10,7 @@ class MyHourlyCell: UICollectionViewCell {
         super.awakeFromNib()
         // Initialization code
     }
-
+    
     func configure(weather: HourlyWeatherData, isFirst: Bool) {
         guard let icon = weather.weather?.first?.icon,
               let temp = weather.temp,
