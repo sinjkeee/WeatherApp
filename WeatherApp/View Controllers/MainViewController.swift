@@ -25,6 +25,8 @@ class MainViewController: UIViewController {
     private var hourlyWeather: [HourlyWeatherData]?
     private var dailyWeather: [DailyWeatherData]?
     private var reverseGeocoding: [ReverseGeocoding]?
+    private var citiesArray: [String] = []
+    private var citiesDict: [String: WeatherData] = [:]
     var networkWeatherManager: RestAPIProviderProtocol = NetworkWeatherManager()
     var units: String = ""
     
@@ -36,7 +38,7 @@ class MainViewController: UIViewController {
         self.geoData = nil
         self.findCityButton.tintColor = .systemCyan
         self.getLocationButton.tintColor = .systemCyan
-        
+        self.citiesArray = ["Москва", "Одесса", "Пекин", "Гомель", "Ставрополь"]
         NotificationCenter.default.addObserver(self, selector: #selector(updateMainInterface), name: .updateMainInterface, object: nil)
         
         tableView.register(UINib(nibName: "CellWithCollectionView", bundle: nil), forCellReuseIdentifier: "CellWithCollectionView")
@@ -52,6 +54,10 @@ class MainViewController: UIViewController {
         
         self.addGradient()
         
+        self.getWeatherForCities(cities: citiesArray) { (weather, name) in
+            self.citiesDict[name] = weather
+        }
+
         if locationManager.authorizationStatus == .denied || locationManager.authorizationStatus == .notDetermined {
             let lastCity = UserDefaults.standard.value(forKey: "city") != nil ? UserDefaults.standard.value(forKey: "city") as! String : "Kaliningrad"
             self.networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] (result: Result<[Geocoding], Error>) in
@@ -128,8 +134,10 @@ class MainViewController: UIViewController {
     
     //MARK: - @IBAction
     @IBAction func listOfCitiesPressed(_ sender: UIBarButtonItem) {
-        guard let citiesViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "CitiesNaviController") as? UINavigationController else { return }
-        present(citiesViewController, animated: true)
+        guard let citiesNaviController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "CitiesNaviController") as? UINavigationController else { return }
+        guard let controller = citiesNaviController.viewControllers.first as? CitiesViewController else { return }
+        controller.citiesDictionary = citiesDict
+        present(citiesNaviController, animated: true)
     }
     
     @IBAction func findCityPressed(_ sender: UIButton) {
@@ -384,6 +392,28 @@ class MainViewController: UIViewController {
         self.removeAllNotification()
         self.weatherCheck(hourlyWeather: hourlyWeather)
         self.hideBlurView()
+    }
+    
+    private func getWeatherForCities(cities: [String], completionHandler: @escaping (WeatherData, String) -> Void) {
+        for name in cities {
+            self.networkWeatherManager.getCoordinatesByName(forCity: name) { [weak self] (result: Result<[Geocoding], Error>) in
+                guard let self = self else { return }
+                switch result {
+                case .success(let success):
+                    guard let lon = success.first?.lon, let lat = success.first?.lat else { return }
+                    self.networkWeatherManager.getWeatherForCityCoordinates(long: lon, lat: lat, language: "languages".localized(), units: self.units) { (result: Result<WeatherData, Error>) in
+                        switch result {
+                        case .success(let weather):
+                            completionHandler(weather, name)
+                        case .failure(let failure):
+                            print(failure.localizedDescription)
+                        }
+                    }
+                case .failure(let failure):
+                    print(failure.localizedDescription)
+                }
+            }
+        }
     }
 }
 

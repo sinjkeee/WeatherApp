@@ -42,6 +42,8 @@
 		2AB5FA532874883200FD53FF /* CurrentWeatherCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AB5FA512874883200FD53FF /* CurrentWeatherCell.swift */; };
 		2AB5FA542874883200FD53FF /* CurrentWeatherCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2AB5FA522874883200FD53FF /* CurrentWeatherCell.xib */; };
 		2AED752F288A9FE3007CF799 /* UIButton+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AED752E288A9FE3007CF799 /* UIButton+Extension.swift */; };
+		2AED7533288E880E007CF799 /* CityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AED7531288E880E007CF799 /* CityCell.swift */; };
+		2AED7534288E880E007CF799 /* CityCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2AED7532288E880E007CF799 /* CityCell.xib */; };
 		B2A9FC62FA74EC45AA7C386B /* Pods_WeatherApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 098477BCF29725D558D934E2 /* Pods_WeatherApp.framework */; };
 		CE643618285C840A0055166C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE643617285C840A0055166C /* AppDelegate.swift */; };
 		CE64361A285C840A0055166C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE643619285C840A0055166C /* SceneDelegate.swift */; };
@@ -90,6 +92,8 @@
 		2AB5FA512874883200FD53FF /* CurrentWeatherCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentWeatherCell.swift; sourceTree = "<group>"; };
 		2AB5FA522874883200FD53FF /* CurrentWeatherCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CurrentWeatherCell.xib; sourceTree = "<group>"; };
 		2AED752E288A9FE3007CF799 /* UIButton+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIButton+Extension.swift"; sourceTree = "<group>"; };
+		2AED7531288E880E007CF799 /* CityCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityCell.swift; sourceTree = "<group>"; };
+		2AED7532288E880E007CF799 /* CityCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CityCell.xib; sourceTree = "<group>"; };
 		5B87901EC2A46BB1A877535D /* Pods-WeatherApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WeatherApp.debug.xcconfig"; path = "Target Support Files/Pods-WeatherApp/Pods-WeatherApp.debug.xcconfig"; sourceTree = "<group>"; };
 		7CE9813F59851AF0A18A111B /* Pods-WeatherApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WeatherApp.release.xcconfig"; path = "Target Support Files/Pods-WeatherApp/Pods-WeatherApp.release.xcconfig"; sourceTree = "<group>"; };
 		CE643614285C840A0055166C /* WeatherApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -181,6 +185,7 @@
 		2A8BBF70286888FE00D05D40 /* TableViewCell */ = {
 			isa = PBXGroup;
 			children = (
+				2AED7530288E87E3007CF799 /* CityCell */,
 				2A0AE9B0286B1D8F00E16479 /* HistoryCell */,
 				2AB5FA502874880B00FD53FF /* CurrentWeatherCell */,
 				2AB5FA452874388D00FD53FF /* CellWithCollectionView */,
@@ -230,6 +235,15 @@
 				2AB5FA522874883200FD53FF /* CurrentWeatherCell.xib */,
 			);
 			path = CurrentWeatherCell;
+			sourceTree = "<group>";
+		};
+		2AED7530288E87E3007CF799 /* CityCell */ = {
+			isa = PBXGroup;
+			children = (
+				2AED7531288E880E007CF799 /* CityCell.swift */,
+				2AED7532288E880E007CF799 /* CityCell.xib */,
+			);
+			path = CityCell;
 			sourceTree = "<group>";
 		};
 		B9E948213F582FDB08A0C371 /* Pods */ = {
@@ -408,6 +422,7 @@
 				CE643624285C840C0055166C /* LaunchScreen.storyboard in Resources */,
 				2AB5FA4E2874399500FD53FF /* MyHourlyCell.xib in Resources */,
 				2A166757287D7B90005D7D60 /* Localizable.strings in Resources */,
+				2AED7534288E880E007CF799 /* CityCell.xib in Resources */,
 				CE643621285C840C0055166C /* Assets.xcassets in Resources */,
 				2AB5FA49287438C400FD53FF /* CellWithCollectionView.xib in Resources */,
 				CE64361F285C840A0055166C /* Main.storyboard in Resources */,
@@ -475,6 +490,7 @@
 				2A7D820628645E21008D3153 /* Endpoint+Extension.swift in Sources */,
 				2A0AE9A8286AF3E500E16479 /* HistoryViewController.swift in Sources */,
 				2A8ED44928815B39009AB8AE /* SettingsViewController.swift in Sources */,
+				2AED7533288E880E007CF799 /* CityCell.swift in Sources */,
 				CE64361A285C840A0055166C /* SceneDelegate.swift in Sources */,
 				2A799027287B038C009E4F7F /* MarkerWindowView.swift in Sources */,
 				2A7D81FC28630F61008D3153 /* Geocoding.swift in Sources */,
