@@ -10,23 +10,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        guard let windowScen = (scene as? UIWindowScene) else { return }
-        window?.windowScene = windowScen
-        guard let second = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MapViewController") as? MapViewController else { return }
-        guard let firstNavi = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "firstNavi") as? UINavigationController else { return }
-        guard let settingsNavi = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "settingsNavi") as? UINavigationController else { return }
-        
-        let tabBar = UITabBarController()
-        tabBar.setViewControllers([firstNavi, second, settingsNavi], animated: true)
-        firstNavi.tabBarItem.title = "Main"
-        firstNavi.tabBarItem.image = UIImage(systemName: "thermometer")
-        second.tabBarItem.title = "Map".localized()
-        second.tabBarItem.image = UIImage(systemName: "globe.europe.africa")
-        settingsNavi.tabBarItem.title = "Settings".localized()
-        settingsNavi.tabBarItem.image = UIImage(systemName: "gearshape")
-        tabBar.tabBar.backgroundColor = UIColor.clear
-        window?.rootViewController = tabBar
+        guard let windowScene = (scene as? UIWindowScene) else { return }
+        window = UIWindow(windowScene: windowScene)
         window?.makeKeyAndVisible()
+        window?.rootViewController = TabBarController()
     }
     
     func sceneDidDisconnect(_ scene: UIScene) {
