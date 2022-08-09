@@ -1,50 +1,58 @@
 import Foundation
 import UIKit
-import SnapKit
 
-extension MainViewController {
+extension CitiesViewController {
     func presentSearchAlertController(withTitle title: String?, message: String?, style: UIAlertController.Style) {
+        var citiesArray = UserDefaults.standard.value(forKey: "cities") as? [String] ?? [""]
+        var citiesArray2: [String: [Double]]
+        citiesArray2 = (UserDefaults.standard.value(forKey: "cities2") as? [String: [Double]]) ?? ["": [0.0, 0.0]]
+        
         let alert = UIAlertController(title: title, message: message, preferredStyle: style)
         let searchButton = UIAlertAction(title: "Search".localized(), style: .cancel) { _ in
             guard let textField = alert.textFields?.first else { return }
             guard let cityName = textField.text else { return }
             if textField.hasText {
-                self.createAndShowBlurEffectWithActivityIndicator()
+                //self.createAndShowBlurEffectWithActivityIndicator()
                 self.networkWeatherManager.getCoordinatesByName(forCity: cityName) { [weak self] (result: Result<[Geocoding], Error>) in
                     guard let self = self else { return }
                     switch result {
                     case .failure(let error):
                         print(error.localizedDescription)
                         DispatchQueue.main.async {
-                            self.hideBlurView()
+                            //self.hideBlurView()
                             self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
                         }
                     case .success(let geocoding):
                         if !geocoding.isEmpty {
-                            self.geoData = geocoding
+                            //self.geoData = geocoding
                             guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
                             self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, language: "languages".localized(), units: self.units) { (result: Result<WeatherData, Error>) in
                                 switch result {
                                 case .failure(let error):
                                     print(error.localizedDescription)
                                     DispatchQueue.main.async {
-                                        self.hideBlurView()
+                                        //self.hideBlurView()
                                         self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
                                     }
-                                case .success(let weatherData):
-                                    self.combiningMethods(weatherData: weatherData)
+                                case .success/*(let weatherData)*/:
+                                    //self.combiningMethods(weatherData: (weatherData, geocoding))
                                     DispatchQueue.main.async {
-                                        UserDefaults.standard.removeObject(forKey: "location")
-                                        UserDefaults.standard.removeObject(forKey: "city")
-                                        UserDefaults.standard.set("\(cityName)", forKey: "city")
-                                        self.getLocationButton.tintColor = .systemCyan
-                                        self.findCityButton.tintColor = .systemPink
+                                        
+                                        citiesArray2[cityName] = [longitude, latitude]
+                                        citiesArray2[""] = nil
+                                        
+                                        citiesArray.insert(cityName, at: 0)
+                                        
+                                        UserDefaults.standard.set(citiesArray2, forKey: "cities2")
+                                        UserDefaults.standard.set(citiesArray, forKey: "cities")
+                                        
+                                        NotificationCenter.default.post(name: .updateMainInterface, object: nil, userInfo: nil)
                                     }
                                 }
                             }
                         } else {
                             DispatchQueue.main.async {
-                                self.hideBlurView()
+                                //self.hideBlurView()
                                 self.showErrorAlert(title: "City not found!".localized(), message: "Check city name and try again".localized())
                             }
                         }
@@ -113,7 +121,7 @@ extension MainViewController {
     }
 }
 
-extension MainViewController: UITextFieldDelegate {
+extension CitiesViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         
         if CharacterSet(charactersIn: "qwertyuiopasdfghjklzxcvbnm ёйцукенгшщзхъфывапролджэячсмитьбю QWERTYUIOPASDFGHJKLZXCVBNM ЁЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ-").isSuperset(of: CharacterSet(charactersIn: string)) {

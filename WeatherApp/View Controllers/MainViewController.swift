@@ -6,19 +6,10 @@ class MainViewController: UIViewController {
     
     //MARK: - @IBOutlets
     @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var getLocationButton: UIButton!
-    @IBOutlet weak var findCityButton: UIButton!
     
     //MARK: - let/var
     private let refresh = UIRefreshControl()
-    lazy var locationManager: CLLocationManager = {
-        let lm = CLLocationManager()
-        lm.delegate = self
-        lm.desiredAccuracy = kCLLocationAccuracyKilometer
-        return lm
-    }()
     private var realmManager: RealmManagerProtocol = RealmManager()
-    private let notificationCenter = UNUserNotificationCenter.current()
     var geoData: [Geocoding]?
     private var coordinate: CLLocationCoordinate2D?
     private var currentWeather: WeatherData?
@@ -26,7 +17,8 @@ class MainViewController: UIViewController {
     private var dailyWeather: [DailyWeatherData]?
     private var reverseGeocoding: [ReverseGeocoding]?
     private var citiesArray: [String] = []
-    private var citiesDict: [String: WeatherData] = [:]
+    var citiesDict: [String: WeatherData] = [:]
+    var weatherForCitiesList = [WeatherData]()
     var networkWeatherManager: RestAPIProviderProtocol = NetworkWeatherManager()
     var units: String = ""
     
@@ -36,267 +28,51 @@ class MainViewController: UIViewController {
         
         self.units = UserDefaults.standard.value(forKey: "isMetric") as? Bool ?? true ? "metric" : "imperial"
         self.geoData = nil
-        self.findCityButton.tintColor = .systemCyan
-        self.getLocationButton.tintColor = .systemCyan
-        self.citiesArray = ["Москва", "Одесса", "Пекин", "Гомель", "Ставрополь"]
-        NotificationCenter.default.addObserver(self, selector: #selector(updateMainInterface), name: .updateMainInterface, object: nil)
         
         tableView.register(UINib(nibName: "CellWithCollectionView", bundle: nil), forCellReuseIdentifier: "CellWithCollectionView")
         tableView.register(UINib(nibName: "DailyWeatherCell", bundle: nil), forCellReuseIdentifier: "DailyWeatherCell")
         tableView.register(UINib(nibName: "CurrentWeatherCell", bundle: nil), forCellReuseIdentifier: "CurrentWeatherCell")
         
-        createAndShowBlurEffectWithActivityIndicator()
-        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.refreshControl = refresh
-        refresh.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
+        
+        refresh.addTarget(self, action: #selector(updateTableView), for: .valueChanged)
         
         self.addGradient()
-        
-        self.getWeatherForCities(cities: citiesArray) { (weather, name) in
-            self.citiesDict[name] = weather
-        }
+    }
 
-        if locationManager.authorizationStatus == .denied || locationManager.authorizationStatus == .notDetermined {
-            let lastCity = UserDefaults.standard.value(forKey: "city") != nil ? UserDefaults.standard.value(forKey: "city") as! String : "Kaliningrad"
-            self.networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] (result: Result<[Geocoding], Error>) in
-                guard let self = self else { return }
-                switch result {
-                case .failure(let error):
-                    print(error.localizedDescription)
-                    DispatchQueue.main.async {
-                        self.hideBlurView()
-                        self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
-                    }
-                case .success(let geocoding):
-                    self.geoData = geocoding
-                    guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
-                    self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, language: "languages".localized(), units: self.units) { (result: Result<WeatherData, Error>) in
-                        switch result {
-                        case .failure(let error):
-                            print(error.localizedDescription)
-                            DispatchQueue.main.async {
-                                self.hideBlurView()
-                                self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
-                            }
-                        case .success(let weatherData):
-                            self.combiningMethods(weatherData: weatherData)
-                            DispatchQueue.main.async {
-                                self.findCityButton.tintColor = .systemPink
-                            }
-                        }
-                    }
-                }
-            }
-        } else if locationManager.authorizationStatus == .authorizedAlways || locationManager.authorizationStatus == .authorizedWhenInUse {
-            if UserDefaults.standard.value(forKey: "city") != nil {
-                let lastCity = UserDefaults.standard.value(forKey: "city") as! String
-                self.networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] (result: Result<[Geocoding], Error>) in
-                    guard let self = self else { return }
-                    switch result {
-                    case .failure(let error):
-                        print(error.localizedDescription)
-                        DispatchQueue.main.async {
-                            self.hideBlurView()
-                            self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
-                        }
-                    case .success(let geocoding):
-                        self.geoData = geocoding
-                        guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
-                        self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, language: "languages".localized(), units: self.units) { (result: Result<WeatherData, Error>) in
-                            switch result {
-                            case .failure(let error):
-                                print(error.localizedDescription)
-                                DispatchQueue.main.async {
-                                    self.hideBlurView()
-                                    self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
-                                }
-                            case .success(let weatherData):
-                                self.combiningMethods(weatherData: weatherData)
-                                DispatchQueue.main.async {
-                                    self.findCityButton.tintColor = .systemPink
-                                }
-                            }
-                        }
-                    }
-                }
-            } else if UserDefaults.standard.value(forKey: "location") != nil {
-                locationManager.requestLocation()
-                self.geoData = nil
-            }
-        }
-    }
-    //MARK: - deinit
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-    
     //MARK: - @IBAction
     @IBAction func listOfCitiesPressed(_ sender: UIBarButtonItem) {
         guard let citiesNaviController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "CitiesNaviController") as? UINavigationController else { return }
         guard let controller = citiesNaviController.viewControllers.first as? CitiesViewController else { return }
-        controller.citiesDictionary = citiesDict
+        controller.weatherForCities = weatherForCitiesList
         present(citiesNaviController, animated: true)
     }
     
-    @IBAction func findCityPressed(_ sender: UIButton) {
-        presentSearchAlertController(withTitle: "Enter city name".localized(), message: nil, style: .alert)
+    func updateCitiesTableView(with weather: [WeatherData]) {
+        guard let citiesNaviController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "CitiesNaviController") as? UINavigationController else { return }
+        guard let controller = citiesNaviController.viewControllers.first as? CitiesViewController else { return }
+        controller.weatherForCities = weather
+        controller.loadViewIfNeeded()
+        controller.reload()
     }
     
-    @IBAction func getLocationPressed(_ sender: UIButton) {
-        if locationManager.authorizationStatus == .notDetermined {
-            locationManager.requestWhenInUseAuthorization()
-            locationManager.requestLocation()
-        } else if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
-            locationManager.requestLocation()
-        }
-    }
-    
-    @IBAction func refreshTableView() {
-        if geoData != nil {
-            self.createAndShowBlurEffectWithActivityIndicator()
-            guard let cityName = geoData?.first?.cityName else { return }
-            self.networkWeatherManager.getCoordinatesByName(forCity: cityName) { [weak self] (result: Result<[Geocoding], Error>) in
-                guard let self = self else { return }
-                switch result {
-                case .failure(let error):
-                    print(error.localizedDescription)
-                    DispatchQueue.main.async {
-                        self.hideBlurView()
-                        self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
-                    }
-                case .success(let geocoding):
-                    self.geoData = geocoding
-                    guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
-                    self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, language: "languages".localized(), units: self.units) { (result: Result<WeatherData, Error>) in
-                        switch result {
-                        case .failure(let error):
-                            print(error.localizedDescription)
-                            DispatchQueue.main.async {
-                                self.hideBlurView()
-                                self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
-                            }
-                        case .success(let weatherData):
-                            self.combiningMethods(weatherData: weatherData)
-                        }
-                    }
-                }
-            }
-        } else {
-            self.createAndShowBlurEffectWithActivityIndicator()
-            locationManager.requestLocation()
-            guard let coordinate = coordinate else { return }
-            self.networkWeatherManager.getCityNameForCoordinates(lon: coordinate.longitude, lat: coordinate.latitude) { [weak self] (result: Result<[ReverseGeocoding], Error>) in
-                guard let self = self else { return }
-                switch result {
-                case .failure(let error):
-                    print(error.localizedDescription)
-                    DispatchQueue.main.async {
-                        self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
-                    }
-                case .success(let reverseGeo):
-                    self.reverseGeocoding = reverseGeo
-                    DispatchQueue.main.async {
-                        guard let name = reverseGeo.first?.name else { return }
-                        let ruName = reverseGeo.first?.localNames?.ru ?? name
-                        let enName = reverseGeo.first?.localNames?.en ?? name
-                        let nameDict = ["ru": ruName, "en": enName]
-                        guard let finalName = nameDict["key".localized()] else { return }
-                        self.title = finalName
-                    }
-                }
-            }
-            self.networkWeatherManager.getWeatherForCityCoordinates(long: coordinate.longitude, lat: coordinate.latitude, language: "languages".localized(), units: self.units) { [weak self] (result: Result<WeatherData, Error>) in
-                guard let self = self else { return }
-                switch result {
-                case .success(let weatherData):
-                    self.combiningMethods(weatherData: weatherData)
-                case .failure(let error):
-                    print(error.localizedDescription)
-                    DispatchQueue.main.async {
-                        self.hideBlurView()
-                        self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
-                    }
-                }
-            }
-        }
+    @objc func updateTableView() {
+        NotificationCenter.default.post(name: .updateMainInterface, object: nil, userInfo: nil)
         refresh.endRefreshing()
     }
-    
-    @IBAction func updateMainInterface() {
-        self.units = UserDefaults.standard.value(forKey: "isMetric") as? Bool ?? true ? "metric" : "imperial"
-        if locationManager.authorizationStatus == .denied || locationManager.authorizationStatus == .notDetermined {
-            let lastCity = UserDefaults.standard.value(forKey: "city") as? String ?? "Kaliningrad"
-            self.networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] (result: Result<[Geocoding], Error>) in
-                guard let self = self else { return }
-                switch result {
-                case .failure(let error):
-                    print(error.localizedDescription)
-                    DispatchQueue.main.async {
-                        self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
-                    }
-                case .success(let geocoding):
-                    self.geoData = geocoding
-                    guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
-                    self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, language: "languages".localized(), units: self.units) { (result: Result<WeatherData, Error>) in
-                        switch result {
-                        case .failure(let error):
-                            print(error.localizedDescription)
-                            DispatchQueue.main.async {
-                                self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
-                            }
-                        case .success(let weatherData):
-                            self.combiningMethods(weatherData: weatherData)
-                            DispatchQueue.main.async {
-                                self.findCityButton.tintColor = .systemPink
-                            }
-                        }
-                    }
-                }
-            }
-        } else if locationManager.authorizationStatus == .authorizedAlways || locationManager.authorizationStatus == .authorizedWhenInUse {
-            if let lastCity = UserDefaults.standard.value(forKey: "city") as? String {
-                self.networkWeatherManager.getCoordinatesByName(forCity: lastCity) { [weak self] (result: Result<[Geocoding], Error>) in
-                    guard let self = self else { return }
-                    switch result {
-                    case .failure(let error):
-                        print(error.localizedDescription)
-                        DispatchQueue.main.async {
-                            self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
-                        }
-                    case .success(let geocoding):
-                        self.geoData = geocoding
-                        guard let longitude = geocoding.first?.lon, let latitude = geocoding.first?.lat else { return }
-                        self.networkWeatherManager.getWeatherForCityCoordinates(long: longitude, lat: latitude, language: "languages".localized(), units: self.units) { (result: Result<WeatherData, Error>) in
-                            switch result {
-                            case .failure(let error):
-                                print(error.localizedDescription)
-                                DispatchQueue.main.async {
-                                    self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
-                                }
-                            case .success(let weatherData):
-                                self.combiningMethods(weatherData: weatherData)
-                                DispatchQueue.main.async {
-                                    self.findCityButton.tintColor = .systemPink
-                                }
-                            }
-                        }
-                    }
-                }
-            } else if UserDefaults.standard.value(forKey: "location") != nil {
-                locationManager.requestLocation()
-                self.geoData = nil
-            }
-        }
-    }
-    
+        
     //MARK: - Methods
     func combiningMethods(weatherData: WeatherData) {
+        //self.geoData = weatherData.1
         self.saveCurrentData(weatherData: weatherData)
         DispatchQueue.main.async {
             self.realmManager.savaData(data: weatherData, isMap: false)
-            self.updateInterface(hourlyWeather: self.hourlyWeather)
+            //self.updateInterface(hourlyWeather: self.hourlyWeather)
+            self.title = weatherData.name
+            self.loadViewIfNeeded()
+            self.tableView.reloadData()
         }
     }
     
@@ -304,79 +80,6 @@ class MainViewController: UIViewController {
         self.currentWeather = weatherData
         self.hourlyWeather = weatherData.hourly
         self.dailyWeather = weatherData.daily
-    }
-    
-    private func weatherCheck(hourlyWeather: [HourlyWeatherData]?) {
-        guard let hourlyWeather = hourlyWeather else { return }
-        var index = 0
-        guard let notifications = UserDefaults.standard.value(forKey: "notifications") as? [Bool] else { return }
-        for hour in hourlyWeather {
-            guard let id = hour.weather?.first?.id, let time = hour.dt else { return }
-            //Если плохая погода впервые или перерыв между уведомлениями больше 3х часов, отправляем новое уведомление
-            if index == 0 || index > 3 {
-                switch id {
-                case 200...232:
-                    if !notifications.isEmpty && notifications[0] {
-                        setLocalNotification(body: "There will be a storm soon!".localized(), title: "Attention!".localized(), dateComponents: getDateComponentsFrom(date: time))
-                    } else if notifications.isEmpty {
-                        setLocalNotification(body: "There will be a storm soon!".localized(), title: "Attention!".localized(), dateComponents: getDateComponentsFrom(date: time))
-                    }
-                    index = 1
-                case 500...531:
-                    if !notifications.isEmpty && notifications[1] {
-                        setLocalNotification(body: "There will be a rain soon!".localized(), title: "Attention!".localized(), dateComponents: getDateComponentsFrom(date: time))
-                    } else if notifications.isEmpty {
-                        setLocalNotification(body: "There will be a rain soon!".localized(), title: "Attention!".localized(), dateComponents: getDateComponentsFrom(date: time))
-                    }
-                    index = 1
-                case 600...622:
-                    if !notifications.isEmpty && notifications[2] {
-                        setLocalNotification(body: "There will be a snow soon!".localized(), title: "Attention!".localized(), dateComponents: getDateComponentsFrom(date: time))
-                    } else if notifications.isEmpty {
-                        setLocalNotification(body: "There will be a snow soon!".localized(), title: "Attention!".localized(), dateComponents: getDateComponentsFrom(date: time))
-                    }
-                    index = 1
-                default: break
-                }
-            }
-            index += 1
-        }
-    }
-    
-    private func getDateComponentsFrom(date: Int) -> DateComponents {
-        let calendar = Calendar.current
-        let newDate = Date(timeIntervalSince1970: TimeInterval(date))
-        var newDateComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: newDate)
-        guard let minutes = newDateComponents.minute else { fatalError() }
-        newDateComponents.minute = minutes - 30
-        return newDateComponents
-    }
-    
-    private func setLocalNotification(body: String, title: String, dateComponents: DateComponents) {
-        notificationCenter.requestAuthorization(options: [.alert, .badge, .sound]) { [weak self] isAutorized, error in
-            guard let self = self else { return }
-            if isAutorized {
-                let content = UNMutableNotificationContent()
-                content.body = body
-                content.title = title
-                
-                let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
-                let identifier = "identifier"
-                let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
-                
-                self.notificationCenter.add(request) { error in
-                    if let error = error {
-                        print(error)
-                    }
-                }
-            } else if let error = error {
-                print(error)
-            }
-        }
-    }
-    
-    private func removeAllNotification() {
-        notificationCenter.removeAllPendingNotificationRequests()
     }
     
     private func updateInterface(hourlyWeather: [HourlyWeatherData]?) {
@@ -388,10 +91,8 @@ class MainViewController: UIViewController {
             guard let finalName = localeNames["key".localized()] else { return }
             self.title = "\(finalName), \(country)"
         }
+        loadViewIfNeeded()
         self.tableView.reloadData()
-        self.removeAllNotification()
-        self.weatherCheck(hourlyWeather: hourlyWeather)
-        self.hideBlurView()
     }
     
     private func getWeatherForCities(cities: [String], completionHandler: @escaping (WeatherData, String) -> Void) {
@@ -414,6 +115,16 @@ class MainViewController: UIViewController {
                 }
             }
         }
+    }
+    
+    func addGradient() {
+        let gradient = CAGradientLayer()
+        gradient.colors = [UIColor.systemYellow.cgColor, UIColor.systemCyan.cgColor, UIColor.systemBlue.cgColor]
+        gradient.opacity = 0.5
+        gradient.startPoint = CGPoint(x: 0.1, y: 0)
+        gradient.endPoint = CGPoint(x: 1.0, y: 1.0)
+        gradient.frame = view.bounds
+        view.layer.insertSublayer(gradient, at: 0)
     }
 }
 
@@ -438,7 +149,6 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         } else {
             return "Daily forecasts".localized()
         }
-        
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -489,79 +199,5 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 30
-    }
-}
-
-//MARK: - CLLocationManagerDelegate
-extension MainViewController: CLLocationManagerDelegate {
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = manager.location?.coordinate else { return }
-        self.coordinate = location
-        
-        self.networkWeatherManager.getCityNameForCoordinates(lon: location.longitude, lat: location.latitude) { [weak self] (result: Result<[ReverseGeocoding], Error>) in
-            guard let self = self else { return }
-            switch result {
-            case .failure(let error):
-                print(error.localizedDescription)
-                DispatchQueue.main.async {
-                    self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
-                }
-            case .success(let reverseGeo):
-                self.reverseGeocoding = reverseGeo
-                DispatchQueue.main.async {
-                    guard let name = reverseGeo.first?.name else { return }
-                    let ruName = reverseGeo.first?.localNames?.ru ?? name
-                    let enName = reverseGeo.first?.localNames?.en ?? name
-                    let nameDict = ["ru": ruName, "en": enName]
-                    guard let finalName = nameDict["key".localized()] else { return }
-                    self.title = finalName
-                }
-            }
-        }
-        
-        self.networkWeatherManager.getWeatherForCityCoordinates(long: location.longitude, lat: location.latitude, language: "languages".localized(), units: self.units) { [weak self] (result: Result<WeatherData, Error>) in
-            guard let self = self else { return }
-            switch result {
-            case .failure(let error):
-                print(error.localizedDescription)
-                DispatchQueue.main.async {
-                    self.showErrorAlert(title: "Oops".localized(), message: "Something went wrong".localized())
-                }
-            case .success(let weatherData):
-                self.combiningMethods(weatherData: weatherData)
-                self.geoData = nil
-                DispatchQueue.main.async {
-                    UserDefaults.standard.removeObject(forKey: "city")
-                    UserDefaults.standard.set(true, forKey: "location")
-                    self.findCityButton.tintColor = .systemCyan
-                    self.getLocationButton.tintColor = .systemPink
-                }
-            }
-        }
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print(error.localizedDescription)
-    }
-    
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        if manager.authorizationStatus == .authorizedWhenInUse || manager.authorizationStatus == .authorizedAlways {
-            if UserDefaults.standard.value(forKey: "city") != nil {
-                self.findCityButton.tintColor = .systemPink
-                self.getLocationButton.tintColor = .systemCyan
-                self.getLocationButton.isEnabled = true
-            } else if UserDefaults.standard.value(forKey: "location") != nil {
-                locationManager.requestLocation()
-                self.getLocationButton.isEnabled = true
-            } else {
-                locationManager.requestLocation()
-                self.getLocationButton.isEnabled = true
-            }
-        } else if manager.authorizationStatus == .restricted || manager.authorizationStatus == .denied {
-            self.getLocationButton.isEnabled = false
-            UserDefaults.standard.removeObject(forKey: "location")
-        } else if manager.authorizationStatus == .notDetermined {
-            self.getLocationButton.isEnabled = true
-        }
     }
 }

@@ -33,45 +33,14 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="Feq-6N-WcL">
-                        <rightBarButtonItems>
-                            <barButtonItem title="Item" image="list.bullet" catalog="system" style="done" id="StK-nr-OY5">
-                                <color key="tintColor" systemColor="systemCyanColor"/>
-                                <connections>
-                                    <action selector="listOfCitiesPressed:" destination="BYZ-38-t0r" id="Whc-NR-DBg"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem style="done" id="GET-r8-oce">
-                                <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="vzr-ve-gRw">
-                                    <rect key="frame" x="263.5" y="5" width="50" height="34"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <color key="tintColor" systemColor="systemCyanColor"/>
-                                    <state key="normal" title="Button"/>
-                                    <buttonConfiguration key="configuration" style="plain" image="magnifyingglass" catalog="system"/>
-                                    <connections>
-                                        <action selector="findCityPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="AQR-5A-tki"/>
-                                    </connections>
-                                </button>
-                            </barButtonItem>
-                            <barButtonItem title="Bar Button Item" style="done" id="gfx-6l-4GO">
-                                <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="RfR-X6-XS1">
-                                    <rect key="frame" x="205.5" y="5" width="50" height="34"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <color key="tintColor" systemColor="systemCyanColor"/>
-                                    <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                    <state key="normal" image="location" catalog="system">
-                                        <color key="titleColor" systemColor="systemCyanColor"/>
-                                    </state>
-                                    <buttonConfiguration key="configuration" style="plain" image="location" catalog="system"/>
-                                    <connections>
-                                        <action selector="getLocationPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Pke-ff-ril"/>
-                                    </connections>
-                                </button>
-                            </barButtonItem>
-                        </rightBarButtonItems>
+                        <barButtonItem key="rightBarButtonItem" title="Item" image="list.bullet" catalog="system" style="done" id="StK-nr-OY5">
+                            <color key="tintColor" systemColor="systemCyanColor"/>
+                            <connections>
+                                <action selector="listOfCitiesPressed:" destination="BYZ-38-t0r" id="Whc-NR-DBg"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="findCityButton" destination="vzr-ve-gRw" id="C0H-70-EmT"/>
-                        <outlet property="getLocationButton" destination="RfR-X6-XS1" id="w4X-4e-oWf"/>
                         <outlet property="tableView" destination="0Kb-fK-oho" id="uZI-m9-qPU"/>
                     </connections>
                 </viewController>
@@ -454,6 +423,14 @@
             </objects>
             <point key="canvasLocation" x="5254" y="2125"/>
         </scene>
+        <!--Page View Controller-->
+        <scene sceneID="NHi-ZY-Yak">
+            <objects>
+                <pageViewController storyboardIdentifier="PageViewController" autoresizesArchivedViewToFullSize="NO" transitionStyle="scroll" navigationOrientation="horizontal" spineLocation="none" id="7wz-5W-wAU" customClass="PageViewController" customModule="WeatherApp" customModuleProvider="target" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7W3-gv-CFJ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1423" y="770"/>
+        </scene>
         <!--Navigation Controller-->
         <scene sceneID="kVM-gI-mS8">
             <objects>
@@ -549,8 +526,6 @@
     <resources>
         <image name="globe.europe.africa" catalog="system" width="128" height="121"/>
         <image name="list.bullet" catalog="system" width="128" height="88"/>
-        <image name="location" catalog="system" width="128" height="118"/>
-        <image name="magnifyingglass" catalog="system" width="128" height="115"/>
         <systemColor name="secondarySystemGroupedBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
