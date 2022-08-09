@@ -62,6 +62,7 @@
 //MARK: - TabBarItem
 "Map" = "Map";
 "Settings" = "Settings";
+"Cities" = "Cities";
 
 //MARK: - SettingsViewController
 "Request history" = "Request history";
@@ -79,3 +80,6 @@
 
 //MARK: - ml/h
 "ml/h" = "ml/h";
+
+//MARK: - CitiesViewController
+"Cities" = "Cities";

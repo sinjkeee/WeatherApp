@@ -62,6 +62,7 @@
 //MARK: - TabBarItem
 "Map" = "Карта";
 "Settings" = "Настройки";
+"Cities" = "Города";
 
 //MARK: - SettingsViewController
 "Request history" = "История запросов";
@@ -79,3 +80,6 @@
 
 //MARK: - ml/h
 "ml/h" = "миля/ч";
+
+//MARK: - CitiesViewController
+"Cities" = "Города";

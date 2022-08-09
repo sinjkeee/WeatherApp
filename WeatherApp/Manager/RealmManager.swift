@@ -8,7 +8,7 @@ protocol RealmManagerProtocol {
 
 class RealmManager: RealmManagerProtocol {
     
-    var realm: Realm!
+    private var realm: Realm!
     
     init() {
         let configuration = Realm.Configuration()

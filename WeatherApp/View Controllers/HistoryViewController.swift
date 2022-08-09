@@ -6,8 +6,8 @@ class HistoryViewController: UIViewController {
     
     //MARK: - let/var
     private var realmManager: RealmManagerProtocol = RealmManager()
-    var arrayData: [CurrentWeatherForRealm] = []
-    var historyTableView = UITableView()
+    private var arrayData: [CurrentWeatherForRealm] = []
+    private var historyTableView = UITableView()
     
     //MARK: - viewDidLoad
     override func viewDidLoad() {
